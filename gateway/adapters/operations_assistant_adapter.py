@@ -23,6 +23,12 @@ import httpx
 
 from gateway.adapters.base import BackendAdapter
 
+# Prefix every "the backend itself failed" string with this so callers (the demo
+# endpoint, tests) can tell an upstream transport/HTTP failure apart from a real
+# model response. An adapter must not raise into GatewayMiddleware.process() --
+# that would 500 the request -- so failures come back as a marked string instead.
+BACKEND_ERROR_PREFIX = "[backend-error] "
+
 OPS_ASSISTANT_URL = os.environ.get("OPS_ASSISTANT_URL", "").rstrip("/")
 OPS_ASSISTANT_API_KEY = os.environ.get("OPS_ASSISTANT_API_KEY", "")
 _TIMEOUT = float(os.environ.get("OPS_ASSISTANT_TIMEOUT", "60"))
@@ -53,7 +59,7 @@ class OpsAssistantAdapter(BackendAdapter):
 
     def send(self, prompt: str, session_id: str, role: str = "employee", user_id: str = "unknown") -> str:
         if not self.base_url:
-            return "[operations_assistant backend not configured: set OPS_ASSISTANT_URL]"
+            return f"{BACKEND_ERROR_PREFIX}operations_assistant not configured (set OPS_ASSISTANT_URL)"
         try:
             resp = httpx.post(
                 f"{self.base_url}/chat",
@@ -63,9 +69,13 @@ class OpsAssistantAdapter(BackendAdapter):
             )
             resp.raise_for_status()
         except httpx.HTTPStatusError as exc:
-            return f"[operations_assistant returned HTTP {exc.response.status_code}: {exc.response.text[:200]}]"
+            hint = ""
+            if exc.response.status_code == 401:
+                hint = " -- set OPS_ASSISTANT_API_KEY on the gateway to match operations-assistant's API_KEY"
+            return (f"{BACKEND_ERROR_PREFIX}operations_assistant returned HTTP "
+                    f"{exc.response.status_code}{hint}")
         except httpx.HTTPError as exc:
-            return f"[operations_assistant unreachable at {self.base_url}: {type(exc).__name__}]"
+            return f"{BACKEND_ERROR_PREFIX}operations_assistant unreachable at {self.base_url} ({type(exc).__name__})"
 
         data = resp.json()
         answer = data.get("answer", "")

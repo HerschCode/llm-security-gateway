@@ -1,46 +1,48 @@
 # LLM Security Gateway
 
-A standalone security middleware for LLM applications. Sits between a caller and
-any LLM backend, inspecting traffic in both directions: prompt injection, PII
-leakage, jailbreak-compliance, and role-inappropriate data exposure. Think of it
-structurally like an nginx/Envoy reverse proxy, except the checks are
-LLM-specific instead of generic auth/rate-limiting.
+![CI](https://github.com/HerschCode/llm-security-gateway/actions/workflows/ci.yml/badge.svg)
+&nbsp;·&nbsp; **[Live demo →](https://llm-security-gateway-psax.onrender.com/gateway/demo)**
+&nbsp;·&nbsp; [Live dashboard →](https://llm-security-gateway-psax.onrender.com/gateway/dashboard)
 
-**What I can actually prove, not just claim:** with the gateway bypassed, a
-naive backend complies with 30/36 attacks in the corpus (passes only the 6 cases
-that don't require any defense at all — the negative/ambiguous controls). With the
-gateway in front of it, 29/36 corpus cases are handled correctly end-to-end, over a
-live running FastAPI service, not an in-process function call. See
-[Proof requirements](#proof-requirements) below for the full checklist with
-receipts — including a real methodology bug (train/test leakage) that was found and
-fixed along the way, not glossed over.
+Standalone security middleware for LLM applications. Sits between a caller and any
+LLM backend and inspects traffic both directions — prompt injection, PII leakage,
+jailbreak-compliance, role-inappropriate data exposure. Structurally like an
+nginx/Envoy reverse proxy, except the checks are LLM-specific instead of generic
+auth/rate-limiting.
+
+![architecture](docs/architecture.svg)
+
+**What it demonstrably does:** with the gateway bypassed, a naive backend complies
+with 30/36 attacks in the hand-built corpus. With the gateway in front, 29/36 are
+handled correctly end-to-end over a live FastAPI service — not an in-process call.
+The value is the *ensemble* (defense-in-depth), not any single layer; the honest
+per-layer numbers, including a train/test leakage bug that was found and fixed, are
+in [Detection layer comparison](#detection-layer-comparison-the-actual-centerpiece)
+and [`HIGHLIGHTS.md`](HIGHLIGHTS.md).
 
 ---
 
-## Status: what's real vs. simulated (read this first)
+## Try it in 60 seconds
 
-In the interest of not overstating progress:
+```bash
+docker compose up --build          # full 3-layer pipeline, no external services
+# open http://localhost:8000/gateway/demo
+```
 
-| Component | Status |
-|---|---|
-| Attack corpus (36 cases, 5 categories) | **Real.** Built from scratch, versioned YAML, status fields filled in by an actual eval run. Expanded from 20 to 36 cases (v0.2.0) — see `docs/decisions.md`. |
-| Rule-based detector | **Real.** Regex/keyword, runs, measured. |
-| Embedding-similarity detector | **Real, but measured honestly now shows 0% detection.** TF-IDF + cosine similarity, not transformer sentence embeddings (documented substitution — see below). Earlier 97% figure was train/test leakage, found and fixed. See [`docs/leakage_fix.md`](docs/leakage_fix.md). |
-| From-scratch classifier | **Real, but not a fine-tune, and only 50% detection once leakage was fixed.** A small PyTorch model, not DistilBERT, for the same network reason as above. Real training loop, real (if modest) precision/recall numbers, and now fully reproducible (PyTorch's RNG was unseeded before an audit pass caught it — see `docs/decisions.md`). |
-| DistilBERT fine-tune script | **Written, never run.** [`scripts/train_distilbert_finetune.py`](scripts/train_distilbert_finetune.py) is correct code for an environment with model-hub access. Its docstring says this explicitly. Treat any numbers you'd expect from it as a hypothesis until someone actually runs it. |
-| FastAPI gateway middleware | **Real.** Pre-flight + post-flight checks, runs as a live server, tested with a real HTTP client. |
-| Two pluggable backends | **One real stub, one trivial, both real code.** `stub_ops_agent` is a deliberately naive stand-in for "Project 2's agent" — Project 2's actual codebase isn't in this sandbox, so this is a shape-alike simulation, not the real thing. Labeled clearly in [`gateway/adapters/stub_ops_agent.py`](gateway/adapters/stub_ops_agent.py). |
-| Project 2 reconstruction (`project2_agent/`) | **Real, working code — a best-effort guess.** 7 tools, real internal tool-authorization, document retrieval with citations, a refusal-policy table — built from one paragraph describing the real Project 2, which wasn't available. Surfaced two genuine findings along the way: an evaluation-methodology issue, and a security control that was silently dead code (found and fixed in a later audit pass). See [`docs/project2_agent_notes.md`](docs/project2_agent_notes.md). |
-| Attack simulation CLI | **Real.** Ran end-to-end against the live server (see below). |
-| Latency measurement | **Real.** Measured, including an honest caveat about what the baseline actually represents. |
-| CLI report view (Tier 2) | **Real.** `scripts/report_cli.py` — category-level pass-rate breakdown per layer, plus a gateway-on-vs-off comparison. |
-| Adaptive thresholding (Tier 3) | **Real.** Per-session risk score tightens layer 2/3 thresholds after prior blocks. Demonstrated: identical borderline text, allowed for a clean session, blocked for a flagged one. |
-| Streaming support (Tier 3) | **Real.** Post-flight checks re-run against the growing response buffer after every chunk; verified live over HTTP cutting off a leak after ~66 characters instead of the full ~240-character leak. |
-| Real-time monitoring dashboard (Tier 3) | **Real.** `/gateway/stats` (JSON) + `/gateway/dashboard` (auto-refreshing HTML), reading the same JSONL log every request writes to. Verified against live traffic. |
+Pick an attack, pick a backend, hit **Run** — the same prompt goes straight at the
+backend and through the gateway, side by side, with the verdict, which layer fired,
+and latency for each. Other run modes (Render free tier, the end-to-end trilogy
+with the real Project 2 RAG agent behind it) are in [`DEPLOY.md`](DEPLOY.md).
+
+> The public link above runs in **lite mode** (`GATEWAY_LITE=1`) — layers 1–2 plus
+> all pre/post-flight checks, but not the torch classifier (layer 3), to fit a
+> 512 MB host. The demo page says so inline. `docker compose up` runs all three.
 
 ---
 
 ## Architecture
+
+See [`docs/architecture.svg`](docs/architecture.svg) above. In text:
 
 ```
 Caller → Gateway
@@ -65,7 +67,8 @@ gateway itself. Demonstrated with three structurally unrelated backends (see
 
 **Project 2 integration (best-effort guess):** `project2_agent/` is a reconstruction
 of Project 2 built from a one-paragraph description in the build doc — its real code
-was never available in this sandbox. See
+was not available when it was written (the real service is now wired in as the
+`operations_assistant` backend — see [`DEPLOY.md`](DEPLOY.md)). See
 [`docs/project2_agent_notes.md`](docs/project2_agent_notes.md) for the full design
 and, importantly, a real evaluation-methodology finding it surfaced: a strict
 pass/fail metric can't distinguish "the gateway blocked this attack" from "nothing
@@ -227,6 +230,22 @@ pytest tests/ -v
 
 ---
 
+## What's real vs. substituted
+
+Nothing here is mocked in a way that inflates a result, but two design choices were
+forced by the original build environment having no model-hub access, and are worth
+knowing:
+
+| Component | Status |
+|---|---|
+| Attack corpus (36 cases, 5 categories), rule-based detector, FastAPI middleware, adaptive thresholding, streaming cutoff, live dashboard | **Real**, run and measured. |
+| Embedding-similarity layer | **Real technique, honest substitution** — TF-IDF + cosine similarity, not transformer sentence embeddings. Measured correctly it detects **0%** of this corpus (the earlier 97% was train/test leakage — [`HIGHLIGHTS.md`](HIGHLIGHTS.md)). |
+| "Fine-tuned classifier" layer | **Real from-scratch torch model**, not a DistilBERT fine-tune. Real training loop, seeded/reproducible, **50%** detection. |
+| `scripts/train_distilbert_finetune.py` | **Written, never run.** Correct code for an environment with model-hub access; its docstring says so. Treat its expected numbers as a hypothesis. |
+| Backends | `stub_ops_agent` (deliberately undefended stand-in), `trivial_echo`, `project2_agent` (best-effort reconstruction with its own tool-auth), and **`operations_assistant`** — an HTTP adapter to the *real* Project 2 RAG service, enabled when `OPS_ASSISTANT_URL` is set (see [`DEPLOY.md`](DEPLOY.md)). |
+
+---
+
 ## Known limitations (stated plainly, not buried)
 
 - **Train/test leakage existed and was fixed** — see `docs/leakage_fix.md`. Not a
@@ -304,5 +323,6 @@ docs/
   comparison_table.md, domain_shift_fix.md, leakage_fix.md, embedding_loo_result.md
   project2_agent_notes.md, latency_report.md
   redteam_report_{direct,gateway}_{stub_ops_agent,project2_agent}.md
-tests/                                 # pytest, 23 passing
+tests/                                 # pytest, 42 passing
+.github/workflows/ci.yml               # runs the suite on every push
 ```

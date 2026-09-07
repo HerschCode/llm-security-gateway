@@ -9,29 +9,36 @@ an attack, and sees the *same prompt* run two ways at once --
   * through the full gateway pipeline
 
 -- side by side, with the verdict, which layer fired, the phase, and the
-latency for each. It's deliberately the "click a link, watch it work" view a
-portfolio needs, built on the exact same `GatewayMiddleware` and adapters the
+latency for each. Built on the exact same `GatewayMiddleware` and adapters the
 real service uses (no separate mock path).
 
 Endpoints:
   GET  /gateway/demo         -> the HTML page
-  GET  /gateway/demo/cases   -> curated corpus cases, grouped by category
+  GET  /gateway/demo/cases   -> curated corpus cases
   POST /gateway/demo/run     -> {prompt, backend} -> both results
+
+Abuse controls (this endpoint can reach an LLM-backed backend):
+  * per-IP fixed-window rate limit -- DEMO_RATE_LIMIT (default 20) requests per
+    DEMO_RATE_WINDOW seconds (default 60). Returns HTTP 429.
+  * optional hard gate -- if DEMO_API_KEY is set, /gateway/demo/run requires an
+    `X-Demo-Key` header matching it.
 """
+import os
 import time
+from collections import deque
 from pathlib import Path
 
 import yaml
-from fastapi import APIRouter
-from fastapi.responses import HTMLResponse
+from fastapi import APIRouter, Request
+from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel
+
+from gateway.adapters.operations_assistant_adapter import BACKEND_ERROR_PREFIX
 
 router = APIRouter()
 
 _CORPUS_PATH = Path(__file__).resolve().parent.parent / "corpus" / "injection_cases.yaml"
 
-# A curated subset -- enough to show every category and both a clear block and a
-# clear negative control, without dumping all 36 rows into a demo dropdown.
 _FEATURED_IDS = [
     "GW-001",  # direct_injection       -- rule_based catches this outright
     "GW-002",  # direct_injection       -- authority impersonation
@@ -41,6 +48,37 @@ _FEATURED_IDS = [
     "GW-016",  # tool_scope_escalation
     "GW-019",  # direct_injection, expected_behavior=allow -- negative control
 ]
+
+_RATE_LIMIT = int(os.environ.get("DEMO_RATE_LIMIT", "20"))
+_RATE_WINDOW = float(os.environ.get("DEMO_RATE_WINDOW", "60"))
+_DEMO_API_KEY = os.environ.get("DEMO_API_KEY", "")
+_LITE = os.environ.get("GATEWAY_LITE", "").lower() in ("1", "true", "yes")
+
+# ip -> deque[timestamps]. In-process only (single Render instance) -- a
+# multi-instance deploy would need a shared store, same caveat as the session
+# trackers. Good enough to stop one script hammering the LLM-backed path.
+_hits: dict[str, deque] = {}
+
+
+def _client_ip(request: Request) -> str:
+    xff = request.headers.get("x-forwarded-for")
+    if xff:
+        return xff.split(",")[0].strip()
+    return request.client.host if request.client else "unknown"
+
+
+def _rate_limited(ip: str) -> bool:
+    now = time.time()
+    dq = _hits.setdefault(ip, deque())
+    while dq and now - dq[0] > _RATE_WINDOW:
+        dq.popleft()
+    if len(dq) >= _RATE_LIMIT:
+        return True
+    dq.append(now)
+    if len(_hits) > 2000:  # crude cap so a spray of IPs can't grow this forever
+        for k in [k for k, v in _hits.items() if not v or now - v[-1] > _RATE_WINDOW][:1000]:
+            _hits.pop(k, None)
+    return False
 
 
 def _load_cases():
@@ -97,10 +135,20 @@ def _summarize_trace(resp):
     }
 
 
+def _is_upstream_error(text) -> bool:
+    return isinstance(text, str) and text.startswith(BACKEND_ERROR_PREFIX)
+
+
 @router.post("/gateway/demo/run")
-def demo_run(req: DemoRunRequest):
-    # Imported here (not at module load) so `import gateway.demo` stays cheap
-    # and this module has no import-time dependency on model files loading.
+def demo_run(req: DemoRunRequest, request: Request):
+    if _DEMO_API_KEY and request.headers.get("x-demo-key") != _DEMO_API_KEY:
+        return JSONResponse({"error": "missing_or_invalid_x_demo_key"}, status_code=401)
+    if _rate_limited(_client_ip(request)):
+        return JSONResponse(
+            {"error": f"rate_limited: max {_RATE_LIMIT} requests per {int(_RATE_WINDOW)}s"},
+            status_code=429,
+        )
+
     from gateway.app import BACKENDS
     from gateway.middleware import GatewayMiddleware
 
@@ -120,6 +168,9 @@ def demo_run(req: DemoRunRequest):
     except Exception as exc:  # a demo should never 500 on a backend quirk
         bypass_text = None
         bypass_err = f"{type(exc).__name__}: {exc}"
+    if _is_upstream_error(bypass_text):
+        bypass_err = bypass_text
+        bypass_text = None
     bypass_ms = (time.perf_counter() - t0) * 1000
 
     # --- 2. Same prompt through the full gateway pipeline ---
@@ -131,24 +182,39 @@ def demo_run(req: DemoRunRequest):
         user_id=req.user_id,
     )
     gw_ms = (time.perf_counter() - t0) * 1000
+    gw_upstream_error = _is_upstream_error(gw.response_text)
 
     return {
         "prompt": req.prompt,
         "backend": req.backend,
+        "lite_mode": _LITE,
         "bypassed": {
-            "allowed": True,  # nothing is checking -- the backend just answers
+            "allowed": bypass_err is None,
             "response": bypass_text,
             "error": bypass_err,
+            "upstream_error": bool(bypass_err),
             "latency_ms": round(bypass_ms, 2),
         },
         "gateway": {
-            "allowed": gw.allowed,
-            "response": gw.response_text,
+            "allowed": gw.allowed and not gw_upstream_error,
+            "response": None if gw_upstream_error else gw.response_text,
+            "error": gw.response_text if gw_upstream_error else None,
+            "upstream_error": gw_upstream_error,
             "latency_ms": round(gw_ms, 2),
             **_summarize_trace(gw),
         },
     }
 
+
+_LITE_BANNER = """
+  <div class="banner">
+    <b>Lite mode</b> &mdash; this free-tier deploy runs layers 1&ndash;2 (rule-based + TF-IDF
+    embedding) and all pre/post-flight checks. Layer 3, the from-scratch torch classifier
+    (the one layer measured as doing real non-leaked work &mdash; see
+    <code>docs/comparison_table.md</code>), is disabled to fit 512&nbsp;MB RAM.
+    The full 3-layer pipeline runs locally via <code>docker compose up</code>.
+  </div>
+"""
 
 _DEMO_HTML = """
 <!DOCTYPE html>
@@ -163,8 +229,12 @@ _DEMO_HTML = """
   body { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
          background: #0d1117; color: #c9d1d9; margin: 0; padding: 24px; line-height: 1.5; }
   h1 { color: #58a6ff; margin: 0 0 4px; font-size: 20px; }
-  .sub { color: #8b949e; font-size: 13px; margin-bottom: 20px; max-width: 780px; }
+  .sub { color: #8b949e; font-size: 13px; margin-bottom: 16px; max-width: 780px; }
   .sub a { color: #58a6ff; }
+  .banner { background: #1c2333; border: 1px solid #2f3b54; border-left: 3px solid #d29922;
+            border-radius: 6px; padding: 10px 12px; font-size: 12px; color: #c9d1d9;
+            margin-bottom: 18px; max-width: 780px; }
+  .banner code { color: #8b949e; }
   .controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-bottom: 12px; }
   label { display: block; font-size: 11px; color: #8b949e; margin-bottom: 4px; text-transform: uppercase; letter-spacing: .04em; }
   select, textarea, button { font-family: inherit; font-size: 13px; background: #161b22;
@@ -181,6 +251,7 @@ _DEMO_HTML = """
   .allowed { color: #f85149; }        /* backend complied with an attack = bad */
   .blocked { color: #3fb950; }        /* gateway stopped it = good */
   .neutral { color: #8b949e; }
+  .errored { color: #d29922; }        /* upstream backend failure -- not a verdict */
   .meta { font-size: 12px; color: #8b949e; margin-bottom: 8px; }
   .meta b { color: #c9d1d9; }
   .resp { white-space: pre-wrap; word-break: break-word; background: #0d1117;
@@ -196,11 +267,12 @@ _DEMO_HTML = """
   <h1>LLM Security Gateway &mdash; Interactive Demo</h1>
   <div class="sub">
     Pick an attack (or write your own), choose a backend, and hit <b>Run</b>. The same prompt is sent
-    two ways: straight at the backend with no protection, and through the full gateway pipeline
-    (PII redaction &rarr; 3-layer injection ensemble &rarr; session checks &rarr; backend &rarr; post-flight
+    two ways: straight at the backend with no protection, and through the gateway pipeline
+    (PII redaction &rarr; injection ensemble &rarr; session checks &rarr; backend &rarr; post-flight
     role / compliance / leak checks). &nbsp;
     <a href="/gateway/dashboard">Live traffic dashboard &rarr;</a>
   </div>
+  __LITE_BANNER__
 
   <div class="controls">
     <div>
@@ -284,16 +356,18 @@ function renderSide(prefix, r, isGateway) {
   const v = $(prefix + '-verdict');
   const meta = $(prefix + '-meta');
   const resp = $(prefix + '-resp');
-  if (r.error) {
-    v.className = 'verdict neutral'; v.textContent = 'ERROR';
-    meta.innerHTML = ''; resp.textContent = r.error; return;
+  if (r.upstream_error || (r.error && !isGateway && !('upstream_error' in r))) {
+    v.className = 'verdict errored'; v.textContent = 'UPSTREAM ERROR';
+    meta.innerHTML = `<b>latency</b> ${r.latency_ms} ms &nbsp;|&nbsp; the backend itself failed &mdash; not a gateway verdict`;
+    resp.textContent = r.error || 'backend error';
+    if (isGateway) $('g-layers').innerHTML = '';
+    return;
   }
   const allowed = r.allowed;
   if (isGateway) {
     v.className = 'verdict ' + (allowed ? 'allowed' : 'blocked');
     v.textContent = allowed ? 'ALLOWED' : 'BLOCKED';
   } else {
-    // backend alone: "answered" is neutral-to-bad, there's no judgement here
     v.className = 'verdict ' + (allowed ? 'allowed' : 'neutral');
     v.textContent = allowed ? 'ANSWERED (no checks)' : 'no response';
   }
@@ -315,6 +389,7 @@ function renderLayers(r) {
   box.innerHTML = names.map(n => {
     const info = pl[n];
     if (!info) return `<span>${n}: n/a</span>`;
+    if (info.skipped) return `<span>${n}: skipped (${info.skipped})</span>`;
     return `<span class="${info.blocked ? 'hit' : ''}">${n}: ${info.blocked ? 'BLOCK' : 'pass'}</span>`;
   }).join('');
 }
@@ -348,4 +423,4 @@ loadBackends();
 
 @router.get("/gateway/demo", response_class=HTMLResponse)
 def demo_page():
-    return _DEMO_HTML
+    return _DEMO_HTML.replace("__LITE_BANNER__", _LITE_BANNER if _LITE else "")

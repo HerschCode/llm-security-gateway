@@ -4,6 +4,34 @@ Running log, written as decisions are made. Not reconstructed after the fact.
 
 ---
 
+## 2026-09-07 — Portfolio polish pass (post-deploy)
+
+All three services are live on Render. This pass addresses gaps found by
+reviewing the deployed state, not the code.
+
+- **Upstream backend errors no longer render as "ALLOWED."** The
+  `operations_assistant` HTTP adapter now prefixes every transport/HTTP failure
+  string with `BACKEND_ERROR_PREFIX`; `/gateway/demo/run` detects it and returns
+  a distinct `upstream_error` state (the demo panel shows "UPSTREAM ERROR", amber,
+  not a green verdict). A 401 from the real Project 2 was previously shown as a
+  successful gateway pass.
+- **Demo endpoint abuse controls.** `/gateway/demo/run` now has a per-IP
+  fixed-window rate limit (`DEMO_RATE_LIMIT`/`DEMO_RATE_WINDOW`, default 20/60s,
+  `X-Forwarded-For` aware for Render's proxy) returning 429, plus an optional hard
+  gate via `DEMO_API_KEY` + `X-Demo-Key`. It can reach an LLM-backed backend, so
+  it shouldn't be open to unbounded scripted traffic.
+- **Lite-mode is now stated on the demo page itself**, not just in docs — an amber
+  banner when `GATEWAY_LITE=1` explaining layer 3 is off and `docker compose up`
+  runs the full pipeline.
+- **CI.** `.github/workflows/ci.yml` runs the suite (now 42 tests, +3 for the demo
+  endpoint) on every push, plus a lite-mode import check. README badge added.
+- **README restructured** to lead with the live-demo link, an SVG architecture
+  diagram (`docs/architecture.svg`), and a 60-second quickstart; the "what's real
+  vs. substituted" table moved down but kept. `HIGHLIGHTS.md` added — the three
+  "made a number worse on purpose" stories pulled out of this log.
+
+---
+
 ## 2026-09-07 — Portfolio-completion pass: git, live-run, demo page, deploy scaffolding
 
 The project was code-complete but had never been version-controlled, run from a
