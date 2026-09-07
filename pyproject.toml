@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "llm-security-gateway"
+version = "0.1.0"
+description = "A standalone security gateway/middleware for LLM applications: prompt-injection detection, PII redaction, role-based response filtering, and jailbreak-compliance checks, sitting in front of any pluggable backend."
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
+    "pydantic>=2.0",
+    "httpx>=0.27",
+    "scikit-learn>=1.4",
+    "torch>=2.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+# Only needed to run the deferred DistilBERT fine-tune script in an environment
+# with model-hub access -- see docs/decisions.md.
+finetune = ["transformers>=4.40", "datasets>=2.19"]
+
+[tool.setuptools.packages.find]
+include = ["gateway*"]
