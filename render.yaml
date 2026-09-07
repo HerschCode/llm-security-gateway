@@ -15,7 +15,13 @@ services:
     envVars:
       - key: GATEWAY_LITE
         value: "1"
-      # Leave OPS_ASSISTANT_URL unset -- the real Project 2 backend needs
-      # ~2GB RAM (chromadb + sentence-transformers) and is a local-only /
-      # docker-compose backend. The deployed demo uses stub_ops_agent and the
-      # project2_agent reconstruction.
+      # The real Project 2 (operations-assistant) runs as its own Render service.
+      # The gateway reaches it over HTTP via its PUBLIC, keyless, IP-rate-limited
+      # /demo/chat endpoint -- so no secret is needed here. Point this at your
+      # operations-assistant URL (or remove both lines to hide that backend).
+      - key: OPS_ASSISTANT_URL
+        value: "https://operations-assistant.onrender.com"
+      - key: OPS_ASSISTANT_CHAT_PATH
+        value: "/demo/chat"
+      - key: OPS_ASSISTANT_TIMEOUT
+        value: "120"

@@ -31,8 +31,14 @@ configuration.
   `docker compose up` runs.
 - Spins down after ~15 min idle; the next request takes ~30-60s to wake.
 
-No API keys. `OPS_ASSISTANT_URL` is deliberately unset, so the `operations_assistant`
-backend is not registered.
+**No API keys.** `render.yaml` points `OPS_ASSISTANT_URL` at the deployed
+operations-assistant and uses its **public, keyless, IP-rate-limited**
+`/demo/chat` endpoint (`OPS_ASSISTANT_CHAT_PATH=/demo/chat`) — so the
+`operations_assistant` backend works in the live demo without any secret. Remove
+those two lines from `render.yaml` to hide that backend instead.
+
+Check wiring any time at `…/gateway/connectivity` — it reports, per backend,
+whether the gateway can actually reach it.
 
 ---
 
@@ -100,7 +106,8 @@ docker compose -f docker-compose.trilogy.yml up --build
 | `GATEWAY_LITE` | gateway | no (default `0`) | `1` disables the torch classifier layer |
 | `PORT` | gateway | no (default `8000`) | Render sets this automatically |
 | `OPS_ASSISTANT_URL` | gateway | only for the real-P2 backend | e.g. `http://operations-assistant:8001`; if unset the backend is not registered |
-| `OPS_ASSISTANT_API_KEY` | gateway | no | `X-API-Key` value P2 expects (P2 fails open if it has none) |
+| `OPS_ASSISTANT_CHAT_PATH` | gateway | no (default `/chat`) | set to `/demo/chat` to use P2's keyless public endpoint instead of the API-key one. A 401 on `/chat` auto-falls-back to `/demo/chat` regardless |
+| `OPS_ASSISTANT_API_KEY` | gateway | only if using `/chat` | `X-API-Key` value; must equal operations-assistant's `API_KEY` |
 | `OPS_ASSISTANT_TIMEOUT` | gateway | no (default `60`) | seconds to wait on a P2 response |
 | `OPS_ASSISTANT_PATH` | compose | no | filesystem path to the operations-assistant repo |
 | `GROQ_API_KEY` / `GEMINI_API_KEY` / `ANTHROPIC_API_KEY` | operations-assistant `.env` | one of them, for the trilogy | LLM provider key (all have free tiers) |

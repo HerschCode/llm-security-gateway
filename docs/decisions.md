@@ -4,6 +4,35 @@ Running log, written as decisions are made. Not reconstructed after the fact.
 
 ---
 
+## 2026-09-07 — Cross-service connectivity
+
+All three portfolio services are on Render. Made the P3 -> P2 link actually work
+on the free tier and made connectivity observable.
+
+- **`operations-assistant` exposes a public `POST /demo/chat`** — same agent as
+  `/chat`, no API key, its own per-IP rate limit. The gateway adapter now takes
+  `OPS_ASSISTANT_CHAT_PATH` (default `/chat`); `render.yaml` sets it to
+  `/demo/chat`, so the deployed demo reaches the *real* Project 2 with **no
+  secret**. A 401 on `/chat` also auto-falls-back to `/demo/chat`.
+- **`GET /gateway/connectivity`** — reports, per backend, whether the gateway can
+  reach it (HTTP backends expose `ping()` against the service's `/health`).
+  Mirrors what `operations-assistant/health` does for `operations-performance`.
+- **`_norm_path()`** tolerates an MSYS/Git-Bash-mangled path env value
+  (`/demo/chat` -> `C:/Program Files/Git/demo/chat`) — only bites on Windows
+  shells, but a real portability trap for local runs.
+- **Verified live end-to-end:** a benign policy question through
+  `llm-security-gateway-psax` -> `operations-assistant` `/demo/chat` returns a
+  cited RAG answer, `allowed=True`, `upstream_error=False`. Contract audit of
+  P2's tool client vs. P1's routes: all 8 paths match, auth is `X-API-Key` ==
+  the other service's `API_KEY` on both hops.
+- **Still on the user (Render dashboard):** set `OPS_PERFORMANCE_API_URL` +
+  `OPS_PERFORMANCE_API_KEY` on the `operations-assistant` service so P2 can reach
+  P1 (`ops_performance_api_reachable` is currently `false`, so P2's data/analytics
+  tools fail and the agent burns its tool-call budget retrying). Code contract is
+  already correct; this is pure env config.
+
+---
+
 ## 2026-09-07 — Portfolio polish pass (post-deploy)
 
 All three services are live on Render. This pass addresses gaps found by

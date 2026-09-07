@@ -122,6 +122,29 @@ def list_backends():
     return {"backends": [{"key": k, "name": adapter.name} for k, (adapter, _) in BACKENDS.items()]}
 
 
+@app.get("/gateway/connectivity")
+def connectivity():
+    """Makes cross-service wiring observable, the way operations-assistant's
+    /health reports whether it can reach operations-performance. In-process
+    backends are always 'ok'; HTTP-backed ones expose a ping()."""
+    out = {}
+    for key, (adapter, _) in BACKENDS.items():
+        ping = getattr(adapter, "ping", None)
+        if callable(ping):
+            ok, detail = ping()
+            row = {"transport": "http", "reachable": ok, "detail": detail}
+            if getattr(adapter, "chat_path", None):
+                row["chat_path"] = adapter.chat_path
+            out[key] = row
+        else:
+            out[key] = {"transport": "in_process", "reachable": True}
+    return {
+        "lite_mode": middleware.lite_mode,
+        "ops_assistant_url": os.environ.get("OPS_ASSISTANT_URL") or None,
+        "backends": out,
+    }
+
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
