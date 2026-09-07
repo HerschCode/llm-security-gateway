@@ -71,12 +71,17 @@ returns a genuine cited answer with real data + policy citations, and a genuine 
 prompt is correctly blocked pre-flight before ever reaching P2. Check
 `/gateway/connectivity` on the live URL at any time to see current reachability.
 
+**All three services now run in containers** -- `operations-performance` and its own
+Postgres are part of `docker-compose.trilogy.yml` too (this used to require Project 1
+running separately on the host at `:8000`; that requirement is gone).
+
 ### Prerequisites
 
-1. **All three repos** checked out. If `operations-assistant` is not at
-   `../../0_Project/operations-assistant/operations-assistant` relative to this
-   repo, set `OPS_ASSISTANT_PATH` to its actual path (env var or a `.env` next to
-   this file).
+1. **All three repos** checked out, flat (no nested `operations-x/operations-x`
+   folder in either companion repo). If your layout differs from
+   `../../0_Project/operations-performance` and `../../0_Project/operations-assistant`
+   relative to this repo, set `OPS_PERFORMANCE_PATH` / `OPS_ASSISTANT_PATH` (env vars
+   or a `.env` next to this file).
 2. **`operations-assistant/.env`** with a free Groq key
    ([console.groq.com](https://console.groq.com/keys)):
    ```
@@ -84,21 +89,20 @@ prompt is correctly blocked pre-flight before ever reaching P2. Check
    AGENT_MODEL=openai/gpt-oss-120b
    GROQ_API_KEY=gsk_...
    ```
-   (`llama-3.3-70b-versatile` was Groq's model at the time this doc was first
-   written; it's since been retired. Check
-   [console.groq.com/docs/models](https://console.groq.com/docs/models) or run
-   `client.models.list()` for the current lineup rather than trusting a name
-   pinned in a doc to stay valid indefinitely.)
+   Check [console.groq.com/docs/models](https://console.groq.com/docs/models) or run
+   `client.models.list()` for the current lineup rather than trusting a name pinned
+   in a doc to stay valid indefinitely -- Groq's models change over time.
    (Gemini works too: `AGENT_PROVIDER=gemini`, `AGENT_MODEL=gemini-1.5-flash`,
    `GEMINI_API_KEY=...` from [aistudio.google.com/apikey](https://aistudio.google.com/apikey).
    Anthropic: `AGENT_PROVIDER=anthropic`, `ANTHROPIC_API_KEY=sk-ant-...`.)
-3. **Project 1's API** running on the host at `:8000`
-   (`cd operations-performance && python -m scripts.run_analysis`). Without it,
-   P2's data/analytics tools return "insufficient data" and only its
-   RAG/document answers work — still enough to demo the gateway in front of a
-   real LLM agent.
-4. **First run only** — build P2's vector index:
+3. **First run only** — bring up Postgres, set up and load Project 1's database,
+   then build Project 2's vector index:
    ```bash
+   docker compose -f docker-compose.trilogy.yml up -d postgres
+   docker compose -f docker-compose.trilogy.yml run --rm operations-performance \
+     python -m scripts.setup_database
+   docker compose -f docker-compose.trilogy.yml run --rm operations-performance \
+     python -m scripts.run_pipeline
    docker compose -f docker-compose.trilogy.yml run --rm operations-assistant \
      python -m scripts.index_documents
    ```
@@ -123,6 +127,7 @@ docker compose -f docker-compose.trilogy.yml up --build
 | `OPS_ASSISTANT_API_KEY` | gateway | only if using `/chat` | `X-API-Key` value; must equal operations-assistant's `API_KEY` |
 | `OPS_ASSISTANT_TIMEOUT` | gateway | no (default `60`) | seconds to wait on a P2 response |
 | `OPS_ASSISTANT_PATH` | compose | no | filesystem path to the operations-assistant repo |
+| `OPS_PERFORMANCE_PATH` | compose | no | filesystem path to the operations-performance repo |
 | `GROQ_API_KEY` / `GEMINI_API_KEY` / `ANTHROPIC_API_KEY` | operations-assistant `.env` | one of them, for the trilogy | LLM provider key (all have free tiers) |
 
 The gateway itself never needs an LLM key — it inspects traffic, it doesn't

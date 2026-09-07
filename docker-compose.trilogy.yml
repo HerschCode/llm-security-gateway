@@ -1,21 +1,30 @@
-# The full portfolio trilogy, end to end:
+# The full portfolio trilogy, end to end, all in containers:
 #
 #   caller -> [ Project 3: LLM Security Gateway ] -> [ Project 2: operations-assistant RAG agent ]
-#                                                        -> [ Project 1: operations-performance API ] (on host)
+#                                                        -> [ Project 1: operations-performance API ]
+#                                                             -> [ Postgres ]
 #
-# This is the "I actually ran all three connected" setup for the demo video /
-# GitHub. It needs all three repos checked out and a free Groq key.
+# This is the "I actually ran all three connected, no host processes" setup for the
+# demo video / GitHub. It needs all three repos checked out and a free Groq key.
 #
 # PREREQUISITES
-#   1. This repo (llm-security-gateway) and operations-assistant checked out.
-#      Set OPS_ASSISTANT_PATH to operations-assistant's path if the default is wrong.
+#   1. This repo (llm-security-gateway), operations-performance, and
+#      operations-assistant all checked out as sibling-ish directories. Set
+#      OPS_PERFORMANCE_PATH / OPS_ASSISTANT_PATH if the defaults below are wrong
+#      for your layout (both repos are flat -- no nested operations-x/operations-x
+#      folder -- as of this compose file's own last update).
 #   2. operations-assistant/.env filled in with:  AGENT_PROVIDER=groq
-#      GROQ_API_KEY=gsk_...  AGENT_MODEL=llama-3.3-70b-versatile
-#   3. Project 1 (operations-performance) API running on the host at :8000
-#      (python -m scripts.run_analysis) -- OR accept that P2's data/analytics
-#      tools return "insufficient data" and only its RAG/document answers work.
-#      P2 reaches the host via host.docker.internal.
-#   4. First run only: build P2's vector index --
+#      GROQ_API_KEY=gsk_...  AGENT_MODEL=openai/gpt-oss-120b
+#      (check console.groq.com/docs/models for the current lineup -- Groq's models
+#      change over time; llama-3.3-70b-versatile, this file's earlier default, was
+#      retired)
+#   3. First run only: set up and load Project 1's database, then build Project 2's
+#      vector index --
+#        docker compose -f docker-compose.trilogy.yml up -d postgres
+#        docker compose -f docker-compose.trilogy.yml run --rm operations-performance \
+#          python -m scripts.setup_database
+#        docker compose -f docker-compose.trilogy.yml run --rm operations-performance \
+#          python -m scripts.run_pipeline
 #        docker compose -f docker-compose.trilogy.yml run --rm operations-assistant \
 #          python -m scripts.index_documents
 #
@@ -24,6 +33,58 @@
 #   open http://localhost:8080/gateway/demo   (pick the "operations_assistant" backend)
 
 services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: operations_performance
+      POSTGRES_USER: operations_admin
+      POSTGRES_PASSWORD: local-dev-only
+    volumes:
+      - trilogy-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U operations_admin -d operations_performance"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  operations-performance:
+    build:
+      context: "${OPS_PERFORMANCE_PATH:-../../0_Project/operations-performance}"
+    expose:
+      - "8000"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_NAME: operations_performance
+      DB_USER: operations_admin
+      DB_PASSWORD: local-dev-only
+      DB_SSLMODE: disable  # this compose network's own Postgres, not a hosted one -- no TLS needed
+      RAW_EVENT_LOG_PATH: data/raw/bpi2019_events.csv
+      API_ALLOWED_ORIGINS: "*"
+    volumes:
+      - "${OPS_PERFORMANCE_PATH:-../../0_Project/operations-performance}/data:/app/data"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  operations-assistant:
+    build:
+      context: "${OPS_ASSISTANT_PATH:-../../0_Project/operations-assistant}"
+    expose:
+      - "8001"
+    env_file:
+      - "${OPS_ASSISTANT_PATH:-../../0_Project/operations-assistant}/.env"
+    environment:
+      OPS_PERFORMANCE_API_URL: "http://operations-performance:8000"
+      CHROMA_PERSIST_DIR: /app/data/chroma
+    volumes:
+      - "${OPS_ASSISTANT_PATH:-../../0_Project/operations-assistant}/data/chroma:/app/data/chroma"
+    depends_on:
+      - operations-performance
+    restart: unless-stopped
+
   gateway:
     build:
       context: .
@@ -38,18 +99,5 @@ services:
       - operations-assistant
     restart: unless-stopped
 
-  operations-assistant:
-    build:
-      context: "${OPS_ASSISTANT_PATH:-../../0_Project/operations-assistant/operations-assistant}"
-    expose:
-      - "8001"
-    env_file:
-      - "${OPS_ASSISTANT_PATH:-../../0_Project/operations-assistant/operations-assistant}/.env"
-    environment:
-      OPS_PERFORMANCE_API_URL: "${OPS_PERFORMANCE_API_URL:-http://host.docker.internal:8000}"
-      CHROMA_PERSIST_DIR: /app/data/chroma
-    volumes:
-      - "${OPS_ASSISTANT_PATH:-../../0_Project/operations-assistant/operations-assistant}/data/chroma:/app/data/chroma"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    restart: unless-stopped
+volumes:
+  trilogy-postgres-data:
