@@ -340,8 +340,8 @@ Systematic pass over the codebase (not just re-reading existing docs) found:
 
 **1. Hardcoded sandbox-specific path (real portability bug).**
 `scripts/prepare_training_data.py` hardcoded `JBLLMS_DIR =
-Path("/home/dev/jbllms/...")` — a path that only existed because I'd manually
-downloaded the dataset once by hand early in this project, completely outside
+Path("/home/dev/jbllms/...")` — a path that only existed because the dataset had
+been downloaded by hand once early in this project, completely outside
 the script itself. The README's claim that this script "pulls verazuo/jailbreak_llms
 from GitHub" was **false** — it assumed the data already existed at that exact path.
 Anyone else cloning this repo would hit `FileNotFoundError` immediately. **Fixed:**
