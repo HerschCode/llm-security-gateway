@@ -63,6 +63,14 @@ gateway block what the backend alone leaks.
 caller → [ P3: LLM Security Gateway ] → [ P2: operations-assistant ] → [ P1: operations-performance API ]
 ```
 
+**This is verified working in production, not just locally** — `/gateway/connectivity`
+on the live deployment shows `operations_assistant: reachable: true` talking to a real
+Groq-backed agent, which itself reaches a real Postgres-backed `operations-performance`
+instance. A real question through `/gateway/chat` (backend `operations_assistant`)
+returns a genuine cited answer with real data + policy citations, and a genuine attack
+prompt is correctly blocked pre-flight before ever reaching P2. Check
+`/gateway/connectivity` on the live URL at any time to see current reachability.
+
 ### Prerequisites
 
 1. **All three repos** checked out. If `operations-assistant` is not at
@@ -73,9 +81,14 @@ caller → [ P3: LLM Security Gateway ] → [ P2: operations-assistant ] → [ P
    ([console.groq.com](https://console.groq.com/keys)):
    ```
    AGENT_PROVIDER=groq
-   AGENT_MODEL=llama-3.3-70b-versatile
+   AGENT_MODEL=openai/gpt-oss-120b
    GROQ_API_KEY=gsk_...
    ```
+   (`llama-3.3-70b-versatile` was Groq's model at the time this doc was first
+   written; it's since been retired. Check
+   [console.groq.com/docs/models](https://console.groq.com/docs/models) or run
+   `client.models.list()` for the current lineup rather than trusting a name
+   pinned in a doc to stay valid indefinitely.)
    (Gemini works too: `AGENT_PROVIDER=gemini`, `AGENT_MODEL=gemini-1.5-flash`,
    `GEMINI_API_KEY=...` from [aistudio.google.com/apikey](https://aistudio.google.com/apikey).
    Anthropic: `AGENT_PROVIDER=anthropic`, `ANTHROPIC_API_KEY=sk-ant-...`.)
