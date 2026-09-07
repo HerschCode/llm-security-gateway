@@ -17,6 +17,7 @@ production mode. Which layer actually fired is preserved in the log
 (matched_pattern_id + detection_layer_used), so a block is always attributable
 to a specific layer even in ensemble mode.
 """
+import os
 import time
 from dataclasses import dataclass, field
 
@@ -24,8 +25,16 @@ from gateway.adaptive_threshold import AdaptiveThresholdTracker
 from gateway.adapters.base import BackendAdapter
 from gateway.detectors import rule_based
 from gateway.detectors.embedding_similarity import EmbeddingSimilarityDetector, SIMILARITY_THRESHOLD
-from gateway.detectors.classifier import ScratchClassifierDetector, CLASSIFIER_THRESHOLD
 from gateway.logging_schema import GatewayLogger, LogRecord
+
+# CLASSIFIER_THRESHOLD is re-declared here (rather than imported from
+# gateway.detectors.classifier) so this module has no import-time dependency on
+# torch. In "lite" mode -- GATEWAY_LITE=1, used for the 512MB Render free-tier
+# deploy -- torch and the scratch classifier are not installed at all, and the
+# ensemble runs rule_based + embedding_similarity only. Keep this value in sync
+# with gateway/detectors/classifier.py.
+CLASSIFIER_THRESHOLD = 0.5
+LITE_MODE = os.environ.get("GATEWAY_LITE", "").lower() in ("1", "true", "yes")
 from gateway.pii import scan_and_redact
 from gateway.response_checks import check_jailbreak_compliance, check_system_prompt_leak
 from gateway.role_exposure import check as check_role_exposure
@@ -44,8 +53,15 @@ class GatewayMiddleware:
     def __init__(self):
         self.embedding_detector = EmbeddingSimilarityDetector()
         self.embedding_detector.load()
-        self.classifier_detector = ScratchClassifierDetector()
-        self.classifier_detector.load()
+
+        # Lite mode (Render free tier): skip the torch-backed classifier entirely.
+        self.lite_mode = LITE_MODE
+        self.classifier_detector = None
+        if not self.lite_mode:
+            from gateway.detectors.classifier import ScratchClassifierDetector
+            self.classifier_detector = ScratchClassifierDetector()
+            self.classifier_detector.load()
+
         self.session_tracker = SessionTracker()
         self.adaptive_tracker = AdaptiveThresholdTracker()
         self.logger = GatewayLogger()
@@ -77,6 +93,10 @@ class GatewayMiddleware:
         if emb_result.blocked:
             self.adaptive_tracker.record_block(session_id)
             return True, "embedding_similarity", emb_result.matched_pattern_id, per_layer
+
+        if self.classifier_detector is None:  # lite mode -- layer 3 disabled
+            per_layer["scratch_classifier"] = {"blocked": False, "skipped": "lite_mode"}
+            return False, None, None, per_layer
 
         clf_threshold = CLASSIFIER_THRESHOLD * multiplier
         clf_result = self.classifier_detector.detect(text, threshold=clf_threshold)

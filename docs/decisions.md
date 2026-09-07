@@ -4,6 +4,68 @@ Running log, written as decisions are made. Not reconstructed after the fact.
 
 ---
 
+## 2026-09-07 — Portfolio-completion pass: git, live-run, demo page, deploy scaffolding
+
+The project was code-complete but had never been version-controlled, run from a
+clean environment, or deployed. This pass (phases agreed with the user) closes
+that, without touching the security/ML substance.
+
+**Phase 0 — version control.** `git init`, `main` branch. `.venv/` added to
+`.gitignore` (caught it getting committed once, `git rm --cached`).
+
+**Phase 1 — proven to run from clean.** Fresh venv on Python 3.10, `pip install
+-r requirements.txt`, `pytest` → 38/38 pass. `requirements.txt` was un-pinned
+(`>=`); now pinned to the resolved versions.
+- **Real finding:** the committed TF-IDF model artifacts (`models/embedding_similarity/*.pkl`)
+  were fit under scikit-learn 1.8 (Python 3.11+), but 1.8 requires Python ≥3.11 —
+  on 3.10 the newest installable is 1.7.2, which loads the pickle with an
+  `InconsistentVersionWarning`. Verified cosmetic: detector loads, scores are
+  produced, all tests pass. Resolution: pin `scikit-learn>=1.7,<1.9`, target
+  Python 3.12 for Docker/deploy (matches the artifact), document the 3.10 warning
+  rather than retrain (a retrain under a different sklearn/torch would shift every
+  documented number for no real gain).
+
+**Phase 2 — real Project 2 adapter.** `gateway/adapters/operations_assistant_adapter.py`
+talks to the real `operations-assistant` RAG service over HTTP (`POST /chat`,
+`X-API-Key`), not by importing its package — it has much heavier deps (chromadb,
+sentence-transformers, torch) and a real gateway sits in front of a service over
+the network anyway. Registered in `app.py` only when `OPS_ASSISTANT_URL` is set.
+The `project2_agent/` reconstruction stays as the zero-config default backend.
+`docker-compose.trilogy.yml` wires gateway → operations-assistant → (host)
+operations-performance for a genuine end-to-end run.
+
+**Phase 3 — interactive demo.** `gateway/demo.py` — `GET /gateway/demo` runs the
+*same prompt* bypassed vs. through the real `GatewayMiddleware`, side by side,
+showing verdict / phase / firing layer / latency. Backend dropdown is populated
+live from `/gateway/backends` so it adapts to lite mode and to whether the real
+P2 is configured. Curated 7-case subset from the corpus (one per category + a
+negative control). `middleware.py` now also includes the `per_layer` trace on the
+allow path so "all layers passed" is visible, not just blocks.
+
+**Phase 4 — deploy scaffolding (free tier only, user's constraint).**
+- **Lite mode** (`GATEWAY_LITE=1`): skips the torch classifier entirely — no
+  torch import, no model load — so the image fits Render's 512MB free tier.
+  Ensemble runs rule_based + embedding_similarity + all pre/post-flight checks.
+  New test `test_lite_mode_disables_classifier_but_still_blocks_and_allows`
+  (39 tests now).
+  **Honest cost, stated on the deploy page and here:** lite mode drops the one
+  layer measured as doing real non-leaked work (50% detection — see
+  `comparison_table.md`), so the *public* demo is the ensemble minus layer 3.
+  Full pipeline = `docker compose up`.
+- `Dockerfile` (full, Python 3.12) + `Dockerfile.render` (slim, no torch, copies
+  only runtime paths) + `requirements-render.txt` + `render.yaml` Blueprint
+  (no secrets) + `.dockerignore` + `DEPLOY.md`.
+- The real Project 2 is **not** deployed: chromadb + sentence-transformers need
+  ~2GB, i.e. a paid instance. Decided (with the user) to keep it as a local /
+  docker-compose backend and let GitHub be where that integration is shown.
+
+**Not done / deferred:** actually building the Docker images (no Docker in this
+environment — user is installing Docker Desktop and will run
+`docker compose up --build`); the actual Render deploy (needs the user's GitHub
+push + dashboard); DistilBERT still never run (unchanged).
+
+---
+
 ## 2026-09-05 — Corpus: build from scratch, do not wait on Project 2
 
 **Decision:** Project 3's attack corpus (`corpus/injection_cases.yaml`) is built

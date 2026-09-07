@@ -1,0 +1,55 @@
+# The full portfolio trilogy, end to end:
+#
+#   caller -> [ Project 3: LLM Security Gateway ] -> [ Project 2: operations-assistant RAG agent ]
+#                                                        -> [ Project 1: operations-performance API ] (on host)
+#
+# This is the "I actually ran all three connected" setup for the demo video /
+# GitHub. It needs all three repos checked out and a free Groq key.
+#
+# PREREQUISITES
+#   1. This repo (llm-security-gateway) and operations-assistant checked out.
+#      Set OPS_ASSISTANT_PATH to operations-assistant's path if the default is wrong.
+#   2. operations-assistant/.env filled in with:  AGENT_PROVIDER=groq
+#      GROQ_API_KEY=gsk_...  AGENT_MODEL=llama-3.3-70b-versatile
+#   3. Project 1 (operations-performance) API running on the host at :8000
+#      (python -m scripts.run_analysis) -- OR accept that P2's data/analytics
+#      tools return "insufficient data" and only its RAG/document answers work.
+#      P2 reaches the host via host.docker.internal.
+#   4. First run only: build P2's vector index --
+#        docker compose -f docker-compose.trilogy.yml run --rm operations-assistant \
+#          python -m scripts.index_documents
+#
+# RUN
+#   docker compose -f docker-compose.trilogy.yml up --build
+#   open http://localhost:8080/gateway/demo   (pick the "operations_assistant" backend)
+
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8000"
+    environment:
+      GATEWAY_LITE: "0"
+      OPS_ASSISTANT_URL: "http://operations-assistant:8001"
+      OPS_ASSISTANT_API_KEY: "${OPS_ASSISTANT_API_KEY:-}"
+    depends_on:
+      - operations-assistant
+    restart: unless-stopped
+
+  operations-assistant:
+    build:
+      context: "${OPS_ASSISTANT_PATH:-../../0_Project/operations-assistant/operations-assistant}"
+    expose:
+      - "8001"
+    env_file:
+      - "${OPS_ASSISTANT_PATH:-../../0_Project/operations-assistant/operations-assistant}/.env"
+    environment:
+      OPS_PERFORMANCE_API_URL: "${OPS_PERFORMANCE_API_URL:-http://host.docker.internal:8000}"
+      CHROMA_PERSIST_DIR: /app/data/chroma
+    volumes:
+      - "${OPS_ASSISTANT_PATH:-../../0_Project/operations-assistant/operations-assistant}/data/chroma:/app/data/chroma"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped

@@ -1,0 +1,21 @@
+# Render Blueprint -- free-tier, single service, no secrets required.
+# In the Render dashboard: New + -> Blueprint -> point at this repo. It reads
+# this file and creates the service below. Nothing to configure; no API keys.
+#
+# Free tier notes: 512MB RAM, spins down after ~15 min idle (first request after
+# that takes ~30-60s to wake). Fine for a portfolio link.
+services:
+  - type: web
+    name: llm-security-gateway
+    runtime: docker
+    dockerfilePath: ./Dockerfile.render
+    plan: free
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: GATEWAY_LITE
+        value: "1"
+      # Leave OPS_ASSISTANT_URL unset -- the real Project 2 backend needs
+      # ~2GB RAM (chromadb + sentence-transformers) and is a local-only /
+      # docker-compose backend. The deployed demo uses stub_ops_agent and the
+      # project2_agent reconstruction.

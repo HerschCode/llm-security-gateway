@@ -209,11 +209,7 @@ _DEMO_HTML = """
     </div>
     <div>
       <label for="backend">Backend</label>
-      <select id="backend">
-        <option value="stub_ops_agent">stub_ops_agent (undefended stand-in)</option>
-        <option value="project2_agent">project2_agent (reconstruction, has own auth)</option>
-        <option value="trivial_echo">trivial_echo</option>
-      </select>
+      <select id="backend"></select>
     </div>
     <button id="run">Run</button>
   </div>
@@ -256,6 +252,24 @@ async function loadCases() {
     const o = document.createElement('option');
     o.value = c.id;
     o.textContent = `${c.id}  [${c.category}]` + (c.expected_behavior === 'allow' ? '  (negative control)' : '');
+    sel.appendChild(o);
+  }
+}
+
+async function loadBackends() {
+  const sel = $('backend');
+  try {
+    const res = await fetch('/gateway/backends');
+    const data = await res.json();
+    for (const b of (data.backends || [])) {
+      const o = document.createElement('option');
+      o.value = b.key;
+      o.textContent = b.name || b.key;
+      sel.appendChild(o);
+    }
+  } catch (e) {
+    const o = document.createElement('option');
+    o.value = 'stub_ops_agent'; o.textContent = 'stub_ops_agent';
     sel.appendChild(o);
   }
 }
@@ -325,6 +339,7 @@ $('run').addEventListener('click', async () => {
 });
 
 loadCases();
+loadBackends();
 </script>
 </body>
 </html>

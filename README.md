@@ -180,8 +180,22 @@ would be expected to do meaningfully better here.
 
 ## Running it yourself
 
+**Fastest:** `docker compose up --build`, then open
+[http://localhost:8000/gateway/demo](http://localhost:8000/gateway/demo) — an
+interactive page that runs the same prompt bypassed vs. through the gateway,
+side by side. Full deploy options (Render free tier, the end-to-end trilogy with
+the real Project 2) are in [`DEPLOY.md`](DEPLOY.md).
+
+**Lite mode** (`GATEWAY_LITE=1`): drops the torch-backed classifier so the
+service fits a 512MB host. The ensemble then runs rule-based + embedding +
+pre/post-flight checks only — honest caveat: that's the ensemble minus the one
+layer measured as doing real work, so it's for the constrained *public* demo,
+not the full story.
+
+**From source:**
+
 ```bash
-pip install -r requirements.txt
+pip install -r requirements.txt   # Python 3.12 recommended (see DEPLOY.md)
 # or: pip install -e ".[dev]"
 
 # 1. Build training data (pulls verazuo/jailbreak_llms from GitHub; needs network)

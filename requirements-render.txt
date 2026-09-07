@@ -1,0 +1,19 @@
+# Slim dependency set for the Render free tier (512MB RAM). No torch -> the
+# scratch-classifier layer is disabled and the gateway runs in GATEWAY_LITE
+# mode: rule_based + embedding_similarity (TF-IDF, scikit-learn) only, plus all
+# pre/post-flight checks, session limiting, adaptive thresholds, streaming and
+# the dashboard -- none of which need torch.
+#
+# Honest note for anyone reading this in an interview: lite mode drops the one
+# ML layer that was doing real work (see docs/comparison_table.md), so the live
+# demo is the ensemble MINUS layer 3. The full pipeline runs locally via
+# `docker compose up` (see docker-compose.yml / DEPLOY.md).
+fastapi==0.141.1
+uvicorn==0.52.4
+pydantic==2.13.5
+httpx==0.28.1
+scikit-learn>=1.7,<1.9
+scipy==1.15.3
+numpy==2.2.6
+joblib==1.6.0
+pyyaml==6.0.3

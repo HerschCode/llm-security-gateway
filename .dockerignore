@@ -1,0 +1,14 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.git/
+data/external/
+data/train.csv
+data/eval.csv
+logs/*.jsonl
+*.md
+!README.md
+screenshots/
+.github/

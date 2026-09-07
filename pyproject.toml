@@ -12,13 +12,14 @@ dependencies = [
     "uvicorn>=0.29",
     "pydantic>=2.0",
     "httpx>=0.27",
-    "scikit-learn>=1.4",
-    "torch>=2.0",
+    "scikit-learn>=1.7,<1.9",
     "pyyaml>=6.0",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0"]
+# Layer 3 (from-scratch torch classifier). Omit for GATEWAY_LITE=1 deploys.
+classifier = ["torch>=2.0"]
+dev = ["pytest>=8.0", "torch>=2.0"]
 # Only needed to run the deferred DistilBERT fine-tune script in an environment
 # with model-hub access -- see docs/decisions.md.
 finetune = ["transformers>=4.40", "datasets>=2.19"]

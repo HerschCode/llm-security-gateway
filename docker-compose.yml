@@ -1,0 +1,19 @@
+# Local run of the gateway with ALL THREE detection layers (full mode, torch
+# included). Zero external dependencies -- backends are stub_ops_agent and the
+# project2_agent reconstruction. This is what you record the core demo against.
+#
+#   docker compose up --build
+#   open http://localhost:8000/gateway/demo
+#
+# For the gateway in front of the REAL Project 2 (operations-assistant), use
+# docker-compose.trilogy.yml instead. See DEPLOY.md.
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      GATEWAY_LITE: "0"
+    restart: unless-stopped

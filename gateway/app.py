@@ -11,9 +11,15 @@ from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
+import os
+
 from gateway.adapters.stub_ops_agent import StubOpsAgentAdapter, FAKE_SYSTEM_PROMPT
 from gateway.adapters.trivial_echo import TrivialEchoAdapter
 from gateway.adapters.project2_agent_adapter import Project2AgentAdapter
+from gateway.adapters.operations_assistant_adapter import (
+    OpsAssistantAdapter,
+    FAKE_SYSTEM_PROMPT as OPS_ASSISTANT_FAKE_SYSTEM_PROMPT,
+)
 from project2_agent.agent import FAKE_SYSTEM_PROMPT as PROJECT2_FAKE_SYSTEM_PROMPT
 from gateway.dashboard import router as dashboard_router
 from gateway.demo import router as demo_router
@@ -38,6 +44,12 @@ BACKENDS = {
     "trivial_echo": (TrivialEchoAdapter(), ""),
     "project2_agent": (Project2AgentAdapter(), PROJECT2_FAKE_SYSTEM_PROMPT),
 }
+
+# The real Project 2 (operations-assistant) is registered only when its URL is
+# configured -- otherwise the free-tier deploy would advertise a backend that
+# can't answer. Run it locally (docker compose) to get this one.
+if os.environ.get("OPS_ASSISTANT_URL"):
+    BACKENDS["operations_assistant"] = (OpsAssistantAdapter(), OPS_ASSISTANT_FAKE_SYSTEM_PROMPT)
 
 
 class ChatRequest(BaseModel):

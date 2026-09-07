@@ -1,11 +1,21 @@
-fastapi>=0.110
-uvicorn>=0.29
-pydantic>=2.0
-httpx>=0.27
-scikit-learn>=1.4
-torch>=2.0
-pyyaml>=6.0
-pytest>=8.0
+# Full / local / dev dependencies. Target: Python 3.12 (the committed model
+# artifacts were fit under scikit-learn 1.8 on 3.12; on 3.10/3.11 you'll get a
+# cosmetic InconsistentVersionWarning on load -- harmless, see docs/decisions.md).
+#
+# For the 512MB Render free-tier deploy, use requirements-render.txt instead --
+# it omits torch (the scratch classifier) and runs the gateway in GATEWAY_LITE
+# mode (rule_based + embedding_similarity only).
+fastapi==0.141.1
+uvicorn==0.52.4
+pydantic==2.13.5
+httpx==0.28.1
+scikit-learn>=1.7,<1.9
+scipy==1.15.3
+numpy==2.2.6
+joblib==1.6.0
+torch==2.14.0
+pyyaml==6.0.3
+pytest==9.1.1
 
 # NOT required to run anything in this repo today -- only needed if you run
 # scripts/train_distilbert_finetune.py in an environment with model-hub access
