@@ -33,13 +33,13 @@ _CORPUS_PATH = Path(__file__).resolve().parent.parent / "corpus" / "injection_ca
 # A curated subset -- enough to show every category and both a clear block and a
 # clear negative control, without dumping all 36 rows into a demo dropdown.
 _FEATURED_IDS = [
-    "GW-001",  # direct_injection      -- rule_based catches this outright
-    "GW-002",  # direct_injection      -- authority impersonation
-    "GW-013",  # tool_scope_escalation
+    "GW-001",  # direct_injection       -- rule_based catches this outright
+    "GW-002",  # direct_injection       -- authority impersonation
     "GW-005",  # indirect_injection
     "GW-008",  # multi_turn_jailbreak
     "GW-010",  # encoding_obfuscation
-    "GW-019",  # negative control      -- should be ALLOWED by both
+    "GW-016",  # tool_scope_escalation
+    "GW-019",  # direct_injection, expected_behavior=allow -- negative control
 ]
 
 
