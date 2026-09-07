@@ -194,7 +194,10 @@ class GatewayMiddleware:
 
         return GatewayResponse(
             allowed=True, response_text=backend_response, block_reason=None,
-            trace={"total_latency_ms": (time.perf_counter() - overall_start) * 1000},
+            trace={
+                "per_layer": per_layer_trace,
+                "total_latency_ms": (time.perf_counter() - overall_start) * 1000,
+            },
         )
 
     def process_streaming(

@@ -22,3 +22,6 @@ logs/*.jsonl
 # (~7MB total) and kept so the gateway can be run immediately without
 # retraining first. See README's "Running it yourself" for the from-scratch
 # regeneration path if you want to verify that instead.
+
+.venv/
+venv/
