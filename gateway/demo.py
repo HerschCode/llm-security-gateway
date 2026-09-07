@@ -34,6 +34,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel
 
 from gateway.adapters.operations_assistant_adapter import BACKEND_ERROR_PREFIX
+from gateway.webui import SHARED_CSS, nav_html
 
 router = APIRouter()
 
@@ -222,12 +223,11 @@ _DEMO_HTML = """
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LLM Security Gateway -- Interactive Demo</title>
+<title>Demo — LLM Security Gateway</title>
 <style>
-  :root { color-scheme: dark; }
-  * { box-sizing: border-box; }
-  body { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-         background: #0d1117; color: #c9d1d9; margin: 0; padding: 24px; line-height: 1.5; }
+__SHARED_CSS__
+  body { padding: 0; }
+  .democontent { padding: 24px; max-width: 1000px; margin: 0 auto; }
   h1 { color: #58a6ff; margin: 0 0 4px; font-size: 20px; }
   .sub { color: #8b949e; font-size: 13px; margin-bottom: 16px; max-width: 780px; }
   .sub a { color: #58a6ff; }
@@ -264,7 +264,9 @@ _DEMO_HTML = """
 </style>
 </head>
 <body>
-  <h1>LLM Security Gateway &mdash; Interactive Demo</h1>
+__NAV__
+<div class="democontent">
+  <h1>Interactive demo</h1>
   <div class="sub">
     Pick an attack (or write your own), choose a backend, and hit <b>Run</b>. The same prompt is sent
     two ways: straight at the backend with no protection, and through the gateway pipeline
@@ -416,6 +418,7 @@ $('run').addEventListener('click', async () => {
 loadCases();
 loadBackends();
 </script>
+</div>
 </body>
 </html>
 """
@@ -423,4 +426,9 @@ loadBackends();
 
 @router.get("/gateway/demo", response_class=HTMLResponse)
 def demo_page():
-    return _DEMO_HTML.replace("__LITE_BANNER__", _LITE_BANNER if _LITE else "")
+    return (
+        _DEMO_HTML
+        .replace("__SHARED_CSS__", SHARED_CSS)
+        .replace("__NAV__", nav_html("demo"))
+        .replace("__LITE_BANNER__", _LITE_BANNER if _LITE else "")
+    )

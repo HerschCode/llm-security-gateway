@@ -23,19 +23,13 @@ from gateway.adapters.operations_assistant_adapter import (
 from project2_agent.agent import FAKE_SYSTEM_PROMPT as PROJECT2_FAKE_SYSTEM_PROMPT
 from gateway.dashboard import router as dashboard_router
 from gateway.demo import router as demo_router
+from gateway.webui import router as webui_router
 from gateway.middleware import GatewayMiddleware
 
 app = FastAPI(title="LLM Security Gateway", version="0.1.0")
+app.include_router(webui_router)
 app.include_router(dashboard_router)
 app.include_router(demo_router)
-
-
-@app.get("/")
-def index():
-    return {
-        "service": "LLM Security Gateway",
-        "try": ["/gateway/demo", "/gateway/dashboard", "/gateway/backends", "/health"],
-    }
 
 middleware = GatewayMiddleware()
 

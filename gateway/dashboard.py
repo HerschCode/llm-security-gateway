@@ -15,6 +15,7 @@ from fastapi import APIRouter
 from fastapi.responses import HTMLResponse
 
 from gateway.logging_schema import LOG_PATH
+from gateway.webui import SHARED_CSS, nav_html
 
 router = APIRouter()
 
@@ -129,71 +130,64 @@ def stats():
     return compute_stats()
 
 
-DASHBOARD_HTML = """
-<!DOCTYPE html>
-<html>
-<head>
-  <title>LLM Security Gateway -- Live Dashboard</title>
-  <style>
-    body { font-family: monospace; background: #0d1117; color: #c9d1d9; padding: 20px; }
-    h1 { color: #58a6ff; }
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
-    .stat-box { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 12px; }
-    .stat-label { font-size: 12px; color: #8b949e; }
-    .stat-value { font-size: 24px; font-weight: bold; color: #58a6ff; }
-    table { width: 100%; border-collapse: collapse; background: #161b22; }
-    th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid #30363d; font-size: 13px; }
-    th { color: #8b949e; }
-    .block { color: #f85149; }
-    .allow { color: #3fb950; }
-    .stale-warning { color: #d29922; margin-bottom: 10px; }
-  </style>
-</head>
-<body>
-  <h1>LLM Security Gateway -- Live Dashboard</h1>
-  <div id="stale" class="stale-warning" style="display:none;">
-    No requests seen in the last window -- send some traffic through /gateway/chat to populate this.
-  </div>
-  <div class="stats-grid" id="stats-grid"></div>
-  <h3>Recent events (last 20)</h3>
-  <table id="events-table">
-    <thead><tr><th>Session</th><th>Phase</th><th>Decision</th><th>Layer</th><th>Matched pattern</th><th>Latency (ms)</th></tr></thead>
+DASHBOARD_HTML = f"""<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard — LLM Security Gateway</title>
+<style>{SHARED_CSS}
+  .block {{ color: #f85149; }} .allow {{ color: #3fb950; }}
+  .stale {{ color: #d29922; font-size: 12px; margin-bottom: 10px; }}
+</style>
+</head><body>
+{nav_html('dashboard')}
+<div class="wrap">
+  <h1>Live dashboard</h1>
+  <div class="sub">From the same JSONL log every request writes. Auto-refreshes every 2s ·
+    window: last 5 minutes. &nbsp;<a href="/gateway/demo">Generate some traffic →</a></div>
+
+  <div id="stale" class="stale" hidden>No requests in the window yet — run something on the demo page.</div>
+  <div class="tiles" id="tiles"></div>
+
+  <h2>Recent events (last 20)</h2>
+  <table id="events">
+    <thead><tr><th>Session</th><th>Phase</th><th>Decision</th><th>Layer</th><th>Matched pattern</th><th>ms</th></tr></thead>
     <tbody></tbody>
   </table>
-  <p style="color:#8b949e; font-size: 12px;">Auto-refreshes every 2s. Window: last 5 minutes of logged requests.</p>
 
-  <script>
-    async function refresh() {
-      const res = await fetch('/gateway/stats');
-      const data = await res.json();
+  <h2>Backends &amp; connectivity</h2>
+  <table id="conn"><thead><tr><th>Backend</th><th>Transport</th><th>Reachable</th><th>Detail</th></tr></thead><tbody></tbody></table>
+</div>
 
-      document.getElementById('stale').style.display = data.total_requests_in_window === 0 ? 'block' : 'none';
-
-      const grid = document.getElementById('stats-grid');
-      grid.innerHTML = `
-        <div class="stat-box"><div class="stat-label">Requests (5min)</div><div class="stat-value">${data.total_requests_in_window}</div></div>
-        <div class="stat-box"><div class="stat-label">Block rate</div><div class="stat-value">${(data.block_rate * 100).toFixed(0)}%</div></div>
-        <div class="stat-box"><div class="stat-label">Avg latency</div><div class="stat-value">${data.avg_latency_ms}ms</div></div>
-        <div class="stat-box"><div class="stat-label">Allowed / Blocked</div><div class="stat-value">${data.decisions.allow || 0} / ${data.decisions.block || 0}</div></div>
-      `;
-
-      const tbody = document.querySelector('#events-table tbody');
-      tbody.innerHTML = data.recent_events.map(e => `
-        <tr>
-          <td>${e.session_id}</td>
-          <td>${e.phase}</td>
-          <td class="${e.decision}">${e.decision}</td>
-          <td>${e.layer || '-'}</td>
-          <td>${e.matched_pattern_id || '-'}</td>
-          <td>${e.latency_ms}</td>
-        </tr>
-      `).join('');
-    }
-    refresh();
-    setInterval(refresh, 2000);
-  </script>
-</body>
-</html>
+<script>
+async function refresh() {{
+  try {{
+    const d = await (await fetch('/gateway/stats')).json();
+    document.getElementById('stale').hidden = d.total_requests_in_window !== 0;
+    document.getElementById('tiles').innerHTML = `
+      <div class="tile"><div class="k">Requests (5min)</div><div class="v">${{d.total_requests_in_window}}</div></div>
+      <div class="tile"><div class="k">Block rate</div><div class="v">${{(d.block_rate * 100).toFixed(0)}}%</div></div>
+      <div class="tile"><div class="k">Avg latency</div><div class="v">${{d.avg_latency_ms}}ms</div></div>
+      <div class="tile"><div class="k">Allowed / Blocked</div><div class="v">${{d.decisions.allow || 0}} / ${{d.decisions.block || 0}}</div></div>`;
+    document.querySelector('#events tbody').innerHTML = d.recent_events.map(e => `
+      <tr><td>${{e.session_id}}</td><td>${{e.phase}}</td><td class="${{e.decision}}">${{e.decision}}</td>
+      <td>${{e.layer || '-'}}</td><td>${{e.matched_pattern_id || '-'}}</td><td>${{e.latency_ms}}</td></tr>`).join('');
+  }} catch {{}}
+}}
+async function loadConn() {{
+  try {{
+    const c = await (await fetch('/gateway/connectivity')).json();
+    document.querySelector('#conn tbody').innerHTML = Object.entries(c.backends || {{}}).map(([k, v]) => {{
+      const ok = v.reachable ? '<span class="pill ok">reachable</span>' : '<span class="pill bad">unreachable</span>';
+      const tp = `<span class="pill mut">${{v.transport === 'http' ? 'http' : 'in-process'}}</span>`;
+      return `<tr><td>${{k}}</td><td>${{tp}}</td><td>${{ok}}</td><td>${{(v.detail || '').slice(0, 120)}}</td></tr>`;
+    }}).join('');
+  }} catch {{}}
+}}
+refresh(); loadConn();
+setInterval(refresh, 2000);
+setInterval(loadConn, 15000);
+</script>
+</body></html>
 """
 
 
