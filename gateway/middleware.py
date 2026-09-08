@@ -38,7 +38,7 @@ LITE_MODE = os.environ.get("GATEWAY_LITE", "").lower() in ("1", "true", "yes")
 from gateway.pii import scan_and_redact
 from gateway.response_checks import check_jailbreak_compliance, check_system_prompt_leak
 from gateway.role_exposure import check as check_role_exposure
-from gateway.session_checks import SessionTracker
+from gateway.session_checks import SessionTracker, SessionContentTracker
 
 
 @dataclass
@@ -63,6 +63,7 @@ class GatewayMiddleware:
             self.classifier_detector.load()
 
         self.session_tracker = SessionTracker()
+        self.session_content_tracker = SessionContentTracker()
         self.adaptive_tracker = AdaptiveThresholdTracker()
         self.logger = GatewayLogger()
 
@@ -142,7 +143,15 @@ class GatewayMiddleware:
                 trace={"phase": "pre_flight", "session_check": session_check.details},
             )
 
-        blocked, layer_used, pattern_id, per_layer_trace = self._run_injection_ensemble(working_text, session_id)
+        # Reconstructed session context (this session's own prior turns + the
+        # current message), not just the current message in isolation -- this is
+        # what makes a GW-009-style split-payload attack detectable for real: no
+        # single turn contains the full malicious instruction, but the
+        # reconstructed context does. The backend still only ever receives
+        # working_text (the real current message) below, never this
+        # detection-only reconstruction.
+        context_text = self.session_content_tracker.get_context_text(session_id, working_text)
+        blocked, layer_used, pattern_id, per_layer_trace = self._run_injection_ensemble(context_text, session_id)
         pre_latency_ms = (time.perf_counter() - pre_start) * 1000
 
         self.logger.log(LogRecord(
@@ -152,6 +161,13 @@ class GatewayMiddleware:
             matched_pattern_id=pattern_id,
             extra={"pii_found": pii_result.found, "per_layer": per_layer_trace},
         ))
+
+        # A blocked message doesn't get added to this session's context -- an
+        # attacker's rejected turn shouldn't still count toward future context
+        # reconstruction, and a legitimate turn only becomes part of context once
+        # it's known to be clean.
+        if not blocked:
+            self.session_content_tracker.record_turn(session_id, working_text)
 
         if blocked:
             return GatewayResponse(
@@ -259,7 +275,10 @@ class GatewayMiddleware:
             yield {"chunk": f"[BLOCKED pre-flight: {session_check.reason}]", "cut_off": True}
             return
 
-        blocked, layer_used, pattern_id, _ = self._run_injection_ensemble(working_text, session_id)
+        # Same session-context reconstruction as process() -- see that method's
+        # comment for why. The backend still only ever receives working_text.
+        context_text = self.session_content_tracker.get_context_text(session_id, working_text)
+        blocked, layer_used, pattern_id, _ = self._run_injection_ensemble(context_text, session_id)
         if blocked:
             self.logger.log(LogRecord(
                 timestamp=self.logger.now(), session_id=session_id, request_id=request_id,
@@ -268,6 +287,8 @@ class GatewayMiddleware:
             ))
             yield {"chunk": f"[BLOCKED pre-flight: injection_detected:{layer_used}:{pattern_id}]", "cut_off": True}
             return
+
+        self.session_content_tracker.record_turn(session_id, working_text)
 
         # ---------- STREAM FROM BACKEND, CHECKING INCREMENTALLY ----------
         buffer = ""

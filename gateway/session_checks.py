@@ -1,10 +1,11 @@
 """
-Pre-flight session-level checks: rate limiting and behavior anomaly detection.
+Pre-flight session-level checks: rate limiting, behavior anomaly detection, and
+(SessionContentTracker, below) real multi-turn message-content tracking.
 
-Both are in-memory / process-local by design -- this is a portfolio project,
-not a production service, so no Redis/shared-state dependency. Documented as
-a known scaling limitation (multi-instance deployment would need a shared
-session store) rather than silently pretending it's production-ready.
+All in-memory / process-local by design -- this is a portfolio project, not a
+production service, so no Redis/shared-state dependency. Documented as a known
+scaling limitation (multi-instance deployment would need a shared session
+store) rather than silently pretending it's production-ready.
 """
 import time
 from collections import defaultdict, deque
@@ -140,3 +141,67 @@ class SessionTracker:
                 )
 
         return SessionCheckResult(allowed=True, reason=None, details={"requests_in_window": len(history)})
+
+
+# How many prior turns (this session's own past messages, post-PII-redaction) get
+# reconstructed alongside the current message before running injection detection.
+# Bounded rather than unbounded session history for two reasons: memory (same
+# eviction discipline as SessionTracker above) and detection quality -- an
+# unbounded window would eventually make every session's context so long that a
+# short, clearly-benign new message gets buried in noise the detectors weren't
+# tuned against.
+MULTI_TURN_CONTEXT_TURNS = 5
+MULTI_TURN_TTL_SECONDS = 600  # a session that's gone quiet for 10 min starts fresh
+
+
+class SessionContentTracker:
+    """Closes the gap README.md names explicitly: "Multi-turn detection tests
+    concatenated transcripts as one message, not true per-turn/session-context
+    chaining." Before this, gateway/middleware.py's process() only ever inspected
+    the CURRENT message in isolation -- a GW-009-style attack (splitting a
+    malicious instruction across several individually-innocuous turns) was
+    structurally undetectable in real per-request usage; the only way the corpus
+    "tested" it was by pre-concatenating the whole fake transcript into one
+    string and sending that as a single message, which doesn't exercise this
+    project's actual real-time detection path at all.
+
+    Stores each session's recent message TEXT (not just timestamps, unlike
+    SessionTracker) so a new message can be checked against the reconstructed
+    recent context, not just itself. record_turn() is called only for messages
+    that passed pre-flight (see middleware.py) -- an already-blocked message
+    shouldn't get added to context future turns are judged against."""
+
+    def __init__(self, max_turns: int = MULTI_TURN_CONTEXT_TURNS, ttl_seconds: float = MULTI_TURN_TTL_SECONDS):
+        self._turns: dict[str, deque] = defaultdict(lambda: deque(maxlen=max_turns))
+        self._last_seen: dict[str, float] = {}
+        self.ttl_seconds = ttl_seconds
+        self._calls_since_sweep = 0
+        self.SWEEP_INTERVAL = 100
+
+    def _sweep(self, now: float):
+        stale_ids = [sid for sid, last in self._last_seen.items() if now - last > self.ttl_seconds]
+        for sid in stale_ids:
+            self._turns.pop(sid, None)
+            self._last_seen.pop(sid, None)
+
+    def get_context_text(self, session_id: str, current_message: str) -> str:
+        """Recent prior turns (oldest first) followed by the current message,
+        joined into one string for detection -- NOT what gets forwarded to the
+        backend (middleware.py still sends only the real current message there);
+        this reconstructed text exists purely so the injection detectors can see
+        what a real multi-turn conversation actually looked like."""
+        now = time.time()
+        if now - self._last_seen.get(session_id, 0) > self.ttl_seconds:
+            self._turns.pop(session_id, None)  # session gone quiet long enough -- start fresh, no stale context
+        prior_turns = list(self._turns.get(session_id, []))
+        return " ".join(prior_turns + [current_message])
+
+    def record_turn(self, session_id: str, message: str):
+        now = time.time()
+        self._calls_since_sweep += 1
+        if self._calls_since_sweep >= self.SWEEP_INTERVAL:
+            self._sweep(now)
+            self._calls_since_sweep = 0
+
+        self._turns[session_id].append(message)
+        self._last_seen[session_id] = now

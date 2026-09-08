@@ -289,10 +289,22 @@ knowing:
 - **`stub_ops_agent` is a simulation, not Project 2's real agent.** The
   integration with the actual Project 2 codebase (real tools, real
   refusal-policy table) is separate follow-up work, not done here.
-- **Multi-turn detection tests concatenated transcripts as one message**, not
-  true per-turn/session-context chaining. The session anomaly check catches
-  request-rate spikes but not semantic content chaining across turns — a real
-  gap for the "split the payload across turns" attack family (GW-009-style).
+- **Real per-turn session-context chaining now exists**
+  (`gateway/session_checks.py::SessionContentTracker`) — closes the gap where multi-turn
+  detection only ever worked against a whole transcript pre-concatenated into one message
+  by the corpus runner, which never exercised the real per-request detection path.
+  `gateway/middleware.py`'s `process()`/`process_streaming()` now reconstruct each
+  session's recent turns (bounded to the last 5, 10-minute TTL) and run detection against
+  that context, not just the current message in isolation — a message only becomes part of
+  future context once it's passed pre-flight, so a blocked turn doesn't linger and affect
+  later, unrelated messages in the same session. Proven directly in
+  `tests/test_multi_turn_detection.py`: a 3-turn split payload where no individual turn
+  contains the trigger phrase is blocked on turn 3 via reconstructed context, while the
+  identical final turn sent as the first message of a fresh session is allowed — the same
+  text, different outcome, purely a function of session history.
+  The session anomaly check (rate-based) and this content-based check are complementary,
+  not overlapping: one catches *how fast*, the other catches *what the combined content
+  says* regardless of pacing.
 - **Post-flight checks are heuristic, not a data-lineage tracker.** They catch
   restricted content that matches known patterns, not arbitrary rephrasing of
   restricted data.

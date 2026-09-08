@@ -3,10 +3,19 @@ Layer 1: Rule-based prompt-injection detector.
 
 Cheapest, fastest, weakest layer. Keyword/regex matching against known injection
 phrases, with Unicode NFKC normalization so obvious homoglyph substitution
-(GW-012-style) doesn't trivially dodge it. Still expected to miss paraphrase,
-encoding (base64/leetspeak), and multi-turn-split attacks by design — that gap is
-the whole point of having layers 2 and 3, and is reported honestly in the
-comparison table rather than patched away with ever-more regexes.
+(GW-012-style) doesn't trivially dodge it. Still expected to miss paraphrase and
+encoding (base64/leetspeak) by design -- that gap is the whole point of having
+layers 2 and 3, reported honestly in the comparison table rather than patched
+away with ever-more regexes.
+
+Multi-turn-split attacks are a different story since gateway/session_checks.py's
+SessionContentTracker started reconstructing session context upstream of every
+layer (including this one) -- if a split payload's pieces land adjacent once
+reconstructed, this layer's exact-phrase regex genuinely can catch it now (see
+tests/test_multi_turn_detection.py). What this layer still can't do is catch a
+split payload whose pieces DON'T reconstruct into one of its known phrases
+verbatim (a paraphrased or reworded split) -- that remains layer 2/3's job, same
+as for a single-turn paraphrase attack.
 """
 import re
 import time
