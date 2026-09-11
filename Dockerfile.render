@@ -1,6 +1,11 @@
-# Slim gateway image for the Render free tier (512MB RAM). No torch: runs in
-# GATEWAY_LITE mode (rule_based + embedding_similarity + all pre/post-flight
-# checks + dashboard). See requirements-render.txt for the honest caveat.
+# Gateway image for the Render free tier (512MB RAM). Runs the FULL 3-layer
+# ensemble -- torch is not a runtime dependency at all: layer 3 (the scratch
+# classifier) is served by gateway/detectors/classifier_numpy.py, a torch-free
+# re-implementation of the trained model's forward pass (verified bit-parity
+# in tests/test_classifier_numpy_parity.py). See requirements-render.txt and
+# docs/decisions.md for the "why" -- torch was the one dependency too heavy
+# for this tier; removing it from serving (not from training) is what made
+# full mode fit here.
 FROM python:3.12-slim
 
 WORKDIR /app
@@ -9,15 +14,18 @@ COPY requirements-render.txt .
 RUN pip install --no-cache-dir -r requirements-render.txt
 
 # Only what the running service needs -- not scripts/, tests/, docs/, or the
-# torch model artifact.
+# torch-format model.pt (weights.npz is the numpy-served copy).
 COPY gateway/ ./gateway/
 COPY project2_agent/ ./project2_agent/
 COPY corpus/ ./corpus/
 COPY models/embedding_similarity/ ./models/embedding_similarity/
+COPY models/scratch_classifier/vocab.json ./models/scratch_classifier/vocab.json
+COPY models/scratch_classifier/weights.npz ./models/scratch_classifier/weights.npz
 
 ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
-ENV GATEWAY_LITE=1
+# Full mode by default -- see the header comment above.
+ENV GATEWAY_LITE=0
 
 EXPOSE 8000
 

@@ -4,6 +4,92 @@ Running log, written as decisions are made. Not reconstructed after the fact.
 
 ---
 
+## 2026-09-11 — Removed torch from the serving path; full mode now fits Render's free tier
+
+**The gap:** `GATEWAY_LITE=1` existed because layer 3 (the scratch classifier)
+was served by `gateway/detectors/classifier.py`, which imports torch — a
+~700MB-installed dependency that made the full 3-layer ensemble too heavy for
+Render's 512MB free instance. The public demo has been running the ensemble
+*minus* layer 3 ever since, the one layer independently measured as doing real,
+non-leaked detection work (`docs/comparison_table.md`).
+
+**Why this was fixable:** the trained model itself is tiny — an
+`nn.Embedding(8000, 64)`, a `Linear(64, 32)`, and a `Linear(32, 1)` (see
+`gateway/detectors/scratch_classifier_model.py`). Its forward pass is mean-pool
++ two matrix multiplies + a sigmoid. There was never an inference-time reason
+this needed a full deep-learning framework — torch is genuinely needed for
+*training* (autograd, the optimizer, the DataLoader), not for running the
+already-trained weights.
+
+**What was built:**
+- `scripts/export_classifier_to_numpy.py` — loads the torch `state_dict`, dumps
+  the five weight tensors to `models/scratch_classifier/weights.npz` (plain
+  numpy, no torch needed to read it back). Run once now; wired into
+  `scripts/train_scratch_classifier.py`'s end so every future retrain
+  re-exports automatically instead of silently drifting out of sync.
+- `gateway/detectors/text_encoding.py` — split the tokenizer/vocab/`encode()`
+  logic out of `scratch_classifier_model.py` into a module with zero torch
+  import. This mattered more than it looked: the numpy detector originally
+  imported `encode`/`PAD_IDX` from `scratch_classifier_model.py`, which still
+  `import torch`s at the top for the `nn.Module` class — so torch was getting
+  pulled in anyway despite the new detector never touching it. Caught by
+  actually checking `'torch' in sys.modules` after building the middleware in
+  full mode, not by assuming the refactor worked.
+- `gateway/detectors/classifier_numpy.py` — re-implements
+  `ScratchClassifier.forward()` term-for-term in numpy (embedding lookup, masked
+  mean pool, `relu(x @ W1.T + b1)`, `x @ W2.T + b2`, sigmoid at the call site).
+  Same `DetectionResult`/detector interface as the torch version — a drop-in
+  swap in `middleware.py`.
+- **Correctness verified, not assumed:** `tests/test_classifier_numpy_parity.py`
+  runs both the torch model and the numpy one over the full 36-case corpus plus
+  15 in-domain benign queries. Decisions match 100%; probabilities agree to
+  <1e-4 (float32-torch vs float64-numpy accumulation, not a bug). This is the
+  same "don't trust a claimed-equivalent substitution without checking" standard
+  the embedding-similarity honesty note and the leakage fix both apply.
+- `gateway/middleware.py` now loads `ScratchClassifierDetectorNumpy` by default.
+  `GATEWAY_LITE` is kept as a genuinely optional "run a smaller ensemble on
+  purpose" toggle — it no longer does anything to solve a resource problem,
+  because there isn't one anymore.
+- `Dockerfile.render` / `requirements-render.txt` / `render.yaml` updated:
+  `GATEWAY_LITE=0` (full ensemble) is now the free-tier default. The render
+  image copies `vocab.json` + `weights.npz` (a few hundred KB), not `model.pt`
+  or torch.
+
+**Verified live in this environment (not just in tests):** built a
+`GatewayMiddleware()` in full mode and confirmed `'torch' in sys.modules` is
+`False` before and after processing both a blocked attack and an allowed
+borderline request that only layer 3 catches — the numpy classifier fired
+correctly (`scratch_classifier: blocked=True`) with no torch import anywhere in
+the process.
+
+**What this doesn't change:** the from-scratch classifier's actual detection
+quality (50% on the corpus, the residual domain-shift false-positive rate) is
+unchanged — this was a serving-cost fix, not a model-quality fix. Numbers in
+`docs/comparison_table.md` still describe the same model; it's just cheaper to
+run now.
+
+---
+
+## 2026-09-11 — DistilBERT fine-tune: network access re-checked
+
+The original "sandbox blocks huggingface.co" finding (`docs/decisions.md`,
+2026-09-05) was specific to that build environment, not a property of this
+project. Re-checked from the current environment: `huggingface.co` responds
+`200`. `download.pytorch.org` is still `403` (irrelevant here — torch is
+already installed via pip, not fetched from that host).
+
+Installed `transformers`+`datasets` and inspected what an actual run would cost:
+`data/train.csv` has grown to ~35.7k rows (the full `verazuo/jailbreak_llms`
+corpus, not the ~2k figure `train_distilbert_finetune.py`'s docstring still
+cites from when it was written) — a real DistilBERT-base fine-tune over that
+many rows for 3 epochs on this machine's CPU (no CUDA available) is a
+multi-hour job, not a quick verification. [Status: see follow-up entry once
+that run completes or is deliberately scoped down — not silently left as
+"deferred" without saying why it's still deferred despite network access now
+working.]
+
+---
+
 ## 2026-09-07 — Cross-service connectivity
 
 All three portfolio services are on Render. Made the P3 -> P2 link actually work

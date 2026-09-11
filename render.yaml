@@ -13,8 +13,10 @@ services:
     healthCheckPath: /health
     autoDeploy: true
     envVars:
+      # Full 3-layer ensemble -- fits the free tier because layer 3 is served
+      # torch-free (gateway/detectors/classifier_numpy.py). See docs/decisions.md.
       - key: GATEWAY_LITE
-        value: "1"
+        value: "0"
       # The real Project 2 (operations-assistant) runs as its own Render service.
       # The gateway reaches it over HTTP via its PUBLIC, keyless, IP-rate-limited
       # /demo/chat endpoint -- so no secret is needed here. Point this at your

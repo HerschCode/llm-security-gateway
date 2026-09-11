@@ -135,6 +135,13 @@ def main():
     save_artifacts(model, vocab)
     print(f"Saved best model (val_loss={best_val_loss:.4f}) to models/scratch_classifier/")
 
+    # Re-export the torch-free numpy weights every retrain, so the serving path
+    # (gateway/detectors/classifier_numpy.py -- what actually runs in
+    # production, see docs/decisions.md) never silently falls behind the
+    # torch model this script just trained.
+    from scripts.export_classifier_to_numpy import export as export_to_numpy
+    export_to_numpy()
+
 
 if __name__ == "__main__":
     main()

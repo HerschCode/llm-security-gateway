@@ -1,13 +1,10 @@
-# Slim dependency set for the Render free tier (512MB RAM). No torch -> the
-# scratch-classifier layer is disabled and the gateway runs in GATEWAY_LITE
-# mode: rule_based + embedding_similarity (TF-IDF, scikit-learn) only, plus all
-# pre/post-flight checks, session limiting, adaptive thresholds, streaming and
-# the dashboard -- none of which need torch.
-#
-# Honest note for anyone reading this in an interview: lite mode drops the one
-# ML layer that was doing real work (see docs/comparison_table.md), so the live
-# demo is the ensemble MINUS layer 3. The full pipeline runs locally via
-# `docker compose up` (see docker-compose.yml / DEPLOY.md).
+# Dependency set for the Render free tier (512MB RAM). No torch: the FULL
+# 3-layer ensemble still runs, because layer 3 (the scratch classifier) is
+# served by gateway/detectors/classifier_numpy.py -- a torch-free
+# re-implementation of the trained model's forward pass (bit-parity verified
+# in tests/test_classifier_numpy_parity.py), not a reduced ensemble. torch is
+# only needed to TRAIN that model (scripts/train_scratch_classifier.py), which
+# happens offline, not in this deployed image. See docs/decisions.md.
 fastapi==0.141.1
 uvicorn==0.52.4
 pydantic==2.13.5

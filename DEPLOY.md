@@ -4,7 +4,7 @@ Three ways to run it, smallest to largest.
 
 | Setup | Layers | Backends | Needs | Use for |
 |---|---|---|---|---|
-| **Render free tier** | rule_based + embedding (lite mode) | stub_ops_agent, project2_agent | nothing | public link for recruiters |
+| **Render free tier** | all 3 (torch-free serving — see below) | stub_ops_agent, project2_agent, operations_assistant | nothing | public link for recruiters |
 | **`docker compose up`** | all 3 | stub_ops_agent, project2_agent | Docker | recording the core demo |
 | **`docker-compose.trilogy.yml`** | all 3 | + **operations_assistant** (real Project 2) | Docker + free Groq key + the other two repos | "I ran all three connected" demo / video |
 
@@ -25,10 +25,14 @@ configuration.
    - `https://<your-service>.onrender.com/health`
 
 **Free-tier caveats (state these honestly on the portfolio site):**
-- **Lite mode**: the torch-backed scratch classifier (layer 3) is disabled to fit
-  in 512MB. The live demo is the ensemble *minus* the one ML layer that was doing
-  real work (see `docs/comparison_table.md`). The full pipeline is what
-  `docker compose up` runs.
+- **All 3 detection layers run.** Layer 3 used to be dropped on this tier
+  (`GATEWAY_LITE=1`) because it was torch-backed and torch didn't fit 512MB.
+  It's now served by `gateway/detectors/classifier_numpy.py` — a torch-free
+  re-implementation of the same trained model's forward pass, verified
+  bit-parity against the original in `tests/test_classifier_numpy_parity.py`.
+  torch is still used to *train* that model (`scripts/train_scratch_classifier.py`),
+  just not to *serve* it. `GATEWAY_LITE=1` still exists as an opt-in smaller
+  ensemble, it's just no longer necessary here — see `docs/decisions.md`.
 - Spins down after ~15 min idle; the next request takes ~30-60s to wake.
 
 **No API keys.** `render.yaml` points `OPS_ASSISTANT_URL` at the deployed
@@ -51,9 +55,9 @@ docker compose up --build
 # open http://localhost:8000/gateway/demo
 ```
 
-`GATEWAY_LITE=0` in `docker-compose.yml` → torch classifier active. This is the
-setup to screen-record: pick an attack, watch all three layer chips, watch the
-gateway block what the backend alone leaks.
+This is the setup to screen-record: pick an attack, watch all three layer
+chips, watch the gateway block what the backend alone leaks. (Now identical to
+what the Render deploy runs, layer-for-layer — see below.)
 
 ---
 
@@ -120,7 +124,7 @@ docker compose -f docker-compose.trilogy.yml up --build
 
 | Var | Where | Required? | What |
 |---|---|---|---|
-| `GATEWAY_LITE` | gateway | no (default `0`) | `1` disables the torch classifier layer |
+| `GATEWAY_LITE` | gateway | no (default `0`) | `1` opts into a smaller ensemble (rule-based + embedding only). No longer needed for RAM — layer 3 is served torch-free either way, see `docs/decisions.md` |
 | `PORT` | gateway | no (default `8000`) | Render sets this automatically |
 | `OPS_ASSISTANT_URL` | gateway | only for the real-P2 backend | e.g. `http://operations-assistant:8001`; if unset the backend is not registered |
 | `OPS_ASSISTANT_CHAT_PATH` | gateway | no (default `/chat`) | set to `/demo/chat` to use P2's keyless public endpoint instead of the API-key one. A 401 on `/chat` auto-falls-back to `/demo/chat` regardless |

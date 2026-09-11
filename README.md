@@ -34,9 +34,11 @@ backend and through the gateway, side by side, with the verdict, which layer fir
 and latency for each. Other run modes (Render free tier, the end-to-end trilogy
 with the real Project 2 RAG agent behind it) are in [`DEPLOY.md`](DEPLOY.md).
 
-> The public link above runs in **lite mode** (`GATEWAY_LITE=1`) — layers 1–2 plus
-> all pre/post-flight checks, but not the torch classifier (layer 3), to fit a
-> 512 MB host. The demo page says so inline. `docker compose up` runs all three.
+> The public link above and `docker compose up` run the **identical full 3-layer
+> ensemble**. Layer 3 (the scratch classifier) used to be dropped on the free
+> 512 MB host because it was torch-backed; it's now served torch-free by
+> `gateway/detectors/classifier_numpy.py`, a bit-parity-verified re-implementation
+> of the trained model's forward pass — see `docs/decisions.md`.
 
 ---
 
@@ -189,11 +191,14 @@ interactive page that runs the same prompt bypassed vs. through the gateway,
 side by side. Full deploy options (Render free tier, the end-to-end trilogy with
 the real Project 2) are in [`DEPLOY.md`](DEPLOY.md).
 
-**Lite mode** (`GATEWAY_LITE=1`): drops the torch-backed classifier so the
-service fits a 512MB host. The ensemble then runs rule-based + embedding +
-pre/post-flight checks only — honest caveat: that's the ensemble minus the one
-layer measured as doing real work, so it's for the constrained *public* demo,
-not the full story.
+**Full mode everywhere, including the 512MB free tier:** layer 3 (the scratch
+classifier) is served by a torch-free numpy re-implementation of the trained
+model's forward pass (`gateway/detectors/classifier_numpy.py`, bit-parity
+verified against the original torch model in
+`tests/test_classifier_numpy_parity.py`). torch is only used to *train* that
+model, not to serve it. `GATEWAY_LITE=1` is kept as an opt-in smaller ensemble
+(rule-based + embedding only) if you want one, but it's no longer required for
+resource reasons on any of the run modes above.
 
 **From source:**
 
@@ -252,9 +257,12 @@ knowing:
   limitation still present, but worth stating here because it's the reason every
   number in this README should be trusted only as far as its cited doc, not by
   reputation from an earlier version of this project.
-- **No pretrained-weight access in the dev sandbox** — layers 2 and 3 are
-  honest substitutions for what the original design called for. See
-  `docs/decisions.md` for the full reasoning and the swap-in path.
+- **No pretrained-weight access in the original dev sandbox** — layers 2 and 3
+  are honest substitutions for what the original design called for. See
+  `docs/decisions.md` for the full reasoning and the swap-in path. (Separately:
+  layer 3 is now *served* without torch at all, via
+  `gateway/detectors/classifier_numpy.py` — a serving-cost fix, not a change to
+  what the model is or how well it detects.)
 - **Embedding-similarity provides no measurable generalization** from the public
   training dataset to this project's own attack corpus (0% detection, honestly
   measured). It's currently dead weight in the ensemble rather than a
@@ -320,21 +328,29 @@ project2_agent/                       # best-effort Project 2 reconstruction (gu
   agent.py, auth.py, refusal_policy.py, tools.py, documents.py, eval_corpus.yaml
 gateway/
   detectors/                          # 3 detection layers
-  adapters/                           # pluggable backend interface + 3 implementations
+    text_encoding.py                    # tokenizer/vocab/encode, torch-free
+    scratch_classifier_model.py         # nn.Module + training save/load (torch, offline-only)
+    classifier_numpy.py                 # SERVING path for layer 3 -- no torch import
+    classifier.py                       # torch inference wrapper, kept for scripts/evaluate.py
+  adapters/                           # pluggable backend interface + 4 implementations
+  webui.py                            # shared nav + landing page
+  demo.py, dashboard.py               # interactive demo, live traffic dashboard
   middleware.py                       # core orchestrator (incl. streaming + adaptive thresholding)
   app.py                              # FastAPI service
-  adaptive_threshold.py, dashboard.py  # Tier 3
+  adaptive_threshold.py
   pii.py, session_checks.py, role_exposure.py, response_checks.py, logging_schema.py
 scripts/
   prepare_training_data.py, fit_embedding_detector.py, train_scratch_classifier.py
+  export_classifier_to_numpy.py       # torch state_dict -> weights.npz, run after every retrain
   evaluate.py, evaluate_embedding_loo.py, measure_domain_shift.py
   run_redteam.py, measure_latency.py, report_cli.py
-  train_distilbert_finetune.py        # deferred, never run here
+  train_distilbert_finetune.py        # see docs/decisions.md for current status
 docs/
   decisions.md                        # running log, written as-we-go
+  architecture.svg
   comparison_table.md, domain_shift_fix.md, leakage_fix.md, embedding_loo_result.md
   project2_agent_notes.md, latency_report.md
   redteam_report_{direct,gateway}_{stub_ops_agent,project2_agent}.md
-tests/                                 # pytest, 42 passing
+tests/                                 # pytest, 63+ passing
 .github/workflows/ci.yml               # runs the suite on every push
 ```

@@ -14,48 +14,21 @@ the actual DistilBERT fine-tuning code, written to run in an environment with
 model-hub access, with results explicitly marked not-yet-run.
 """
 import json
-import re
 from pathlib import Path
 
 import torch
 import torch.nn as nn
 
+# Tokenizer/vocab/encode + the size constants live in text_encoding.py, which
+# has no torch import -- re-exported here for backward compatibility (training
+# scripts import them from this module) without dragging torch into anything
+# that only needs encode()/PAD_IDX (see gateway/detectors/classifier_numpy.py).
+from gateway.detectors.text_encoding import (  # noqa: F401
+    tokenize, build_vocab, encode,
+    MAX_VOCAB_SIZE, MAX_SEQ_LEN, EMBED_DIM, HIDDEN_DIM, PAD_IDX, UNK_IDX,
+)
+
 MODEL_DIR = Path(__file__).resolve().parents[2] / "models" / "scratch_classifier"
-
-MAX_VOCAB_SIZE = 8000
-MAX_SEQ_LEN = 128
-EMBED_DIM = 64
-HIDDEN_DIM = 32
-PAD_IDX = 0
-UNK_IDX = 1
-
-
-def tokenize(text: str) -> list[str]:
-    """Simple whitespace + punctuation-aware tokenizer. Deliberately basic --
-    this is a from-scratch baseline, not a production tokenizer."""
-    text = text.lower()
-    return re.findall(r"[a-z0-9]+", text)
-
-
-def build_vocab(texts: list[str], max_vocab_size: int = MAX_VOCAB_SIZE) -> dict:
-    from collections import Counter
-
-    counter = Counter()
-    for text in texts:
-        counter.update(tokenize(text))
-
-    vocab = {"<pad>": PAD_IDX, "<unk>": UNK_IDX}
-    for word, _ in counter.most_common(max_vocab_size - 2):
-        vocab[word] = len(vocab)
-    return vocab
-
-
-def encode(text: str, vocab: dict, max_len: int = MAX_SEQ_LEN) -> list[int]:
-    tokens = tokenize(text)[:max_len]
-    ids = [vocab.get(tok, UNK_IDX) for tok in tokens]
-    if len(ids) < max_len:
-        ids = ids + [PAD_IDX] * (max_len - len(ids))
-    return ids
 
 
 class ScratchClassifier(nn.Module):

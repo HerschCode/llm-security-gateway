@@ -27,12 +27,19 @@ from gateway.detectors import rule_based
 from gateway.detectors.embedding_similarity import EmbeddingSimilarityDetector, SIMILARITY_THRESHOLD
 from gateway.logging_schema import GatewayLogger, LogRecord
 
-# CLASSIFIER_THRESHOLD is re-declared here (rather than imported from
-# gateway.detectors.classifier) so this module has no import-time dependency on
-# torch. In "lite" mode -- GATEWAY_LITE=1, used for the 512MB Render free-tier
-# deploy -- torch and the scratch classifier are not installed at all, and the
-# ensemble runs rule_based + embedding_similarity only. Keep this value in sync
-# with gateway/detectors/classifier.py.
+# CLASSIFIER_THRESHOLD is re-declared here (rather than imported from a
+# detector module) to keep this file import-cheap. Keep in sync with
+# gateway/detectors/classifier_numpy.py.
+#
+# History: GATEWAY_LITE=1 originally existed to skip the classifier because it
+# was torch-backed and torch didn't fit Render's 512MB free tier (see
+# docs/decisions.md). It no longer needs to exist for that reason -- the
+# serving path now uses gateway/detectors/classifier_numpy.py, a torch-free
+# re-implementation of the same trained model's forward pass (verified
+# bit-parity in tests/test_classifier_numpy_parity.py), so the FULL 3-layer
+# ensemble fits the free tier too. GATEWAY_LITE is kept as an opt-in "run an
+# even smaller ensemble" toggle (marginally lower latency, one fewer moving
+# part for a quick smoke test), not because anything requires it anymore.
 CLASSIFIER_THRESHOLD = 0.5
 LITE_MODE = os.environ.get("GATEWAY_LITE", "").lower() in ("1", "true", "yes")
 from gateway.pii import scan_and_redact
@@ -54,12 +61,13 @@ class GatewayMiddleware:
         self.embedding_detector = EmbeddingSimilarityDetector()
         self.embedding_detector.load()
 
-        # Lite mode (Render free tier): skip the torch-backed classifier entirely.
+        # GATEWAY_LITE=1: deliberately run a smaller ensemble (see the module
+        # docstring above for why this is no longer a torch/RAM necessity).
         self.lite_mode = LITE_MODE
         self.classifier_detector = None
         if not self.lite_mode:
-            from gateway.detectors.classifier import ScratchClassifierDetector
-            self.classifier_detector = ScratchClassifierDetector()
+            from gateway.detectors.classifier_numpy import ScratchClassifierDetectorNumpy
+            self.classifier_detector = ScratchClassifierDetectorNumpy()
             self.classifier_detector.load()
 
         self.session_tracker = SessionTracker()
