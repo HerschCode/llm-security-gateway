@@ -78,15 +78,17 @@ project. Re-checked from the current environment: `huggingface.co` responds
 `200`. `download.pytorch.org` is still `403` (irrelevant here — torch is
 already installed via pip, not fetched from that host).
 
-Installed `transformers`+`datasets` and inspected what an actual run would cost:
-`data/train.csv` has grown to ~35.7k rows (the full `verazuo/jailbreak_llms`
-corpus, not the ~2k figure `train_distilbert_finetune.py`'s docstring still
-cites from when it was written) — a real DistilBERT-base fine-tune over that
-many rows for 3 epochs on this machine's CPU (no CUDA available) is a
-multi-hour job, not a quick verification. [Status: see follow-up entry once
-that run completes or is deliberately scoped down — not silently left as
-"deferred" without saying why it's still deferred despite network access now
-working.]
+Installed `transformers`+`datasets` and benchmarked a real training step before
+committing to a run: `wc -l data/train.csv` initially looked like ~35.7k lines,
+which would have meant a multi-hour CPU fine-tune -- but that count is raw
+lines, not rows (payload text contains embedded newlines inside quoted CSV
+fields). Parsed properly with `csv.DictReader`, it's 2,020 rows (1,000
+positive / 1,020 negative), matching this script's own docstring estimate.
+Caught by actually parsing the file instead of trusting a quick line count --
+the same discipline as every other "check, don't assume" moment in this log.
+At ~2s/step (batch 32, CPU, 20 threads, benchmarked directly), the real script
+is a ~15-20 minute job, not a multi-hour one. See the follow-up entry for the
+actual run and its results.
 
 ---
 

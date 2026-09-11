@@ -3,8 +3,11 @@
 # cosmetic InconsistentVersionWarning on load -- harmless, see docs/decisions.md).
 #
 # For the 512MB Render free-tier deploy, use requirements-render.txt instead --
-# it omits torch (the scratch classifier) and runs the gateway in GATEWAY_LITE
-# mode (rule_based + embedding_similarity only).
+# it's the serving-only subset (no torch: layer 3 is served by
+# gateway/detectors/classifier_numpy.py, not the torch model). torch here is
+# for TRAINING (scripts/train_scratch_classifier.py) and for running
+# gateway/detectors/classifier.py in scripts/evaluate.py / tests, not for
+# what actually gets deployed.
 fastapi==0.141.1
 uvicorn==0.52.4
 pydantic==2.13.5
@@ -17,9 +20,12 @@ torch==2.14.0
 pyyaml==6.0.3
 pytest==9.1.1
 
-# NOT required to run anything in this repo today -- only needed if you run
-# scripts/train_distilbert_finetune.py in an environment with model-hub access
-# (this sandbox has none; see docs/decisions.md). Left commented so a plain
-# `pip install -r requirements.txt` here doesn't fail trying to fetch weights.
+# NOT required to run anything else in this repo -- only needed for
+# scripts/train_distilbert_finetune.py, which needs network access to
+# huggingface.co (works from this environment as of 2026-09-11; see
+# docs/decisions.md for the environment where it didn't). Left commented so a
+# plain `pip install -r requirements.txt` doesn't fetch ~260MB of weights
+# nobody asked for.
 # transformers>=4.40
 # datasets>=2.19
+# accelerate>=1.1.0

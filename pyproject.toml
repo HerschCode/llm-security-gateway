@@ -22,7 +22,7 @@ classifier = ["torch>=2.0"]
 dev = ["pytest>=8.0", "torch>=2.0"]
 # Only needed to run the deferred DistilBERT fine-tune script in an environment
 # with model-hub access -- see docs/decisions.md.
-finetune = ["transformers>=4.40", "datasets>=2.19"]
+finetune = ["transformers>=4.40", "datasets>=2.19", "accelerate>=1.1.0"]
 
 [tool.setuptools.packages.find]
 include = ["gateway*"]

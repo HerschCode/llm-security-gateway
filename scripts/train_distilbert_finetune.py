@@ -1,39 +1,41 @@
 """
-DEFERRED SCRIPT -- HAS NEVER BEEN RUN. READ THIS BEFORE TRUSTING ANYTHING BELOW.
+DistilBERT fine-tune -- the "real" Layer 3 the build doc originally asked for.
 
-This is the "real" Layer 3 the build doc originally asked for: fine-tuning a
-pretrained DistilBERT checkpoint on injection-vs-benign data. It is written
-correctly (to the best of my knowledge, following standard HF fine-tuning
-patterns) but has NEVER BEEN EXECUTED, because this sandbox cannot reach
-huggingface.co or any other host that serves pretrained model weights (see
-docs/decisions.md, 2026-09-05 entries -- checked huggingface.co, hf-mirror.com,
-objects.githubusercontent.com, download.pytorch.org, all blocked).
+STATUS (2026-09-11): the original build environment for this project could not
+reach huggingface.co or any other host serving pretrained weights (see
+docs/decisions.md, 2026-09-05 entries). Re-checked from the current
+environment: huggingface.co is reachable. Benchmarked a real training step
+before running the full script (see docs/decisions.md, 2026-09-11) -- ~2,020
+training rows at batch 32 is a ~15-20 minute CPU job, not the multi-hour one a
+naive line-count of data/train.csv would have suggested. Results of the actual
+run are recorded in docs/comparison_table.md and docs/decisions.md once
+complete -- read those for the real numbers rather than the "expected result"
+paragraph below, which was a prediction made before this ever ran.
 
-What actually runs and is proven in this repo is
+What has run since the beginning of this project is
 gateway/detectors/scratch_classifier_model.py, trained from scratch (random
 embedding init, no pretrained knowledge) -- see docs/comparison_table.md and
-docs/domain_shift_fix.md for its real, measured numbers.
+docs/domain_shift_fix.md for its real, measured numbers. This script fine-tunes
+a genuinely pretrained checkpoint instead, for a fair apples-to-apples
+comparison on the identical train/eval split.
 
-To actually run this script:
-  1. Move to a machine/environment with network access to huggingface.co
-     (a laptop, Colab, an EC2 instance -- anywhere without this sandbox's
-     allowlist restriction).
-  2. pip install -r requirements.txt (uncomment the `transformers` and
-     `datasets` lines, or `pip install ".[finetune]"` if using pyproject.toml)
-  3. Run: python scripts/train_distilbert_finetune.py
+To run it yourself:
+  1. Network access to huggingface.co (this repo's own environment now has it;
+     a restricted sandbox may not).
+  2. pip install -r requirements.txt, then uncomment the `transformers` and
+     `datasets` lines (or `pip install ".[finetune]"`).
+  3. python scripts/train_distilbert_finetune.py
   4. Compare its printed precision/recall/latency against
-     docs/comparison_table.md's scratch_classifier row, on the SAME
-     data/eval.csv, and add a fourth row honestly -- don't guess the numbers
-     ahead of actually running this.
+     docs/comparison_table.md's scratch_classifier row on the SAME
+     data/eval.csv.
 
-Expected qualitative result (a prediction, not a measurement): a real
-DistilBERT fine-tune should meaningfully outperform the from-scratch
-classifier on the domain-mismatch false-positive problem documented in
-docs/domain_shift_fix.md, because pretrained language understanding
-generalizes from far fewer in-domain examples than an embedding matrix
-trained from scratch on this project's ~2,050 training rows. Whether that
-prediction actually holds is exactly what running this script would tell you
--- until then, treat it as a hypothesis, not a result.
+Original prediction (kept for the record, not as a substitute for the actual
+result above): a real DistilBERT fine-tune should meaningfully outperform the
+from-scratch classifier on the domain-mismatch false-positive problem
+documented in docs/domain_shift_fix.md, because pretrained language
+understanding generalizes from far fewer in-domain examples than an embedding
+matrix trained from scratch. Whether that held is in the actual run's numbers,
+not in this paragraph.
 """
 import csv
 from pathlib import Path
@@ -42,7 +44,8 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 
 MODEL_CHECKPOINT = "distilbert-base-uncased"
 MAX_LENGTH = 128
-BATCH_SIZE = 16
+BATCH_SIZE = 32  # bumped from the original 16 -- benchmarked faster on this
+                 # CPU (20 threads) without changing what's being measured
 EPOCHS = 3
 LEARNING_RATE = 2e-5
 
@@ -145,6 +148,64 @@ def main():
 
     model.save_pretrained(REPO_ROOT / "models" / "distilbert_finetuned" / "final")
     tokenizer.save_pretrained(REPO_ROOT / "models" / "distilbert_finetuned" / "final")
+
+    # --- Same methodology as scripts/evaluate.py, so this is a genuinely
+    # apples-to-apples 4th row in docs/comparison_table.md: per-case single-
+    # example latency (not batched), detection rate = recall on
+    # expected_behavior=="block", false-positive rate = block rate on
+    # expected_behavior=="allow", GW-018/GW-036 (flag) reported separately. ---
+    import time
+    model.eval()
+    eval_case_rows = []
+    with open(REPO_ROOT / "data" / "eval.csv", encoding="utf-8", newline="") as f:
+        for row in csv.DictReader(f):
+            eval_case_rows.append(row)
+
+    results = []
+    for row in eval_case_rows:
+        t0 = time.perf_counter()
+        enc = tokenizer(row["text"], truncation=True, padding="max_length",
+                         max_length=MAX_LENGTH, return_tensors="pt")
+        with torch.no_grad():
+            logits = model(**enc).logits
+        probs = torch.softmax(logits, dim=-1)[0]
+        blocked = bool(torch.argmax(logits, dim=-1).item() == 1)
+        latency_ms = (time.perf_counter() - t0) * 1000
+        results.append({
+            "case_id": row["case_id"], "expected_behavior": row["expected_behavior"],
+            "blocked": blocked, "confidence": float(probs[1]), "latency_ms": latency_ms,
+        })
+
+    should_block = [r for r in results if r["expected_behavior"] == "block"]
+    should_allow = [r for r in results if r["expected_behavior"] == "allow"]
+    ambiguous = [r for r in results if r["expected_behavior"] == "flag"]
+    detection_rate = sum(1 for r in should_block if r["blocked"]) / len(should_block) if should_block else float("nan")
+    fp_rate = sum(1 for r in should_allow if r["blocked"]) / len(should_allow) if should_allow else float("nan")
+    avg_latency_ms = sum(r["latency_ms"] for r in results) / len(results)
+    missed = [r["case_id"] for r in should_block if not r["blocked"]]
+    false_positives = [r["case_id"] for r in should_allow if r["blocked"]]
+    ambiguous_decisions = [(r["case_id"], r["blocked"]) for r in ambiguous]
+
+    print(f"\n=== scripts/evaluate.py-equivalent scoring on data/eval.csv ===")
+    print(f"detection_rate={detection_rate:.2%} ({len(should_block) - len(missed)}/{len(should_block)})")
+    print(f"false_positive_rate={fp_rate:.2%} ({len(false_positives)}/{len(should_allow)})")
+    print(f"avg_latency_ms={avg_latency_ms:.3f}")
+    print(f"missed={missed}")
+    print(f"false_positives={false_positives}")
+    print(f"ambiguous(GW-018/GW-036)={ambiguous_decisions}")
+
+    result_summary = {
+        "detection_rate": detection_rate, "n_should_block": len(should_block), "n_missed": len(missed),
+        "false_positive_rate": fp_rate, "n_should_allow": len(should_allow), "n_false_positives": len(false_positives),
+        "avg_latency_ms": avg_latency_ms, "missed": missed, "false_positives": false_positives,
+        "ambiguous": ambiguous_decisions, "trainer_eval_metrics": metrics,
+    }
+    import json
+    out_path = REPO_ROOT / "docs" / "distilbert_finetune_raw_result.json"
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(result_summary, f, indent=2)
+    print(f"\nRaw result written to {out_path} -- see docs/distilbert_finetune_result.md "
+          f"for the write-up and docs/comparison_table.md for the added row.")
 
 
 if __name__ == "__main__":
