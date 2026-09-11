@@ -18,10 +18,19 @@ logs/*.jsonl
 # OS cruft
 .DS_Store
 
-# Trained model artifacts are intentionally NOT ignored -- they're small
-# (~7MB total) and kept so the gateway can be run immediately without
-# retraining first. See README's "Running it yourself" for the from-scratch
-# regeneration path if you want to verify that instead.
+# Trained model artifacts for what's actually SERVED are intentionally NOT
+# ignored -- they're small (~7MB total: models/embedding_similarity/,
+# models/scratch_classifier/) and kept so the gateway can be run immediately
+# without retraining first. See README's "Running it yourself" for the
+# from-scratch regeneration path if you want to verify that instead.
+
+# The DistilBERT fine-tune (scripts/train_distilbert_finetune.py) is NOT part
+# of the serving path -- it's a comparison experiment, see
+# docs/distilbert_finetune_result.md for the numbers. Its checkpoints are
+# ~2.5GB (full model.safetensors per checkpoint + epoch), regenerable by
+# re-running that script, and would blow well past what's reasonable to
+# commit for a result already captured in docs/.
+models/distilbert_finetuned/
 
 .venv/
 venv/

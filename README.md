@@ -166,8 +166,10 @@ enough to justify the added complexity and risk. Full reasoning for not adopting
 in production: `docs/embedding_loo_result.md` and `docs/decisions.md`. The takeaway:
 even in the most favorable non-leaked test available, TF-IDF lexical similarity
 struggles specifically because this corpus's attacks were deliberately written to be
-diverse from each other — a real semantic embedding (the deferred DistilBERT path)
-would be expected to do meaningfully better here.
+diverse from each other. (The natural next question — would a real semantic
+embedding do better — was tested directly, not just assumed: see
+[`docs/distilbert_finetune_result.md`](docs/distilbert_finetune_result.md).
+Short answer: no, not on this data.)
 
 ---
 
@@ -246,7 +248,7 @@ knowing:
 | Attack corpus (36 cases, 5 categories), rule-based detector, FastAPI middleware, adaptive thresholding, streaming cutoff, live dashboard | **Real**, run and measured. |
 | Embedding-similarity layer | **Real technique, honest substitution** — TF-IDF + cosine similarity, not transformer sentence embeddings. Measured correctly it detects **0%** of this corpus (the earlier 97% was train/test leakage — [`HIGHLIGHTS.md`](HIGHLIGHTS.md)). |
 | "Fine-tuned classifier" layer | **Real from-scratch torch model**, not a DistilBERT fine-tune. Real training loop, seeded/reproducible, **50%** detection. |
-| `scripts/train_distilbert_finetune.py` | **Written, never run.** Correct code for an environment with model-hub access; its docstring says so. Treat its expected numbers as a hypothesis. |
+| `scripts/train_distilbert_finetune.py` | **Run for real (2026-09-11).** Tied `scratch_classifier` exactly on detection rate, false-positive rate, *and* domain-shift false-positive rate — at ~325x the latency. The "pretrained should meaningfully outperform" hypothesis this script carried for months did not hold. See [`docs/distilbert_finetune_result.md`](docs/distilbert_finetune_result.md). |
 | Backends | `stub_ops_agent` (deliberately undefended stand-in), `trivial_echo`, `project2_agent` (best-effort reconstruction with its own tool-auth), and **`operations_assistant`** — an HTTP adapter to the *real* Project 2 RAG service, enabled when `OPS_ASSISTANT_URL` is set (see [`DEPLOY.md`](DEPLOY.md)). |
 
 ---

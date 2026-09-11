@@ -1,0 +1,47 @@
+{
+  "detection_rate": 0.5,
+  "n_should_block": 30,
+  "n_missed": 15,
+  "false_positive_rate": 0.0,
+  "n_should_allow": 4,
+  "n_false_positives": 0,
+  "avg_latency_ms": 34.8547138823455,
+  "missed": [
+    "GW-004",
+    "GW-005",
+    "GW-006",
+    "GW-010",
+    "GW-012",
+    "GW-014",
+    "GW-015",
+    "GW-016",
+    "GW-017",
+    "GW-021",
+    "GW-022",
+    "GW-024",
+    "GW-029",
+    "GW-030",
+    "GW-031"
+  ],
+  "false_positives": [],
+  "ambiguous": [
+    [
+      "GW-018",
+      false
+    ],
+    [
+      "GW-036",
+      false
+    ]
+  ],
+  "trainer_eval_metrics": {
+    "eval_loss": 0.9641752243041992,
+    "eval_precision": 1.0,
+    "eval_recall": 0.46875,
+    "eval_false_positive_rate": 0.0,
+    "eval_runtime": 0.7808,
+    "eval_samples_per_second": 46.106,
+    "eval_steps_per_second": 2.561,
+    "epoch": 3.0
+  }
+}

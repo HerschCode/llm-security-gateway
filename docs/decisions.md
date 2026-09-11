@@ -92,6 +92,53 @@ actual run and its results.
 
 ---
 
+## 2026-09-11 — DistilBERT fine-tune: ran it. The hypothesis didn't hold.
+
+Ran `scripts/train_distilbert_finetune.py` for real: `distilbert-base-uncased`,
+3 epochs, batch 32, same train/eval split and scoring methodology as
+`scripts/evaluate.py`. Took ~63 minutes wall-clock (longer than the ~15-20 min
+benchmark estimate — one checkpoint save between steps 112-113 stalled for
+~33 minutes for a reason not diagnosed; noted rather than quietly excluded from
+the total).
+
+**Result: exact tie with `scratch_classifier`** — 50% detection (15/30), 0%
+false-positive rate (0/4) on the standard corpus. Also ran it against the
+domain-shift held-out benign set from `docs/domain_shift_fix.md`
+(`scripts/measure_distilbert_domain_shift.py`, new): **1/10 (10%)** false
+positives — the same rate, on the same query, as the scratch classifier.
+
+This directly tests (not just repeats) the hypothesis this script's docstring
+carried since 2026-09-05: "a real DistilBERT fine-tune should meaningfully
+outperform the from-scratch classifier... because pretrained language
+understanding generalizes better." **It didn't.** Identical accuracy, identical
+domain-shift generalization, at ~325x the latency (34.9ms vs 0.11ms/request).
+The missed-case sets aren't even identical (11 of 15 overlap, 4 differ each
+way) — two different failure patterns landing on the same aggregate number, not
+the same model twice.
+
+Plausible reasons (reasoning, not a second unverified claim): 2,020 training
+rows may just not be enough for either architecture to pull ahead, and/or this
+corpus's attacks being deliberately lexically diverse from each other (see the
+LOO-CV finding above) may resist a transformer's attention the same way it
+resisted TF-IDF. 3 epochs at this learning rate is also an untuned recipe, not
+an exhaustively searched one.
+
+**Consequence:** no change to production. `gateway/detectors/classifier_numpy.py`
+(the from-scratch classifier, served torch-free — see the entry above) remains
+the right choice on every axis this comparison measured. What this closes is
+the "hypothesis, not a result" caveat that sat in this repo for weeks — it's
+now a measured result, and the measured result is "no meaningful difference,"
+which is a more useful thing to know than an untested "presumably better."
+
+Full write-up: [`docs/distilbert_finetune_result.md`](distilbert_finetune_result.md).
+`docs/comparison_table.md` has the 4th row. The fine-tuned checkpoint (~2.5GB
+across 3 epoch checkpoints + final) is gitignored (`models/distilbert_finetuned/`)
+-- not part of the serving path, regenerable by re-running the script, and
+several orders of magnitude past what's reasonable to commit for a result
+already captured in `docs/`.
+
+---
+
 ## 2026-09-07 — Cross-service connectivity
 
 All three portfolio services are on Render. Made the P3 -> P2 link actually work
