@@ -125,6 +125,7 @@ docker compose -f docker-compose.trilogy.yml up --build
 | Var | Where | Required? | What |
 |---|---|---|---|
 | `GATEWAY_LITE` | gateway | no (default `0`) | `1` opts into a smaller ensemble (rule-based + embedding only). No longer needed for RAM — layer 3 is served torch-free either way, see `docs/decisions.md` |
+| `EMBEDDING_BACKEND` | gateway | no (default `tfidf`) | `sentence_transformer` swaps layer 2 to a real MiniLM embedding (23% detection vs TF-IDF's 0%, see `docs/sentence_transformer_similarity_result.md`) — needs `pip install sentence-transformers` and `python scripts/fit_sentence_transformer_detector.py` first; re-adds torch, so not used by the free-tier deploy |
 | `PORT` | gateway | no (default `8000`) | Render sets this automatically |
 | `OPS_ASSISTANT_URL` | gateway | only for the real-P2 backend | e.g. `http://operations-assistant:8001`; if unset the backend is not registered |
 | `OPS_ASSISTANT_CHAT_PATH` | gateway | no (default `/chat`) | set to `/demo/chat` to use P2's keyless public endpoint instead of the API-key one. A 401 on `/chat` auto-falls-back to `/demo/chat` regardless |

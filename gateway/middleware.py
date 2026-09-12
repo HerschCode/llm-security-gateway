@@ -24,7 +24,6 @@ from dataclasses import dataclass, field
 from gateway.adaptive_threshold import AdaptiveThresholdTracker
 from gateway.adapters.base import BackendAdapter
 from gateway.detectors import rule_based
-from gateway.detectors.embedding_similarity import EmbeddingSimilarityDetector, SIMILARITY_THRESHOLD
 from gateway.logging_schema import GatewayLogger, LogRecord
 
 # CLASSIFIER_THRESHOLD is re-declared here (rather than imported from a
@@ -42,6 +41,14 @@ from gateway.logging_schema import GatewayLogger, LogRecord
 # part for a quick smoke test), not because anything requires it anymore.
 CLASSIFIER_THRESHOLD = 0.5
 LITE_MODE = os.environ.get("GATEWAY_LITE", "").lower() in ("1", "true", "yes")
+
+# Layer 2 backend: "tfidf" (default, torch-free, what the free-tier deploy
+# runs) or "sentence_transformer" (opt-in, real semantic embeddings, needs
+# `pip install sentence-transformers` -- pulls in torch). See
+# gateway/detectors/embedding_similarity_st.py's docstring and
+# docs/sentence_transformer_similarity_result.md for the measured trade-off
+# that makes this opt-in rather than the default.
+EMBEDDING_BACKEND = os.environ.get("EMBEDDING_BACKEND", "tfidf").lower()
 from gateway.pii import scan_and_redact
 from gateway.response_checks import check_jailbreak_compliance, check_system_prompt_leak
 from gateway.role_exposure import check as check_role_exposure
@@ -58,8 +65,19 @@ class GatewayResponse:
 
 class GatewayMiddleware:
     def __init__(self):
-        self.embedding_detector = EmbeddingSimilarityDetector()
+        self.embedding_backend = EMBEDDING_BACKEND
+        if self.embedding_backend == "sentence_transformer":
+            from gateway.detectors.embedding_similarity_st import (
+                SentenceTransformerSimilarityDetector, SIMILARITY_THRESHOLD as EMB_THRESHOLD,
+            )
+            self.embedding_detector = SentenceTransformerSimilarityDetector()
+        else:
+            from gateway.detectors.embedding_similarity import (
+                EmbeddingSimilarityDetector, SIMILARITY_THRESHOLD as EMB_THRESHOLD,
+            )
+            self.embedding_detector = EmbeddingSimilarityDetector()
         self.embedding_detector.load()
+        self.similarity_threshold = EMB_THRESHOLD
 
         # GATEWAY_LITE=1: deliberately run a smaller ensemble (see the module
         # docstring above for why this is no longer a torch/RAM necessity).
@@ -93,7 +111,7 @@ class GatewayMiddleware:
             self.adaptive_tracker.record_block(session_id)
             return True, "rule_based", rb_result.matched_pattern_id, per_layer
 
-        emb_threshold = SIMILARITY_THRESHOLD * multiplier
+        emb_threshold = self.similarity_threshold * multiplier
         emb_result = self.embedding_detector.detect(text, threshold=emb_threshold)
         per_layer["embedding_similarity"] = {
             "blocked": emb_result.blocked, "latency_ms": emb_result.latency_ms,

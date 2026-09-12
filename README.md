@@ -101,9 +101,24 @@ this wasn't always true, and the difference matters enormously).
 | Layer | Detection rate | False-positive rate | Avg latency (ms) |
 |---|---|---|---|
 | rule_based | 23% (7/30) | 0% (0/4) | 0.024 |
-| embedding_similarity | 0% (0/30) | 0% (0/4) | 6.566 |
+| embedding_similarity (TF-IDF, in production) | 0% (0/30) | 0% (0/4) | 6.566 |
+| embedding_similarity_st (sentence-transformer, opt-in) | 23% (7/30) | 0% (0/4) | 44.225 |
 | scratch_classifier (in production) | 50% (15/30) | 0% (0/4) | 0.107 |
-| distilbert_finetuned | 50% (15/30) | 0% (0/4) | 34.855 |
+| distilbert_finetuned (comparison only) | 50% (15/30) | 0% (0/4) | 34.855 |
+
+Two of these rows are experiments run to actually test a hypothesis this
+project had previously only stated:
+
+`embedding_similarity_st` swaps TF-IDF for a real `all-MiniLM-L6-v2` embedding
+on the *same* known-bad index, threshold independently swept (0.35 isn't
+comparable across different similarity distributions). **Confirms TF-IDF's 0%
+is an architecture ceiling, not a tuning problem** — a real embedding finds
+signal TF-IDF structurally can't, non-leaked, from the same public dataset. Set
+`EMBEDDING_BACKEND=sentence_transformer` to run it — kept opt-in rather than
+default because it's still the weakest real detector (23% vs. the
+classifier's 50%) at ~440x the classifier's latency, and it would re-introduce
+torch into the serving path this project deliberately removed (see below).
+Full writeup: [`docs/sentence_transformer_similarity_result.md`](docs/sentence_transformer_similarity_result.md).
 
 `distilbert_finetuned` is a real fine-tuned `distilbert-base-uncased` run
 (precision 1.0, recall 0.469 on the trainer's own internal eval split — a
@@ -115,6 +130,20 @@ nothing over a from-scratch model trained on the same ~2,000 rows, including
 on the domain-shift false-positive test (`docs/domain_shift_fix.md`). Full
 writeup, training run details, and the raw eval JSON:
 [`docs/distilbert_finetune_result.md`](docs/distilbert_finetune_result.md).
+
+### Throughput and concurrency — measured, including a bottleneck found and diagnosed
+
+`scripts/measure_throughput.py` hits a live `uvicorn` process with a mixed
+benign+attack payload set at concurrency 1/10/50. Single worker: **req/s stays
+flat (~21-26) as concurrency rises to 50, while p50 latency grows almost
+linearly with it (38.7ms → 405.0ms → 1948.7ms)** — a serialization signature,
+not real parallelism. Diagnosed (not just observed): the detection work is
+CPU-bound Python/numpy running inside a thread pool, and the GIL prevents that
+from actually running concurrently across threads. Verified the diagnosis by
+testing the fix: `--workers 4` (separate processes, separate GILs) roughly
+doubles throughput and halves p50 latency at concurrency 50 — real, but not a
+clean 4x, an unresolved second-order bottleneck reported rather than rounded
+away. Full writeup: [`docs/throughput_report.md`](docs/throughput_report.md).
 
 ### The biggest finding in this project: train/test leakage, found and fixed
 
@@ -283,7 +312,7 @@ knowing:
 | Component | Status |
 |---|---|
 | Attack corpus (36 cases, 5 categories), rule-based detector, FastAPI middleware, adaptive thresholding, streaming cutoff, live dashboard | **Real**, run and measured. |
-| Embedding-similarity layer | **Real technique, honest substitution** — TF-IDF + cosine similarity, not transformer sentence embeddings. Measured correctly it detects **0%** of this corpus (the earlier 97% was train/test leakage — [`HIGHLIGHTS.md`](HIGHLIGHTS.md)). |
+| Embedding-similarity layer | **Real technique, honest substitution, tested against the real thing.** Production default is TF-IDF + cosine similarity, detects **0%** of this corpus (the earlier 97% was train/test leakage — [`HIGHLIGHTS.md`](HIGHLIGHTS.md)). A real sentence-transformer alternative was built and measured (**23% at 0% FP** on the identical index) — confirms 0% is an architecture ceiling, not a tuning miss. Available opt-in (`EMBEDDING_BACKEND=sentence_transformer`), not default (still weakest detector, ~440x the latency, re-adds torch). See `docs/sentence_transformer_similarity_result.md`. |
 | "Fine-tuned classifier" layer | **Real from-scratch torch model**, not a DistilBERT fine-tune. Real training loop, seeded/reproducible, **50%** detection. |
 | `scripts/train_distilbert_finetune.py` | **Run for real (2026-09-11).** Tied `scratch_classifier` exactly on detection rate, false-positive rate, *and* domain-shift false-positive rate — at ~325x the latency. The "pretrained should meaningfully outperform" hypothesis this script carried for months did not hold. See [`docs/distilbert_finetune_result.md`](docs/distilbert_finetune_result.md). |
 | Backends | `stub_ops_agent` (deliberately undefended stand-in), `trivial_echo`, `project2_agent` (best-effort reconstruction with its own tool-auth), and **`operations_assistant`** — an HTTP adapter to the *real* Project 2 RAG service, enabled when `OPS_ASSISTANT_URL` is set (see [`DEPLOY.md`](DEPLOY.md)). |
@@ -302,11 +331,16 @@ knowing:
   layer 3 is now *served* without torch at all, via
   `gateway/detectors/classifier_numpy.py` — a serving-cost fix, not a change to
   what the model is or how well it detects.)
-- **Embedding-similarity provides no measurable generalization** from the public
-  training dataset to this project's own attack corpus (0% detection, honestly
-  measured). It's currently dead weight in the ensemble rather than a
-  contributing layer. Kept in the pipeline for the architecture comparison's
-  sake, not because it's pulling its weight.
+- **TF-IDF embedding-similarity (the production default) provides no measurable
+  generalization** from the public training dataset to this project's own
+  attack corpus (0% detection, honestly measured) — dead weight in the
+  ensemble. **Confirmed to be an architecture problem, not a tuning problem**:
+  a real sentence-transformer embedding on the identical known-bad index gets
+  23% detection at 0% FP (see the throughput/comparison section above). Built
+  as a real opt-in backend (`EMBEDDING_BACKEND=sentence_transformer`) rather
+  than silently left unfixed — not made the default because it's still the
+  weakest real detector at the highest cost, and it would re-introduce torch
+  into the serving path. See `docs/sentence_transformer_similarity_result.md`.
 - **~10% residual false-positive rate** on unseen in-domain benign queries after the
   domain-shift fix (down from a genuine, reproducible 60% before it — see
   `docs/domain_shift_fix.md`). Not necessarily 10% on the next retrain: see the next
@@ -355,6 +389,19 @@ knowing:
 - **Post-flight checks are heuristic, not a data-lineage tracker.** They catch
   restricted content that matches known patterns, not arbitrary rephrasing of
   restricted data.
+- **A single-worker deployment does not scale with concurrent load** — measured,
+  not assumed: req/s stays flat from concurrency 1 to 50 while p50 latency grows
+  almost linearly, because the CPU-bound detection work runs in a GIL-bound
+  thread pool. `--workers N` measurably helps (throughput roughly doubled at
+  N=4) but doesn't scale cleanly even then — a second, undiagnosed bottleneck
+  remains. Full measurement and diagnosis: `docs/throughput_report.md`.
+- **The append-only JSONL audit log (`logs/gateway.jsonl`) is single-file,
+  single-node.** Fine for a portfolio demo's traffic volume; a real production
+  deployment would need it shipped to something built for this (e.g. a
+  structured-logging pipeline into ClickHouse/Postgres with time-series
+  partitioning, or Kafka if multiple gateway instances need to write
+  concurrently) rather than N processes appending to the same local file. Not
+  built here — stated as the known next step, not silently absent.
 
 ---
 

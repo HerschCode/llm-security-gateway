@@ -92,6 +92,78 @@ actual run and its results.
 
 ---
 
+## 2026-09-12 — Tested real sentence-transformer embeddings for layer 2
+
+Same reasoning as the DistilBERT entry below applied to the OTHER documented
+substitution in this project: `gateway/detectors/embedding_similarity.py`
+(TF-IDF) has said since 2026-09-05 that swapping in real sentence embeddings
+was "a drop-in change... if this ever runs somewhere with model-hub access."
+That access exists now. Tested it instead of continuing to let that sentence
+sit unverified.
+
+`scripts/evaluate_sentence_transformer_similarity.py`: `all-MiniLM-L6-v2`,
+same known-bad index as TF-IDF (`data/train.csv` label==1, 1,000 rows),
+threshold independently swept (0.30-0.70) rather than reusing TF-IDF's 0.35 —
+a different embedding space's cosine similarities aren't the same numbers.
+
+**Result: 23% detection (7/30) at 0% false positives (threshold 0.45), vs
+TF-IDF's 0%.** Confirms TF-IDF's zero is a real architectural ceiling, not a
+threshold-tuning failure — a semantic embedding, on the exact same reference
+set, finds signal TF-IDF structurally cannot. Still the weakest real detector
+in the ensemble (`scratch_classifier` gets 50% at 1/440th the latency), and it
+would cost re-introducing torch to the serving path — the dependency the
+2026-09-11 classifier work removed specifically to fit Render's free tier.
+
+**Decision: built it as a real, working, OPT-IN backend
+(`gateway/detectors/embedding_similarity_st.py`,
+`EMBEDDING_BACKEND=sentence_transformer`), not adopted as the default.**
+Verified end-to-end through `GatewayMiddleware` with the env var set — it
+correctly loads, indexes, and blocks a paraphrase-style attack TF-IDF misses.
+Full reasoning and the full threshold sweep:
+[`docs/sentence_transformer_similarity_result.md`](sentence_transformer_similarity_result.md).
+This is the same "measure the real trade-off, decide with the number in hand"
+discipline `docs/embedding_loo_result.md` already established for a different
+version of this same question — the difference this time is the improvement
+is real and non-leaked (0% -> 23% from the public dataset alone), just still
+not worth making the default.
+
+---
+
+## 2026-09-12 — Throughput benchmark: a real concurrency bottleneck, found and diagnosed
+
+Built `scripts/measure_throughput.py` (live HTTP, real uvicorn, mixed
+benign+attack payload set, concurrency 1/10/50) in response to a fair
+criticism this project had no answer to: no throughput numbers existed
+anywhere in this repo.
+
+**Finding: the gateway does not scale with concurrency on a single worker.**
+req/s stayed flat (~21-26) from concurrency 1 to 50, while p50 latency grew
+almost exactly linearly with concurrency (38.7ms -> 405.0ms -> 1948.7ms) —
+the signature of requests being serialized, not parallelized.
+
+**Diagnosed, not just observed:** `/gateway/chat` is a synchronous `def`
+route, so Starlette runs it in a thread pool — but the actual detection work
+(TF-IDF cosine similarity, the numpy classifier) is CPU-bound Python/numpy,
+which the GIL prevents from running in true parallel across those threads.
+More concurrent requests just means more threads taking turns.
+
+**Verified the diagnosis by testing the fix, not just asserting it:** reran
+the identical benchmark with `uvicorn --workers 4` (separate processes, real
+parallelism). Throughput roughly doubled at concurrency 50 (22.5 -> 47.2
+req/s), p50 roughly halved (1948.7ms -> 924.1ms) — consistent with a GIL-bound
+diagnosis. Not a clean 4x, though, which is reported honestly as an
+unresolved second-order bottleneck (plausibly OS thread-pool scheduling, or
+contention on the shared JSONL log across processes) rather than rounded up to
+"basically fixed."
+
+**Not fixed in code this session** — filed as a documented, measured
+limitation with a stated production path (`--workers N`, or moving detection
+off the request thread pool entirely) rather than either hidden or patched
+half-carefully under time pressure. Full write-up:
+[`docs/throughput_report.md`](throughput_report.md).
+
+---
+
 ## 2026-09-11 — DistilBERT fine-tune: ran it. The hypothesis didn't hold.
 
 Ran `scripts/train_distilbert_finetune.py` for real: `distilbert-base-uncased`,

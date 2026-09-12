@@ -1,0 +1,32 @@
+[
+  {
+    "concurrency": 1,
+    "n_requests": 200,
+    "wall_seconds": 8.556,
+    "req_per_sec": 23.38,
+    "p50_ms": 44.35,
+    "p95_ms": 48.17,
+    "p99_ms": 53.61,
+    "max_ms": 371.8
+  },
+  {
+    "concurrency": 10,
+    "n_requests": 200,
+    "wall_seconds": 5.054,
+    "req_per_sec": 39.57,
+    "p50_ms": 205.53,
+    "p95_ms": 475.05,
+    "p99_ms": 530.8,
+    "max_ms": 543.65
+  },
+  {
+    "concurrency": 50,
+    "n_requests": 200,
+    "wall_seconds": 4.235,
+    "req_per_sec": 47.22,
+    "p50_ms": 924.11,
+    "p95_ms": 1339.09,
+    "p99_ms": 1429.87,
+    "max_ms": 1434.99
+  }
+]

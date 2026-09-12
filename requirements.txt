@@ -29,3 +29,10 @@ pytest==9.1.1
 # transformers>=4.40
 # datasets>=2.19
 # accelerate>=1.1.0
+
+# NOT required for the default TF-IDF layer 2 -- only for the opt-in real
+# semantic-embedding backend (EMBEDDING_BACKEND=sentence_transformer, see
+# gateway/detectors/embedding_similarity_st.py and
+# docs/sentence_transformer_similarity_result.md). Left commented for the same
+# reason as above: don't fetch a ~90MB model nobody asked for by default.
+# sentence-transformers>=3.0

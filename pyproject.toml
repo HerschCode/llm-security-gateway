@@ -17,12 +17,19 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# Layer 3 (from-scratch torch classifier). Omit for GATEWAY_LITE=1 deploys.
+# Only needed to TRAIN layer 3 (scripts/train_scratch_classifier.py). Serving
+# it (gateway/detectors/classifier_numpy.py) needs no torch at all -- see
+# docs/decisions.md, 2026-09-11.
 classifier = ["torch>=2.0"]
 dev = ["pytest>=8.0", "torch>=2.0"]
-# Only needed to run the deferred DistilBERT fine-tune script in an environment
-# with model-hub access -- see docs/decisions.md.
+# Only needed to run the (now-run-for-real, see docs/distilbert_finetune_result.md)
+# DistilBERT fine-tune comparison script.
 finetune = ["transformers>=4.40", "datasets>=2.19", "accelerate>=1.1.0"]
+# Opt-in layer 2 backend: real sentence-transformer embeddings instead of the
+# default TF-IDF. Pulls in torch -- not used by the free-tier deploy. See
+# gateway/detectors/embedding_similarity_st.py and
+# docs/sentence_transformer_similarity_result.md.
+semantic = ["sentence-transformers>=3.0"]
 
 [tool.setuptools.packages.find]
 include = ["gateway*"]

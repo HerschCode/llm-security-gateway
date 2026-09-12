@@ -7,21 +7,34 @@ from an actual run of `scripts/evaluate.py`, not estimated.
 | Layer | Detection rate | False-positive rate | Avg latency (ms) |
 |---|---|---|---|
 | rule_based | 23% (7/30) | 0% (0/4) | 0.022 |
-| embedding_similarity | 0% (0/30) | 0% (0/4) | 7.102 |
-| scratch_classifier | 50% (15/30) | 0% (0/4) | 0.107 |
-| distilbert_finetuned | 50% (15/30) | 0% (0/4) | 34.855 |
+| embedding_similarity (TF-IDF, production default) | 0% (0/30) | 0% (0/4) | 7.102 |
+| embedding_similarity_st (sentence-transformer, opt-in) | 23% (7/30) | 0% (0/4) | 44.225 |
+| scratch_classifier (production) | 50% (15/30) | 0% (0/4) | 0.107 |
+| distilbert_finetuned (comparison only, not deployed) | 50% (15/30) | 0% (0/4) | 34.855 |
 
-The 4th row is a real fine-tune run (2026-09-11, not a hypothetical) — same
-train/eval split and scoring methodology as the other three, via
-`scripts/train_distilbert_finetune.py`. It tied `scratch_classifier` on both
-detection and false-positive rate, at ~325x the latency. Full write-up,
-including the more important domain-shift comparison:
-[`distilbert_finetune_result.md`](distilbert_finetune_result.md).
+Two of these rows are real experiments run to test a hypothesis this project
+had previously only stated, not measured — both on 2026-09-11, once this
+environment's model-hub access made them possible (see `docs/decisions.md`):
+
+- **`embedding_similarity_st`**: swapping TF-IDF for a real
+  `all-MiniLM-L6-v2` embedding, same known-bad index, threshold independently
+  swept (not reused from TF-IDF — different similarity distribution). Confirms
+  TF-IDF's 0% is an architecture problem, not a tuning problem — but it's still
+  the weakest real detector at the highest cost, so it's opt-in
+  (`EMBEDDING_BACKEND=sentence_transformer`), not the default. Full write-up:
+  [`sentence_transformer_similarity_result.md`](sentence_transformer_similarity_result.md).
+- **`distilbert_finetuned`**: a real fine-tune run, same train/eval split and
+  scoring methodology as the other rows, via
+  `scripts/train_distilbert_finetune.py`. Tied `scratch_classifier` on both
+  detection and false-positive rate, at ~325x the latency — a comparison
+  experiment, never the deployed layer 3. Full write-up:
+  [`distilbert_finetune_result.md`](distilbert_finetune_result.md).
 
 ## Missed attacks (should have blocked, didn't)
 
 - **rule_based**: GW-004, GW-005, GW-006, GW-007, GW-009, GW-011, GW-012, GW-013, GW-015, GW-016, GW-017, GW-021, GW-022, GW-023, GW-024, GW-025, GW-026, GW-027, GW-028, GW-029, GW-030, GW-031, GW-033
 - **embedding_similarity**: GW-001, GW-002, GW-003, GW-004, GW-005, GW-006, GW-007, GW-008, GW-009, GW-010, GW-011, GW-012, GW-013, GW-014, GW-015, GW-016, GW-017, GW-021, GW-022, GW-023, GW-024, GW-025, GW-026, GW-027, GW-028, GW-029, GW-030, GW-031, GW-032, GW-033
+- **embedding_similarity_st** (threshold 0.45): GW-002, GW-004, GW-005, GW-006, GW-008, GW-010, GW-011, GW-012, GW-013, GW-014, GW-015, GW-016, GW-017, GW-022, GW-024, GW-025, GW-026, GW-027, GW-029, GW-030, GW-031, GW-032, GW-033 (catches GW-001, GW-003, GW-007, GW-009, GW-021, GW-023, GW-028 — the 7/30)
 - **scratch_classifier**: GW-004, GW-005, GW-006, GW-010, GW-011, GW-014, GW-015, GW-017, GW-021, GW-022, GW-025, GW-026, GW-027, GW-028, GW-029
 - **distilbert_finetuned**: GW-004, GW-005, GW-006, GW-010, GW-012, GW-014, GW-015, GW-016, GW-017, GW-021, GW-022, GW-024, GW-029, GW-030, GW-031
 
@@ -35,6 +48,7 @@ aggregate rate, not the same model twice.
 
 - **rule_based**: (none)
 - **embedding_similarity**: (none)
+- **embedding_similarity_st**: (none, at threshold 0.45 — see the full sweep in `sentence_transformer_similarity_result.md` for how quickly this changes at looser thresholds: 75% FP at 0.30)
 - **scratch_classifier**: (none)
 - **distilbert_finetuned**: (none)
 
@@ -42,5 +56,6 @@ aggregate rate, not the same model twice.
 
 - **rule_based**: GW-018=allowed, GW-036=allowed
 - **embedding_similarity**: GW-018=allowed, GW-036=allowed
+- **embedding_similarity_st**: GW-018=allowed, GW-036=allowed
 - **scratch_classifier**: GW-018=blocked, GW-036=blocked
 - **distilbert_finetuned**: GW-018=allowed, GW-036=allowed
