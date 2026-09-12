@@ -185,6 +185,22 @@ Short answer: no, not on this data.)
 
 ---
 
+## Audit logging
+
+Every request produces one append-only JSONL record per phase (pre-flight,
+post-flight) in `logs/gateway.jsonl` — `timestamp`, `session_id`, `user_id`
+(caller identity, threaded through from `process()`/`process_streaming()`),
+`decision` (allow/block), `detection_layer_used`, `matched_pattern_id`, and
+`latency_ms` (schema: [`gateway/logging_schema.py`](gateway/logging_schema.py)).
+Nothing is ever mutated after being written — a block decision is always
+attributable to a specific caller, session, and detection layer after the fact,
+which is the actual point of an audit log (who did what, when, and what the
+system decided) rather than just a debug trace. `GET /gateway/stats` and
+`/gateway/dashboard` (see above) read this same file live, so the audit trail
+and the live dashboard are one source of truth, not two.
+
+---
+
 ## Running it yourself
 
 **Fastest:** `docker compose up --build`, then open
@@ -201,6 +217,15 @@ verified against the original torch model in
 model, not to serve it. `GATEWAY_LITE=1` is kept as an opt-in smaller ensemble
 (rule-based + embedding only) if you want one, but it's no longer required for
 resource reasons on any of the run modes above.
+
+The service itself is stateless per-request (session/rate-limit state lives in
+in-process trackers, not a shared external store — see the note on running
+multiple instances under [Known limitations](#known-limitations-stated-plainly-not-buried)),
+so the same `Dockerfile` this project already builds runs unmodified as a
+Kubernetes `Deployment` behind a `Service` — no orchestrator-specific code
+required. No k8s manifests are checked in here since there's no cluster to
+demonstrate them against honestly; the point being made is container
+portability, not a claim of a tested k8s deployment.
 
 **From source:**
 

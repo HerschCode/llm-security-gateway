@@ -140,7 +140,7 @@ class GatewayMiddleware:
         session_check = self.session_tracker.record_and_check(session_id)
         if not session_check.allowed:
             self.logger.log(LogRecord(
-                timestamp=self.logger.now(), session_id=session_id, request_id=request_id,
+                timestamp=self.logger.now(), session_id=session_id, request_id=request_id, user_id=user_id,
                 phase="pre_flight", decision="block", detection_layer_used="session_check",
                 latency_ms=(time.perf_counter() - pre_start) * 1000,
                 matched_pattern_id=session_check.reason,
@@ -163,7 +163,7 @@ class GatewayMiddleware:
         pre_latency_ms = (time.perf_counter() - pre_start) * 1000
 
         self.logger.log(LogRecord(
-            timestamp=self.logger.now(), session_id=session_id, request_id=request_id,
+            timestamp=self.logger.now(), session_id=session_id, request_id=request_id, user_id=user_id,
             phase="pre_flight", decision="block" if blocked else "allow",
             detection_layer_used=layer_used, latency_ms=pre_latency_ms,
             matched_pattern_id=pattern_id,
@@ -206,7 +206,7 @@ class GatewayMiddleware:
             post_reason = "system_prompt_leak"
 
         self.logger.log(LogRecord(
-            timestamp=self.logger.now(), session_id=session_id, request_id=request_id,
+            timestamp=self.logger.now(), session_id=session_id, request_id=request_id, user_id=user_id,
             phase="post_flight", decision="block" if post_blocked else "allow",
             detection_layer_used="post_flight_checks", latency_ms=post_latency_ms,
             matched_pattern_id=post_reason,
@@ -276,7 +276,7 @@ class GatewayMiddleware:
         session_check = self.session_tracker.record_and_check(session_id)
         if not session_check.allowed:
             self.logger.log(LogRecord(
-                timestamp=self.logger.now(), session_id=session_id, request_id=request_id,
+                timestamp=self.logger.now(), session_id=session_id, request_id=request_id, user_id=user_id,
                 phase="pre_flight", decision="block", detection_layer_used="session_check",
                 latency_ms=0.0, matched_pattern_id=session_check.reason, extra={},
             ))
@@ -289,7 +289,7 @@ class GatewayMiddleware:
         blocked, layer_used, pattern_id, _ = self._run_injection_ensemble(context_text, session_id)
         if blocked:
             self.logger.log(LogRecord(
-                timestamp=self.logger.now(), session_id=session_id, request_id=request_id,
+                timestamp=self.logger.now(), session_id=session_id, request_id=request_id, user_id=user_id,
                 phase="pre_flight", decision="block", detection_layer_used=layer_used,
                 latency_ms=0.0, matched_pattern_id=pattern_id, extra={},
             ))
@@ -315,7 +315,7 @@ class GatewayMiddleware:
                 )
                 self.adaptive_tracker.record_block(session_id)
                 self.logger.log(LogRecord(
-                    timestamp=self.logger.now(), session_id=session_id, request_id=request_id,
+                    timestamp=self.logger.now(), session_id=session_id, request_id=request_id, user_id=user_id,
                     phase="post_flight", decision="block", detection_layer_used="streaming_post_flight",
                     latency_ms=0.0, matched_pattern_id=reason,
                     extra={"chars_generated_before_cutoff": len(buffer), "buffer_snippet": buffer[-80:]},
@@ -326,7 +326,7 @@ class GatewayMiddleware:
             yield {"chunk": chunk, "cut_off": False}
 
         self.logger.log(LogRecord(
-            timestamp=self.logger.now(), session_id=session_id, request_id=request_id,
+            timestamp=self.logger.now(), session_id=session_id, request_id=request_id, user_id=user_id,
             phase="post_flight", decision="allow", detection_layer_used="streaming_post_flight",
             latency_ms=0.0, matched_pattern_id=None, extra={"total_chars": len(buffer)},
         ))

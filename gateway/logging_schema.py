@@ -3,10 +3,15 @@ Logging schema (matches build doc's Tier-1 requirement exactly):
   timestamp, session_id, decision (allow/block), detection_layer_used,
   latency_ms, matched_pattern_id (if blocked)
 
-Plus a few fields beyond the minimum spec (request_id, phase, category) that
-make the log actually useful for the attack-simulation report and for
+Plus a few fields beyond the minimum spec (request_id, phase, category, user_id)
+that make the log actually useful for the attack-simulation report and for
 distinguishing pre-flight blocks from post-flight blocks -- noted here since
 it's an intentional addition, not scope creep on the logging schema itself.
+
+This JSONL file is this project's audit trail: every request gets an
+append-only, per-phase record of who (user_id/session_id), what (decision,
+matched_pattern_id), and when (timestamp) -- see the "Audit logging" section
+in README.md for how it's used (compliance framing, dashboard queries).
 """
 import json
 import time
@@ -28,6 +33,7 @@ class LogRecord:
     latency_ms: float
     matched_pattern_id: str | None
     extra: dict = field(default_factory=dict)
+    user_id: str = "unknown"        # caller identity, for audit attribution -- see module docstring
 
 
 class GatewayLogger:
