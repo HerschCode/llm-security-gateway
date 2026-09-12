@@ -32,13 +32,20 @@ def load_cases():
         return yaml.safe_load(f)
 
 
-def call_gateway(base_url: str, prompt: str, session_id: str, backend: str, role: str = "employee"):
-    with httpx.Client(timeout=10.0) as client:
-        resp = client.post(f"{base_url}/gateway/chat", json={
-            "prompt": prompt, "session_id": session_id, "role": role, "backend": backend,
-        })
-        resp.raise_for_status()
-        return resp.json()
+def call_gateway(client: httpx.Client, base_url: str, prompt: str, session_id: str,
+                  backend: str, role: str = "employee"):
+    # A shared client (passed in, not created per call) matters here: opening
+    # a fresh httpx.Client -- and therefore a fresh TCP connection -- for
+    # every single one of 72 requests added ~2s of connection-setup overhead
+    # PER CASE on this machine (a >70x latency inflation versus the gateway's
+    # own measured ~20-40ms concurrency-1 cost in docs/throughput_report.md).
+    # Found by comparing this script's reported per-case latency against that
+    # benchmark's numbers, not assumed -- see docs/decisions.md.
+    resp = client.post(f"{base_url}/gateway/chat", json={
+        "prompt": prompt, "session_id": session_id, "role": role, "backend": backend,
+    })
+    resp.raise_for_status()
+    return resp.json()
 
 
 BACKEND_REGISTRY = {
@@ -72,39 +79,41 @@ def main():
     cases = load_cases()
     results = []
 
-    for case in cases:
-        start = time.perf_counter()
-        try:
-            if args.bypass_gateway:
-                response_text = call_backend_directly(case["payload"], args.backend)
-                # "Direct" mode has no block concept -- backend always responds.
-                allowed = True
-                block_reason = None
-            else:
-                resp = call_gateway(args.target, case["payload"], session_id=f"redteam-{case['id']}", backend=args.backend)
-                allowed = resp["allowed"]
-                block_reason = resp.get("block_reason")
-                response_text = resp.get("response")
-        except httpx.ConnectError:
-            print(f"ERROR: could not connect to {args.target} -- is the gateway running?")
-            print(f"Start it with: uvicorn gateway.app:app --port 8000")
-            sys.exit(1)
+    with httpx.Client(timeout=10.0) as client:
+        for case in cases:
+            start = time.perf_counter()
+            try:
+                if args.bypass_gateway:
+                    response_text = call_backend_directly(case["payload"], args.backend)
+                    # "Direct" mode has no block concept -- backend always responds.
+                    allowed = True
+                    block_reason = None
+                else:
+                    resp = call_gateway(client, args.target, case["payload"],
+                                         session_id=f"redteam-{case['id']}", backend=args.backend)
+                    allowed = resp["allowed"]
+                    block_reason = resp.get("block_reason")
+                    response_text = resp.get("response")
+            except httpx.ConnectError:
+                print(f"ERROR: could not connect to {args.target} -- is the gateway running?")
+                print(f"Start it with: uvicorn gateway.app:app --port 8000")
+                sys.exit(1)
 
-        latency_ms = (time.perf_counter() - start) * 1000
+            latency_ms = (time.perf_counter() - start) * 1000
 
-        expected = case["expected_behavior"]
-        if expected == "block":
-            passed = not allowed
-        elif expected == "allow":
-            passed = allowed
-        else:  # "flag" -- ambiguous case, always "informational", never fails the run
-            passed = True
+            expected = case["expected_behavior"]
+            if expected == "block":
+                passed = not allowed
+            elif expected == "allow":
+                passed = allowed
+            else:  # "flag" -- ambiguous case, always "informational", never fails the run
+                passed = True
 
-        results.append({
-            "id": case["id"], "category": case["category"], "expected": expected,
-            "allowed": allowed, "block_reason": block_reason, "passed": passed,
-            "latency_ms": latency_ms, "response_snippet": (response_text or "")[:100],
-        })
+            results.append({
+                "id": case["id"], "category": case["category"], "expected": expected,
+                "allowed": allowed, "block_reason": block_reason, "passed": passed,
+                "latency_ms": latency_ms, "response_snippet": (response_text or "")[:100],
+            })
 
     # --- Report ---
     n_pass = sum(1 for r in results if r["passed"])

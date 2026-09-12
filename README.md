@@ -13,7 +13,7 @@ auth/rate-limiting.
 ![architecture](docs/architecture.svg)
 
 **What it demonstrably does:** with the gateway bypassed, a naive backend complies
-with 30/36 attacks in the hand-built corpus. With the gateway in front, 29/36 are
+with 56/72 attacks in the hand-built corpus. With the gateway in front, 50/72 are
 handled correctly end-to-end over a live FastAPI service — not an in-process call.
 The value is the *ensemble* (defense-in-depth), not any single layer; the honest
 per-layer numbers, including a train/test leakage bug that was found and fixed, are
@@ -95,19 +95,36 @@ Replace this package wholesale once the real Project 2 codebase exists.
 ## Detection layer comparison (the actual centerpiece)
 
 Run via `python scripts/evaluate.py`, scored against `data/eval.csv` — our own
-36-case corpus, **strictly held out from training** (see the leakage note below —
-this wasn't always true, and the difference matters enormously).
+72-case corpus (expanded from 36 on 2026-09-12 in response to external review —
+see [`docs/corpus_expansion_result.md`](docs/corpus_expansion_result.md)),
+**strictly held out from training** (see the leakage note below — this wasn't
+always true, and the difference matters enormously).
 
 | Layer | Detection rate | False-positive rate | Avg latency (ms) |
 |---|---|---|---|
-| rule_based | 23% (7/30) | 0% (0/4) | 0.024 |
-| embedding_similarity (TF-IDF, in production) | 0% (0/30) | 0% (0/4) | 6.566 |
-| embedding_similarity_st (sentence-transformer, opt-in) | 23% (7/30) | 0% (0/4) | 44.225 |
-| scratch_classifier (in production) | 50% (15/30) | 0% (0/4) | 0.107 |
-| distilbert_finetuned (comparison only) | 50% (15/30) | 0% (0/4) | 34.855 |
+| rule_based | 16% (9/56) | 8% (1/12) | 0.018 |
+| embedding_similarity (TF-IDF, in production) | 0% (0/56) | 0% (0/12) | 5.654 |
+| embedding_similarity_st (sentence-transformer, opt-in) | 23% (13/56) | 0% (0/12) | 47.443 |
+| scratch_classifier (in production) | 48% (27/56) | 25% (3/12) | 0.090 |
+| distilbert_finetuned (comparison only) | 52% (29/56) | 25% (3/12) | 364.5* |
 
-Two of these rows are experiments run to actually test a hypothesis this
-project had previously only stated:
+\* single-inference CPU timing, varies run-to-run — see `docs/comparison_table.md`'s footnote.
+
+**These are the 72-case numbers** (expanded from 36 on 2026-09-12 — see
+[`docs/corpus_expansion_result.md`](docs/corpus_expansion_result.md)). The
+expansion tripled negative-control coverage (4 → 12 cases) and found two real
+false positives a smaller eval set was structurally incapable of catching:
+`rule_based` blocks a benign "please decode this" request (a rule meant for
+GW-010-style encoded attacks can't tell benign decode requests from malicious
+ones), and `scratch_classifier`'s false-positive rate is actually **25%, not
+the 0% every prior version of this README reported** — both borderline
+(confidence 0.52-0.53) and one more confident miss on the word "disregard"
+outside an override context. Full root-cause analysis, per-case confidence
+scores, and reasoning for why neither was patched same-session:
+[`docs/corpus_expansion_result.md`](docs/corpus_expansion_result.md).
+
+Two of these rows are separate experiments run to actually test a hypothesis
+this project had previously only stated:
 
 `embedding_similarity_st` swaps TF-IDF for a real `all-MiniLM-L6-v2` embedding
 on the *same* known-bad index, threshold independently swept (0.35 isn't
@@ -116,20 +133,19 @@ is an architecture ceiling, not a tuning problem** — a real embedding finds
 signal TF-IDF structurally can't, non-leaked, from the same public dataset. Set
 `EMBEDDING_BACKEND=sentence_transformer` to run it — kept opt-in rather than
 default because it's still the weakest real detector (23% vs. the
-classifier's 50%) at ~440x the classifier's latency, and it would re-introduce
+classifier's 48%) at ~500x the classifier's latency, and it would re-introduce
 torch into the serving path this project deliberately removed (see below).
 Full writeup: [`docs/sentence_transformer_similarity_result.md`](docs/sentence_transformer_similarity_result.md).
 
-`distilbert_finetuned` is a real fine-tuned `distilbert-base-uncased` run
-(precision 1.0, recall 0.469 on the trainer's own internal eval split — a
-different, non-comparable metric definition from the detection-rate/FPR
-columns above, so not mixed into the same cells), scored with the exact same
-methodology as every other row. **Identical accuracy to the from-scratch
-classifier, ~325x the latency** — pretrained language understanding bought
-nothing over a from-scratch model trained on the same ~2,000 rows, including
-on the domain-shift false-positive test (`docs/domain_shift_fix.md`). Full
-writeup, training run details, and the raw eval JSON:
-[`docs/distilbert_finetune_result.md`](docs/distilbert_finetune_result.md).
+`distilbert_finetuned` is a real fine-tuned `distilbert-base-uncased` run,
+re-scored on the expanded corpus (`scripts/rescore_distilbert.py`, inference
+only, no retraining needed), scored with the exact same methodology as every
+other row. **Ties the from-scratch classifier within a few points on both
+metrics, at 2-3 orders of magnitude the latency** — pretrained language
+understanding bought nothing over a from-scratch model trained on the same
+~2,000 rows, including on the domain-shift false-positive test
+(`docs/domain_shift_fix.md`). Full writeup, training run details, and the raw
+eval JSON: [`docs/distilbert_finetune_result.md`](docs/distilbert_finetune_result.md).
 
 ### Throughput and concurrency — measured, including a bottleneck found and diagnosed
 
@@ -172,7 +188,7 @@ declaring victory on a suspiciously good number.
 ### The gateway's real value is the ensemble, not any one layer
 
 Despite the above, the gateway still measurably works end-to-end:
-**6/36 pass without the gateway, 29/36 pass with it** (see
+**16/72 pass without the gateway, 50/72 pass with it** (see
 [Proof requirements](#proof-requirements)) — because rule-based catches the most
 literal attacks outright, the classifier catches a real (if partial) share of the
 rest, and the post-flight role-exposure/compliance/leak checks catch what pre-flight
@@ -180,20 +196,21 @@ misses. Defense-in-depth doing its job even with one layer contributing nothing 
 more realistic security story than "all three layers are individually excellent"
 would have been.
 
-### Remaining honest weaknesses on the current 36-case corpus
+### Remaining honest weaknesses on the current 72-case corpus
 
-Still failing with the gateway on (per `scripts/report_cli.py`, `stub_ops_agent`
-backend): GW-004, GW-006, GW-025 (indirect injection, missed), GW-011, GW-022
-(encoding obfuscation, missed), and GW-027, GW-028 (multi-turn jailbreak, missed) —
-7 of 36. This list shifted after the classifier-reproducibility fix (see
-`docs/decisions.md`) changed which specific model gets trained; it's expected to
-shift again on any future retrain, since the classifier's decision boundary isn't
-identical to any previous snapshot's. None of these are hidden — they're in
-`docs/redteam_report_gateway_stub_ops_agent.md` and surfaced directly by
-`scripts/report_cli.py`. The domain-mismatch false-positive issue (GW-020 in an
-earlier run, not necessarily the same case every run) is tracked separately in
-`docs/domain_shift_fix.md`, since it's a property of unseen-query generalization,
-not this specific corpus.
+22 of 72 fail end-to-end through the gateway (`stub_ops_agent` backend, full
+list in `docs/redteam_report_gateway_stub_ops_agent.md`) — 18 missed attacks
+(mostly encoding obfuscation and indirect injection, the two categories the
+detection layers were weakest on above) and **4 false positives**:
+`GW-052` (benign decode request, `rule_based`'s RB-013), `GW-056` (a clean
+self-lookup), `GW-064` (benign ROT13-decode request), and `GW-070` (mundane
+use of "disregard") — all four traced to root cause in
+`docs/corpus_expansion_result.md`. This list will shift on any future
+retrain, since the classifier's decision boundary isn't identical to any
+previous snapshot's — none of it is hidden, it's surfaced directly by
+`scripts/report_cli.py` and the redteam reports. The domain-mismatch
+false-positive issue (a different, non-corpus benign query set) is tracked
+separately in `docs/domain_shift_fix.md`.
 
 ### Was embedding-similarity's design intent even tested fairly?
 
@@ -201,10 +218,13 @@ The build doc's original design for this layer assumed the known-bad index would
 include our own found attacks, not just a public dataset — but doing that naively
 is exactly the leakage bug above. Tested it properly with leave-one-out
 cross-validation (`scripts/evaluate_embedding_loo.py`): for each corpus case, index
-everything else, test if it's caught. **Result: 17% detection (5/30), with a new
-false positive** — a real but modest improvement over the honest 0% baseline, not
-enough to justify the added complexity and risk. Full reasoning for not adopting it
-in production: `docs/embedding_loo_result.md` and `docs/decisions.md`. The takeaway:
+everything else, test if it's caught. **Result (72-case corpus): 32% detection
+(18/56), with a 33% false-positive rate (4/12)** — a real improvement in detection
+over the honest 0% baseline, but the false-positive rate (measured properly now
+that there are 12 negative controls instead of 4) makes the "not worth adopting"
+call even clearer than the original 36-case result suggested. Full reasoning for
+not adopting it in production: `docs/embedding_loo_result.md` and `docs/decisions.md`.
+The takeaway:
 even in the most favorable non-leaked test available, TF-IDF lexical similarity
 struggles specifically because this corpus's attacks were deliberately written to be
 diverse from each other. (The natural next question — would a real semantic
@@ -219,8 +239,8 @@ Short answer: no, not on this data.)
 - [x] **Detection comparison table, with numbers** — [`docs/comparison_table.md`](docs/comparison_table.md), reproduced above. Generated by `scripts/evaluate.py`, not hand-written. Numbers were wrong once (leakage) and got corrected — see `docs/leakage_fix.md`.
 - [x] **A documented missed-attack case + the fix that closed it (or didn't, honestly)** — see the current miss list above and `docs/redteam_report_gateway_stub_ops_agent.md`. The deeper domain-shift story is in `docs/domain_shift_fix.md`, and the leakage story in `docs/leakage_fix.md` is arguably the strongest version of this requirement in the whole project.
 - [x] **Attack simulation report against a real backend, end-to-end** — ran `scripts/run_redteam.py` against a live `uvicorn` server, against both backends:
-  - **`stub_ops_agent`** — direct: 6/36 passed (`docs/redteam_report_direct_stub_ops_agent.md`); through gateway: 29/36 (`docs/redteam_report_gateway_stub_ops_agent.md`).
-  - **`project2_agent`** (guessed reconstruction) — direct: 6/36 passed (`docs/redteam_report_direct_project2_agent.md`); through gateway: 24/36 (`docs/redteam_report_gateway_project2_agent.md`). Lower than the stub's score, for a non-obvious reason explained in `docs/project2_agent_notes.md` — worth reading before assuming the gateway is somehow "worse" against this backend.
+  - **`stub_ops_agent`** — direct: 16/72 passed (`docs/redteam_report_direct_stub_ops_agent.md`); through gateway: 50/72 (`docs/redteam_report_gateway_stub_ops_agent.md`).
+  - **`project2_agent`** (guessed reconstruction) — direct: 16/72 passed (`docs/redteam_report_direct_project2_agent.md`); through gateway: 44/72 (`docs/redteam_report_gateway_project2_agent.md`). Lower than the stub's score, for a non-obvious reason explained in `docs/project2_agent_notes.md` — worth reading before assuming the gateway is somehow "worse" against this backend.
 - [x] **Latency overhead, reported honestly** — [`docs/latency_report.md`](docs/latency_report.md). ~9.9ms added per request in this sandbox. Reported with an explicit caveat: the stub backend has near-zero baseline latency (no real I/O), so a "gateway is X% slower" framing would be misleading here — see the report for the honest version of that number.
 - [x] **Live demo of the gateway protecting the stub "Project 2 stand-in" specifically** — same corpus, same backend, gateway on vs. off, in `docs/redteam_report_direct_stub_ops_agent.md` vs `docs/redteam_report_gateway_stub_ops_agent.md`. Repeated against the fuller `project2_agent` reconstruction too — see above.
 
@@ -311,7 +331,7 @@ knowing:
 
 | Component | Status |
 |---|---|
-| Attack corpus (36 cases, 5 categories), rule-based detector, FastAPI middleware, adaptive thresholding, streaming cutoff, live dashboard | **Real**, run and measured. |
+| Attack corpus (72 cases, 5 categories, expanded from 36 on 2026-09-12), rule-based detector, FastAPI middleware, adaptive thresholding, streaming cutoff, live dashboard | **Real**, run and measured. |
 | Embedding-similarity layer | **Real technique, honest substitution, tested against the real thing.** Production default is TF-IDF + cosine similarity, detects **0%** of this corpus (the earlier 97% was train/test leakage — [`HIGHLIGHTS.md`](HIGHLIGHTS.md)). A real sentence-transformer alternative was built and measured (**23% at 0% FP** on the identical index) — confirms 0% is an architecture ceiling, not a tuning miss. Available opt-in (`EMBEDDING_BACKEND=sentence_transformer`), not default (still weakest detector, ~440x the latency, re-adds torch). See `docs/sentence_transformer_similarity_result.md`. |
 | "Fine-tuned classifier" layer | **Real from-scratch torch model**, not a DistilBERT fine-tune. Real training loop, seeded/reproducible, **50%** detection. |
 | `scripts/train_distilbert_finetune.py` | **Run for real (2026-09-11).** Tied `scratch_classifier` exactly on detection rate, false-positive rate, *and* domain-shift false-positive rate — at ~325x the latency. The "pretrained should meaningfully outperform" hypothesis this script carried for months did not hold. See [`docs/distilbert_finetune_result.md`](docs/distilbert_finetune_result.md). |
@@ -408,7 +428,7 @@ knowing:
 ## Project structure
 
 ```
-corpus/injection_cases.yaml           # 36 attack cases, versioned (v0.2.0)
+corpus/injection_cases.yaml           # 72 attack cases, versioned (v0.3.0)
 corpus/benign_indomain_queries.yaml   # domain-shift fix data
 project2_agent/                       # best-effort Project 2 reconstruction (guess)
   agent.py, auth.py, refusal_policy.py, tools.py, documents.py, eval_corpus.yaml

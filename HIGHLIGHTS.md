@@ -1,6 +1,6 @@
 # Engineering highlights
 
-Three moments from this build where checking a result mattered more than
+Four moments from this build where checking a result mattered more than
 producing one. Full running log: [`docs/decisions.md`](docs/decisions.md).
 
 ---
@@ -23,7 +23,8 @@ leakage programmatically before re-running anything.
 this corpus. Classifier dropped 87% → 50%. Every comparison table, red-team
 report and README number was regenerated against the honest figures.
 
-The gateway still works end-to-end (6/36 pass without it, ~29/36 with it) —
+The gateway still works end-to-end (16/72 pass without it, 50/72 with it, on
+the corpus as expanded 2026-09-12 — see `docs/corpus_expansion_result.md`) —
 because that's the *ensemble* doing defense-in-depth, not any single layer being
 excellent. That's a more realistic security story than the one the project was
 telling before. → [`docs/leakage_fix.md`](docs/leakage_fix.md)
@@ -72,6 +73,34 @@ match."
 **50%**, not the 63% reported earlier — a different number because it's a
 different (now pinned) model, not a regression. Every percentage in the README
 is tied to seed 42 on this exact code, and says so.
+
+---
+
+## 4. An external review said 36 test cases was too few. It was right.
+
+Every false-positive rate in this README — 0% for the classifier, 0% for both
+embedding backends — was measured against **4 negative controls.** Confirmed
+correct as far as it went, and structurally incapable of catching anything a
+4-example sample happens not to include.
+
+**Fix:** wrote 36 more cases (72 total), 8 of them new negative controls
+(4 → 12), each targeting a technique not already in the corpus rather than
+padding the count. Re-ran everything — `scripts/evaluate.py`, both live
+redteam reports, the LOO-CV experiment, the sentence-transformer and
+DistilBERT comparisons.
+
+**What the bigger sample actually found:** the classifier's real
+false-positive rate is **25%, not 0%** — a benign self-lookup and a benign
+"please decode this" request both trip it, at confidences of 0.52-0.53
+(genuinely borderline, not a confident model failure). A rule-based pattern
+(`base64[\s\-]?decode`) has the identical blind spot for the same reason.
+Checked each one's actual confidence score rather than reporting "false
+positive" as one undifferentiated bucket.
+
+**Not patched reflexively** — the classifier's training process is unchanged;
+this was a measurement gap, not a regression, and closing it properly (more
+borderline benign training examples) is follow-up work, not a same-session
+fix. → [`docs/corpus_expansion_result.md`](docs/corpus_expansion_result.md)
 
 ---
 

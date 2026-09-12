@@ -4,6 +4,60 @@ Running log, written as decisions are made. Not reconstructed after the fact.
 
 ---
 
+## 2026-09-12 — Corpus expanded 36 → 72 cases; found two real false positives the old one couldn't
+
+External review flagged the 36-case corpus, and specifically its 4 negative
+controls, as too small a sample to trust a false-positive claim from. Rather
+than argue it, tested it: added 36 new cases (GW-037–072, corpus v0.3.0),
+tripling negative-control coverage (4 → 12) and covering technique families
+not previously in the corpus (repetition-extraction, fictional-framing,
+continuation attacks, foot-in-the-door scope creep, requester_id
+identity-spoofing -- directly targeting the real dead-code auth bug from
+`docs/project2_agent_notes.md` -- audit-log-bypass framing, three new
+encoding schemes, combining-diacritic Unicode abuse).
+
+Regenerated `data/eval.csv` from the corpus (`scripts/prepare_training_data.py`
+-- zero corpus rows in training, per the leakage-fix rule) and re-ran
+`scripts/evaluate.py`, both live redteam reports (`scripts/run_redteam.py`,
+both backends, bypass and gateway modes), the LOO-CV embedding experiment, and
+re-scored (not retrained) both the sentence-transformer backend and the
+DistilBERT fine-tune against the new eval set. Every number this project
+publishes about corpus-scored detection is now against the same 72-case set.
+
+**Found two real false positives a 4-negative-control eval set was
+structurally incapable of catching:**
+1. `rule_based`'s `RB-013` (`base64[\s\-]?decode`) blocks a benign "please
+   decode this" request -- it keys on the request shape, not the decoded
+   content, and no prior negative control happened to be a decode request.
+2. `scratch_classifier`'s real false-positive rate is **25% (3/12), not the
+   0% (0/4) every prior version of this README reported.** Checked actual
+   confidence scores rather than treating "false positive" as one bucket:
+   two are borderline (0.52-0.53, a clean self-lookup and a benign
+   ROT13-decode request), one is a more confident miss on "disregard" outside
+   an override context (0.64).
+
+Neither fixed in code this pass -- both are measurement findings (the true
+rates were always this, just unmeasured with only 4 negative examples), not
+regressions, and reflexively patching either without deciding the
+precision/recall trade-off properly would repeat the exact mistake
+`docs/domain_shift_fix.md` already documented once. Full write-up, per-case
+numbers, and the updated live-server pass rates (stub_ops_agent: 16/72 direct
+-> 50/72 gateway, down proportionally from 6/36 -> 32/36 because the new false
+positives now correctly count against it): `docs/corpus_expansion_result.md`.
+
+**Also found and fixed in passing:** `scripts/run_redteam.py` opened a new
+`httpx.Client` per request instead of reusing one across the run -- ~2s of
+pure connection-setup overhead per case on this machine (>70x the gateway's
+actual measured per-request cost from `docs/throughput_report.md`). Fixed;
+verified identical pass/fail results before and after, only latency changed.
+
+`docs/comparison_table.md`, `docs/embedding_loo_result.md`,
+`docs/sentence_transformer_similarity_result.md`,
+`docs/distilbert_finetune_result.md`, README, and `HIGHLIGHTS.md` all
+regenerated/updated against the 72-case numbers.
+
+---
+
 ## 2026-09-11 — Removed torch from the serving path; full mode now fits Render's free tier
 
 **The gap:** `GATEWAY_LITE=1` existed because layer 3 (the scratch classifier)

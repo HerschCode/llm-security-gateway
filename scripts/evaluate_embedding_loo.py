@@ -16,8 +16,8 @@ full corpus) is exactly the leakage bug already found and fixed. The honest
 way is leave-one-out: for each corpus case, fit the known-bad index on the
 public dataset PLUS every OTHER corpus attack case (never the case being
 tested), then check if that held-out case gets caught. Every test case is
-genuinely unseen by its own index -- 36 separate fits, cheap for a
-TF-IDF vectorizer on a small corpus.
+genuinely unseen by its own index -- one separate fit per corpus case, cheap
+for a TF-IDF vectorizer on a small corpus.
 
 This produces a legitimately different, non-leaked number from the
 comparison table's 0%, because now the reference set has attacks from the
@@ -108,7 +108,7 @@ def score(results):
 
 
 def main():
-    print("Running leave-one-out cross-validation (36 separate fits)...")
+    print("Running leave-one-out cross-validation (one fit per corpus case)...")
     results = run_loo()
     detection_rate, fp_rate, missed, false_positives, n_block, n_allow = score(results)
 
