@@ -61,6 +61,24 @@ Caller → Gateway
   └─ 4. Log everything, return allow/block + response  (gateway/logging_schema.py)
 ```
 
+```mermaid
+graph TD
+    A[User Request] --> B[PII Detection & Redaction]
+    B --> C["Layer 1: Rule-Based\n14 regex patterns\n~0.02ms"]
+    C -->|block| Z[Block + Audit Log]
+    C -->|pass| D["Layer 2: Embedding Similarity\nTF-IDF cosine · opt-in sentence-transformers\n~5.7ms / ~47ms"]
+    D -->|block| Z
+    D -->|pass| E["Layer 3: MLP Classifier\npure NumPy · torch-free\n~0.09ms"]
+    E -->|block| Z
+    E -->|pass| F[Rate Limiting & Session Check]
+    F -->|block| Z
+    F -->|pass| G[LLM Backend]
+    G --> H[Post-Flight: Role Exposure Check]
+    H --> I[Post-Flight: Jailbreak Compliance]
+    I --> J[Post-Flight: System Prompt Leak]
+    J --> K[Response to User]
+```
+
 **Pluggability:** backends implement one method — `send(prompt, session_id, role) -> str`
 (see [`gateway/adapters/base.py`](gateway/adapters/base.py)). Dropping the gateway in
 front of a different LLM app means writing one small adapter class, not editing the

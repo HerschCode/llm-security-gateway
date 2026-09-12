@@ -135,8 +135,8 @@ DASHBOARD_HTML = f"""<!DOCTYPE html>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dashboard — LLM Security Gateway</title>
 <style>{SHARED_CSS}
-  .block {{ color: #f85149; }} .allow {{ color: #3fb950; }}
-  .stale {{ color: #d29922; font-size: 12px; margin-bottom: 10px; }}
+  .block {{ color: var(--bad); }} .allow {{ color: var(--good); }}
+  .stale {{ font-size: 12px; margin-bottom: 10px; }}
 </style>
 </head><body>
 {nav_html('dashboard')}
@@ -145,10 +145,24 @@ DASHBOARD_HTML = f"""<!DOCTYPE html>
   <div class="sub">From the same JSONL log every request writes. Auto-refreshes every 2s ·
     window: last 5 minutes. &nbsp;<a href="/gateway/demo">Generate some traffic →</a></div>
 
-  <div id="stale" class="stale" hidden>No requests in the window yet — run something on the demo page.</div>
+  <div id="stale" class="stale" hidden>
+    <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--warn);
+                border-radius:8px;padding:16px 18px;max-width:680px;">
+      <b style="color:var(--text)">No traffic in the last 5 minutes.</b><br>
+      <span style="color:var(--muted);font-size:12px">The gateway is running and ready &mdash;
+      send a test prompt on the <a href="/gateway/demo">demo page</a> to see live detection in action.</span>
+    </div>
+  </div>
   <div class="tiles" id="tiles"></div>
 
+  <h2>Detection by layer</h2>
+  <div class="tiles" id="layer-tiles" style="grid-template-columns:repeat(3,1fr)"></div>
+
   <h2>Recent events (last 20)</h2>
+  <p style="font-size:11px;color:var(--muted);margin:0 0 6px">
+    <b>phase:</b> pre_flight = checked before reaching LLM &nbsp;|&nbsp; post_flight = checked after LLM response &nbsp;&nbsp;
+    <b>decision:</b> block = stopped &nbsp;|&nbsp; allow = passed
+  </p>
   <table id="events">
     <thead><tr><th>Session</th><th>Phase</th><th>Decision</th><th>Layer</th><th>Matched pattern</th><th>ms</th></tr></thead>
     <tbody></tbody>
@@ -165,12 +179,17 @@ async function refresh() {{
     document.getElementById('stale').hidden = d.total_requests_in_window !== 0;
     document.getElementById('tiles').innerHTML = `
       <div class="tile"><div class="k">Requests (5min)</div><div class="v">${{d.total_requests_in_window}}</div></div>
-      <div class="tile"><div class="k">Block rate</div><div class="v">${{(d.block_rate * 100).toFixed(0)}}%</div></div>
-      <div class="tile"><div class="k">Avg latency</div><div class="v">${{d.avg_latency_ms}}ms</div></div>
-      <div class="tile"><div class="k">Allowed / Blocked</div><div class="v">${{d.decisions.allow || 0}} / ${{d.decisions.block || 0}}</div></div>`;
+      <div class="tile"><div class="k">Block rate</div><div class="v">${{(d.block_rate * 100).toFixed(0)}}%</div><div class="ctx">% of requests flagged as injection attempts</div></div>
+      <div class="tile"><div class="k">Avg latency</div><div class="v">${{d.avg_latency_ms}}ms</div><div class="ctx">per-request detection overhead (pre-flight)</div></div>
+      <div class="tile"><div class="k">Allowed / Blocked</div><div class="v">${{d.decisions.allow || 0}} / ${{d.decisions.block || 0}}</div><div class="ctx">in last 5 min window</div></div>`;
     document.querySelector('#events tbody').innerHTML = d.recent_events.map(e => `
       <tr><td>${{e.session_id}}</td><td>${{e.phase}}</td><td class="${{e.decision}}">${{e.decision}}</td>
       <td>${{e.layer || '-'}}</td><td>${{e.matched_pattern_id || '-'}}</td><td>${{e.latency_ms}}</td></tr>`).join('');
+    const bl = d.blocks_by_layer || {{}};
+    const layerLabels = {{'rule_based': 'Rule-based', 'embedding_similarity': 'Embedding similarity', 'scratch_classifier': 'MLP classifier'}};
+    document.getElementById('layer-tiles').innerHTML = Object.entries(layerLabels).map(([k, label]) =>
+      `<div class="tile"><div class="k">${{label}}</div><div class="v">${{bl[k] || 0}} blocks</div></div>`
+    ).join('');
   }} catch {{}}
 }}
 async function loadConn() {{

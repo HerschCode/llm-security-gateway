@@ -209,11 +209,9 @@ def demo_run(req: DemoRunRequest, request: Request):
 
 _LITE_BANNER = """
   <div class="banner">
-    <b>Lite mode</b> &mdash; this free-tier deploy runs layers 1&ndash;2 (rule-based + TF-IDF
-    embedding) and all pre/post-flight checks. Layer 3, the from-scratch torch classifier
-    (the one layer measured as doing real non-leaked work &mdash; see
-    <code>docs/comparison_table.md</code>), is disabled to fit 512&nbsp;MB RAM.
-    The full 3-layer pipeline runs locally via <code>docker compose up</code>.
+    &#x26A1; <b>Lite mode</b> &mdash; Layers 1 &amp; 2 active (rule-based + embedding similarity).
+    Layer 3 (MLP classifier) requires 512&nbsp;MB+ RAM and runs locally via
+    <code>docker compose up</code>. All pre/post-flight checks run on this deploy.
   </div>
 """
 
@@ -228,39 +226,41 @@ _DEMO_HTML = """
 __SHARED_CSS__
   body { padding: 0; }
   .democontent { padding: 24px; max-width: 1000px; margin: 0 auto; }
-  h1 { color: #58a6ff; margin: 0 0 4px; font-size: 20px; }
-  .sub { color: #8b949e; font-size: 13px; margin-bottom: 16px; max-width: 780px; }
-  .sub a { color: #58a6ff; }
-  .banner { background: #1c2333; border: 1px solid #2f3b54; border-left: 3px solid #d29922;
-            border-radius: 6px; padding: 10px 12px; font-size: 12px; color: #c9d1d9;
+  h1 { color: var(--accent); margin: 0 0 4px; font-size: 20px; }
+  .sub { color: var(--muted); font-size: 13px; margin-bottom: 16px; max-width: 780px; }
+  .sub a { color: var(--accent); }
+  .banner { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--warn);
+            border-radius: 6px; padding: 10px 12px; font-size: 12px; color: var(--text);
             margin-bottom: 18px; max-width: 780px; }
-  .banner code { color: #8b949e; }
+  .banner code { color: var(--muted); }
   .controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-bottom: 12px; }
-  label { display: block; font-size: 11px; color: #8b949e; margin-bottom: 4px; text-transform: uppercase; letter-spacing: .04em; }
-  select, textarea, button { font-family: inherit; font-size: 13px; background: #161b22;
-         color: #c9d1d9; border: 1px solid #30363d; border-radius: 6px; padding: 8px 10px; }
+  label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .04em; }
+  select, textarea, button { font-family: inherit; font-size: 13px; background: var(--surface);
+         color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; }
   textarea { width: 100%; min-height: 90px; resize: vertical; margin-bottom: 12px; }
   button { background: #238636; border-color: #2ea043; color: #fff; cursor: pointer; font-weight: 600; padding: 9px 18px; }
   button:disabled { opacity: .5; cursor: default; }
-  .case-vector { font-size: 12px; color: #8b949e; margin: -4px 0 10px; }
+  .case-vector { font-size: 12px; color: var(--muted); margin: -4px 0 4px; }
+  .case-explain { font-size: 12px; color: var(--muted); margin: 0 0 10px; font-style: italic; }
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
   @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
-  .panel { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 14px; }
-  .panel h2 { font-size: 13px; margin: 0 0 10px; color: #8b949e; text-transform: uppercase; letter-spacing: .04em; }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .panel h2 { font-size: 13px; margin: 0 0 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
   .verdict { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-  .allowed { color: #f85149; }        /* backend complied with an attack = bad */
-  .blocked { color: #3fb950; }        /* gateway stopped it = good */
-  .neutral { color: #8b949e; }
-  .errored { color: #d29922; }        /* upstream backend failure -- not a verdict */
-  .meta { font-size: 12px; color: #8b949e; margin-bottom: 8px; }
-  .meta b { color: #c9d1d9; }
-  .resp { white-space: pre-wrap; word-break: break-word; background: #0d1117;
-          border: 1px solid #21262d; border-radius: 6px; padding: 10px; font-size: 12.5px; max-height: 260px; overflow: auto; }
+  .allowed { color: var(--bad); }     /* backend complied with an attack = bad */
+  .blocked { color: var(--good); }   /* gateway stopped it = good */
+  .neutral { color: var(--muted); }
+  .errored { color: var(--warn); }   /* upstream backend failure -- not a verdict */
+  .meta { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .meta b { color: var(--text); }
+  .resp { white-space: pre-wrap; word-break: break-word; background: var(--bg);
+          border: 1px solid var(--surface2); border-radius: 6px; padding: 10px; font-size: 12.5px; max-height: 260px; overflow: auto; }
   .layers { font-size: 11px; margin-top: 8px; }
-  .layers span { display: inline-block; margin: 2px 4px 0 0; padding: 2px 6px; border-radius: 4px; background: #21262d; }
-  .layers .hit { background: #3fb95022; color: #3fb950; border: 1px solid #3fb95055; }
-  .foot { margin-top: 20px; font-size: 12px; color: #8b949e; }
-  .foot a { color: #58a6ff; }
+  .layers span { display: inline-block; margin: 2px 4px 0 0; padding: 2px 6px; border-radius: 4px; background: var(--surface2); }
+  .layers .hit { background: color-mix(in srgb, var(--good) 13%, transparent); color: var(--good); border: 1px solid color-mix(in srgb, var(--good) 33%, transparent); }
+  .explanation { font-size: 12px; color: var(--muted); margin-top: 8px; font-style: italic; }
+  .foot { margin-top: 20px; font-size: 12px; color: var(--muted); }
+  .foot a { color: var(--accent); }
 </style>
 </head>
 <body>
@@ -288,6 +288,7 @@ __NAV__
     <button id="run">Run</button>
   </div>
   <div class="case-vector" id="vector"></div>
+  <div class="case-explain" id="case-explain"></div>
 
   <textarea id="prompt" placeholder="Type a prompt to send through the gateway..."></textarea>
 
@@ -304,6 +305,7 @@ __NAV__
       <div class="meta" id="g-meta"></div>
       <div class="resp" id="g-resp"></div>
       <div class="layers" id="g-layers"></div>
+      <div class="explanation" id="g-explanation"></div>
     </div>
   </div>
 
@@ -316,6 +318,14 @@ __NAV__
 <script>
 const $ = id => document.getElementById(id);
 let CASES = [];
+
+const CATEGORY_EXPLAINERS = {
+  direct_injection: "Tries to override the system prompt by telling the model to ignore its instructions.",
+  indirect_injection: "Hides attack payload in content the model is asked to process (not in the direct prompt).",
+  multi_turn_jailbreak: "Uses multiple conversation turns to gradually shift the model's behaviour.",
+  encoding_obfuscation: "Encodes the malicious instruction in base64 or Unicode to evade text-matching defenses.",
+  tool_scope_escalation: "Attempts to call tools or access data beyond the user's authorised scope.",
+};
 
 async function loadCases() {
   const res = await fetch('/gateway/demo/cases');
@@ -341,6 +351,9 @@ async function loadBackends() {
       o.textContent = b.name || b.key;
       sel.appendChild(o);
     }
+    // Prefer the real agent as default; fall back to whatever is first
+    const keys = (data.backends || []).map(b => b.key);
+    if (keys.includes('operations_assistant')) sel.value = 'operations_assistant';
   } catch (e) {
     const o = document.createElement('option');
     o.value = 'stub_ops_agent'; o.textContent = 'stub_ops_agent';
@@ -351,6 +364,7 @@ async function loadBackends() {
 $('case').addEventListener('change', e => {
   const c = CASES.find(x => x.id === e.target.value);
   $('vector').textContent = c ? c.vector : '';
+  $('case-explain').textContent = c ? (CATEGORY_EXPLAINERS[c.category] || '') : '';
   if (c) $('prompt').value = c.payload;
 });
 
@@ -385,15 +399,34 @@ function renderSide(prefix, r, isGateway) {
 
 function renderLayers(r) {
   const box = $('g-layers');
+  const expl = $('g-explanation');
   const pl = r.per_layer || {};
   const names = ['rule_based', 'embedding_similarity', 'scratch_classifier'];
-  if (!Object.keys(pl).length) { box.innerHTML = ''; return; }
+  if (!Object.keys(pl).length) { box.innerHTML = ''; expl.textContent = ''; return; }
   box.innerHTML = names.map(n => {
     const info = pl[n];
     if (!info) return `<span>${n}: n/a</span>`;
     if (info.skipped) return `<span>${n}: skipped (${info.skipped})</span>`;
     return `<span class="${info.blocked ? 'hit' : ''}">${n}: ${info.blocked ? 'BLOCK' : 'pass'}</span>`;
   }).join('');
+  // Plain-English explanation of the verdict
+  const activeCount = names.filter(n => pl[n] && !pl[n].skipped).length;
+  if (!r.allowed) {
+    if (pl.rule_based && pl.rule_based.blocked) {
+      const pid = r.block_reason || 'a known pattern';
+      expl.textContent = `Matched ${pid} — classic instruction-override pattern.`;
+    } else if (pl.embedding_similarity && pl.embedding_similarity.blocked) {
+      expl.textContent = 'Prompt semantically similar to known attack patterns.';
+    } else if (pl.scratch_classifier && pl.scratch_classifier.blocked) {
+      expl.textContent = 'MLP classifier flagged as injection attempt.';
+    } else if (r.layer === 'post_flight_checks') {
+      expl.textContent = 'Post-flight checks caught a policy violation in the response.';
+    } else {
+      expl.textContent = `Blocked by ${r.layer || 'a detection layer'}.`;
+    }
+  } else {
+    expl.textContent = `Passed all ${activeCount} active detection layer${activeCount !== 1 ? 's' : ''}.`;
+  }
 }
 
 $('run').addEventListener('click', async () => {
