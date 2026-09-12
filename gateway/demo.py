@@ -40,15 +40,37 @@ router = APIRouter()
 
 _CORPUS_PATH = Path(__file__).resolve().parent.parent / "corpus" / "injection_cases.yaml"
 
-_FEATURED_IDS = [
-    "GW-001",  # direct_injection       -- rule_based catches this outright
-    "GW-002",  # direct_injection       -- authority impersonation
-    "GW-005",  # indirect_injection
-    "GW-008",  # multi_turn_jailbreak
-    "GW-010",  # encoding_obfuscation
-    "GW-016",  # tool_scope_escalation
-    "GW-019",  # direct_injection, expected_behavior=allow -- negative control
+# Curated set organised by category so the dropdown renders with <optgroup> grouping.
+# Format: (id, display_label_suffix)  -- suffix shown after the id in the UI.
+_FEATURED_CASES = [
+    # ── Direct injection ─────────────────────────────────────────────────────
+    ("GW-001", "classic instruction override"),
+    ("GW-002", "authority impersonation"),
+    ("GW-032", "fake markdown system block"),
+    ("GW-033", "security-researcher claim"),
+    ("GW-019", "✓ negative control — benign"),        # expected allow
+    # ── Indirect injection ────────────────────────────────────────────────────
+    ("GW-005", "injection in citation / footnote"),
+    ("GW-004", "payload in retrieved document"),
+    ("GW-024", "injection inside tool-call JSON result"),
+    ("GW-020", "✓ negative control — benign doc"),    # expected allow
+    # ── Multi-turn jailbreak ──────────────────────────────────────────────────
+    ("GW-007", "DAN-style roleplay buildup"),
+    ("GW-008", "trust-building before payload"),
+    ("GW-009", "instruction split across turns"),
+    # ── Encoding obfuscation ──────────────────────────────────────────────────
+    ("GW-010", "base64-encoded instruction"),
+    ("GW-011", "leetspeak / char substitution"),
+    ("GW-012", "Unicode homoglyphs"),
+    ("GW-052", "✓ negative control — harmless base64"),  # expected allow
+    # ── Tool scope escalation ─────────────────────────────────────────────────
+    ("GW-015", "direct out-of-scope tool request"),
+    ("GW-016", "framed as a helpful shortcut"),
+    ("GW-036", "✓ ambiguous — employee own data"),    # expected allow
 ]
+
+_FEATURED_IDS = [cid for cid, _ in _FEATURED_CASES]
+_FEATURED_LABELS = {cid: label for cid, label in _FEATURED_CASES}
 
 _RATE_LIMIT = int(os.environ.get("DEMO_RATE_LIMIT", "20"))
 _RATE_WINDOW = float(os.environ.get("DEMO_RATE_WINDOW", "60"))
@@ -94,6 +116,7 @@ def _load_cases():
         out.append({
             "id": c["id"],
             "category": c["category"],
+            "label": _FEATURED_LABELS.get(c["id"], ""),
             "vector": c.get("vector", ""),
             "payload": c["payload"].strip(),
             "expected_behavior": c.get("expected_behavior", ""),
@@ -327,16 +350,36 @@ const CATEGORY_EXPLAINERS = {
   tool_scope_escalation: "Attempts to call tools or access data beyond the user's authorised scope.",
 };
 
+const CATEGORY_LABELS = {
+  direct_injection:    '🔴 Direct Injection',
+  indirect_injection:  '🟠 Indirect Injection',
+  multi_turn_jailbreak:'🟡 Multi-turn Jailbreak',
+  encoding_obfuscation:'🟣 Encoding Obfuscation',
+  tool_scope_escalation:'🔵 Tool Scope Escalation',
+};
+
 async function loadCases() {
   const res = await fetch('/gateway/demo/cases');
   const data = await res.json();
   CASES = data.cases || [];
   const sel = $('case');
+  // Group by category and render <optgroup> sections
+  const groups = {};
   for (const c of CASES) {
-    const o = document.createElement('option');
-    o.value = c.id;
-    o.textContent = `${c.id}  [${c.category}]` + (c.expected_behavior === 'allow' ? '  (negative control)' : '');
-    sel.appendChild(o);
+    (groups[c.category] = groups[c.category] || []).push(c);
+  }
+  const categoryOrder = ['direct_injection','indirect_injection','multi_turn_jailbreak','encoding_obfuscation','tool_scope_escalation'];
+  for (const cat of categoryOrder) {
+    if (!groups[cat]) continue;
+    const grp = document.createElement('optgroup');
+    grp.label = CATEGORY_LABELS[cat] || cat;
+    for (const c of groups[cat]) {
+      const o = document.createElement('option');
+      o.value = c.id;
+      o.textContent = `${c.id} — ${c.label || c.vector.slice(0, 55)}`;
+      grp.appendChild(o);
+    }
+    sel.appendChild(grp);
   }
 }
 
