@@ -102,7 +102,19 @@ this wasn't always true, and the difference matters enormously).
 |---|---|---|---|
 | rule_based | 23% (7/30) | 0% (0/4) | 0.024 |
 | embedding_similarity | 0% (0/30) | 0% (0/4) | 6.566 |
-| scratch_classifier | 50% (15/30) | 0% (0/4) | 0.107 |
+| scratch_classifier (in production) | 50% (15/30) | 0% (0/4) | 0.107 |
+| distilbert_finetuned | 50% (15/30) | 0% (0/4) | 34.855 |
+
+`distilbert_finetuned` is a real fine-tuned `distilbert-base-uncased` run
+(precision 1.0, recall 0.469 on the trainer's own internal eval split — a
+different, non-comparable metric definition from the detection-rate/FPR
+columns above, so not mixed into the same cells), scored with the exact same
+methodology as every other row. **Identical accuracy to the from-scratch
+classifier, ~325x the latency** — pretrained language understanding bought
+nothing over a from-scratch model trained on the same ~2,000 rows, including
+on the domain-shift false-positive test (`docs/domain_shift_fix.md`). Full
+writeup, training run details, and the raw eval JSON:
+[`docs/distilbert_finetune_result.md`](docs/distilbert_finetune_result.md).
 
 ### The biggest finding in this project: train/test leakage, found and fixed
 
