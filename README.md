@@ -179,6 +179,18 @@ doubles throughput and halves p50 latency at concurrency 50 — real, but not a
 clean 4x, an unresolved second-order bottleneck reported rather than rounded
 away. Full writeup: [`docs/throughput_report.md`](docs/throughput_report.md).
 
+**In-process benchmark** (`scripts/benchmark_throughput.py`, no HTTP overhead, no
+server process — direct function calls against the full detection pipeline):
+
+| Concurrency | req/s | p50 ms | p95 ms | p99 ms |
+|---|---|---|---|---|
+| 1 | 52.9 | 26.4 | 28.5 | 30.7 |
+| 10 | 132.9 | 85.9 | 126.9 | 146.2 |
+| 50 | 122.4 | 135.8 | 283.9 | 302.6 |
+
+The gap between the HTTP server numbers (~21-26 req/s) and the in-process numbers
+(53 req/s at c=1) isolates the uvicorn/asyncio overhead from the detection cost itself.
+
 ### The biggest finding in this project: train/test leakage, found and fixed
 
 These numbers replace an earlier, wrong set (embedding-similarity: 97%, classifier:
