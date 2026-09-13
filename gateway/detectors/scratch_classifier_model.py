@@ -66,6 +66,6 @@ def load_artifacts(path: Path = MODEL_DIR) -> tuple[ScratchClassifier, dict]:
     with open(path / "vocab.json", encoding="utf-8") as f:
         vocab = json.load(f)
     model = ScratchClassifier(vocab_size=len(vocab))
-    model.load_state_dict(torch.load(path / "model.pt", map_location="cpu"))
+    model.load_state_dict(torch.load(path / "model.pt", map_location="cpu", weights_only=True))
     model.eval()
     return model, vocab
