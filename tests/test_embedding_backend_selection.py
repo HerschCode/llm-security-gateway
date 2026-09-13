@@ -1,8 +1,8 @@
 """Verifies GatewayMiddleware's layer-2 backend selection (EMBEDDING_BACKEND
-env var) -- default stays TF-IDF (what the free-tier deploy runs), and the
-opt-in sentence-transformer backend actually wires up and runs when selected.
-See gateway/detectors/embedding_similarity_st.py and
-docs/sentence_transformer_similarity_result.md for why this is opt-in."""
+env var). Default is "sentence_transformer" (real semantic embeddings, the
+better-measured layer -- see docs/sentence_transformer_similarity_result.md);
+render.yaml explicitly pins EMBEDDING_BACKEND=tfidf for the free-tier deploy
+to stay torch-free within 512MB. Both paths need coverage, not just one."""
 import importlib
 import sys
 from pathlib import Path
@@ -21,23 +21,51 @@ def _reload_middleware():
     return importlib.reload(mw)
 
 
-def test_default_backend_is_tfidf(monkeypatch):
+def _sentence_transformer_available() -> bool:
+    if not (REPO_ROOT / "models" / "embedding_similarity_st" / "known_bad_vectors.npy").exists():
+        return False
+    try:
+        import sentence_transformers  # noqa: F401
+        return True
+    except ImportError:
+        return False
+
+
+def test_default_backend_is_sentence_transformer(monkeypatch):
+    if not _sentence_transformer_available():
+        pytest.skip("sentence-transformers not installed / models/embedding_similarity_st not built.")
+
     monkeypatch.delenv("EMBEDDING_BACKEND", raising=False)
     mw_module = _reload_middleware()
     middleware = mw_module.GatewayMiddleware()
-    assert middleware.embedding_backend == "tfidf"
-    from gateway.detectors.embedding_similarity import EmbeddingSimilarityDetector
-    assert isinstance(middleware.embedding_detector, EmbeddingSimilarityDetector)
-    assert middleware.similarity_threshold == 0.35
+    try:
+        assert middleware.embedding_backend == "sentence_transformer"
+        from gateway.detectors.embedding_similarity_st import SentenceTransformerSimilarityDetector
+        assert isinstance(middleware.embedding_detector, SentenceTransformerSimilarityDetector)
+        assert middleware.similarity_threshold == 0.45
+    finally:
+        _reload_middleware()
+
+
+def test_tfidf_backend_when_explicitly_selected(monkeypatch):
+    """This is the path render.yaml actually pins for the free-tier deploy --
+    torch-free, fits 512MB. Must keep working even though it's no longer the
+    code default."""
+    monkeypatch.setenv("EMBEDDING_BACKEND", "tfidf")
+    mw_module = _reload_middleware()
+    middleware = mw_module.GatewayMiddleware()
+    try:
+        assert middleware.embedding_backend == "tfidf"
+        from gateway.detectors.embedding_similarity import EmbeddingSimilarityDetector
+        assert isinstance(middleware.embedding_detector, EmbeddingSimilarityDetector)
+        assert middleware.similarity_threshold == 0.35
+    finally:
+        monkeypatch.delenv("EMBEDDING_BACKEND", raising=False)
+        _reload_middleware()
 
 
 def test_sentence_transformer_backend_when_selected(monkeypatch):
-    if not (REPO_ROOT / "models" / "embedding_similarity_st" / "known_bad_vectors.npy").exists():
-        pytest.skip("models/embedding_similarity_st not built -- run "
-                     "scripts/fit_sentence_transformer_detector.py first.")
-    try:
-        import sentence_transformers  # noqa: F401
-    except ImportError:
+    if not _sentence_transformer_available():
         pytest.skip("sentence-transformers not installed (pip install sentence-transformers).")
 
     monkeypatch.setenv("EMBEDDING_BACKEND", "sentence_transformer")
