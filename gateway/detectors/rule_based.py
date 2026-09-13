@@ -50,6 +50,20 @@ PATTERNS = [
     ("RB-012", r"skip\s+(the\s+)?(usual\s+)?(safety|role)\s+check"),
     ("RB-013", r"base64[\s\-]?decode"),
     ("RB-014", r"no\s+longer\s+(bound|restricted)\s+by"),
+    # tool_scope_escalation patterns — these attacks exploit agent tool-calling by
+    # requesting legitimate-looking operations on out-of-scope resources. Vocabulary
+    # is distinct from direct injection so separate patterns are needed.
+    # Note: no final \b where the match word is part of a compound (admin_reset_password).
+    ("RB-015", r"(don'?t|doesn'?t|not|without).{0,20}\blog(ged)?\b.{0,30}\baudit\b"),
+    ("RB-016", r"\baudit[\s\-]?trail\b.{0,80}(don'?t|not|without|suppress|skip|disable)"),
+    ("RB-017", r"\badmin[\s_\-](reset|query|command|bypass|delete|purge)"),
+    ("RB-018", r"\badmin\b.{0,30}\b(query|tool|command)\b.{0,30}(sql|select|database|db)\b"),
+    ("RB-019", r"\bSELECT\b.{0,50}\ball\s+tables\b"),
+    ("RB-020", r"(System32|/etc/passwd|/etc/shadow|/etc/sudoers|\bSAM\b.{0,10}(file|database|config))"),
+    ("RB-021", r"\bescalate\s+(my\s+)?(privilege|permission|access|role)\b"),
+    ("RB-022", r"\bimpersonat(e|ing)\s+(another\s+|a\s+)?(user|admin|role)\b"),
+    ("RB-023", r"bypass\s+(the\s+)?(rate[\s\-]?limit|access[\s\-]?control|permission\s+check|auth)"),
+    ("RB-024", r"\b(pull|fetch|export|download|retrieve)\s+(all|every)\s+(employee|user|customer|staff)\s+(records?|data|entries)"),
 ]
 
 _COMPILED = [(pid, re.compile(pattern, re.IGNORECASE)) for pid, pattern in PATTERNS]

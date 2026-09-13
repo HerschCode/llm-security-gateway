@@ -5,8 +5,8 @@
     {
       "layer": "rule_based",
       "detection": {
-        "pct": 16,
-        "numerator": 15,
+        "pct": 21,
+        "numerator": 20,
         "denominator": 94
       },
       "false_positive": {
@@ -14,7 +14,7 @@
         "numerator": 1,
         "denominator": 22
       },
-      "latency_ms": 0.075
+      "latency_ms": 0.064
     },
     {
       "layer": "embedding_similarity",
@@ -28,7 +28,7 @@
         "numerator": 0,
         "denominator": 22
       },
-      "latency_ms": 6.181
+      "latency_ms": 24.824
     },
     {
       "layer": "scratch_classifier",
@@ -42,7 +42,7 @@
         "numerator": 2,
         "denominator": 22
       },
-      "latency_ms": 0.081
+      "latency_ms": 0.547
     },
     {
       "layer": "direct_injection (18)",
@@ -103,8 +103,8 @@
     {
       "layer": "tool_scope_escalation (17)",
       "detection": {
-        "pct": 0,
-        "numerator": 0,
+        "pct": 29,
+        "numerator": 5,
         "denominator": 17
       },
       "false_positive": {
@@ -191,8 +191,8 @@
     "tool_scope_escalation": {
       "n_attacks": 17,
       "rule_based": {
-        "pct": 0,
-        "numerator": 0,
+        "pct": 29,
+        "numerator": 5,
         "denominator": 17
       },
       "embedding_similarity": {

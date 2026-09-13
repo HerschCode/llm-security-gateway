@@ -120,10 +120,10 @@ always true, and the difference matters enormously).
 
 | Layer | Detection rate | False-positive rate | Avg latency (ms) |
 |---|---|---|---|
-| rule_based | 16% (15/94) | 5% (1/22) | 0.018 |
-| embedding_similarity (TF-IDF, in production) | 0% (0/94) | 0% (0/22) | 6.457 |
+| rule_based | 21% (20/94) | 5% (1/22) | 0.064 |
+| embedding_similarity (TF-IDF, in production) | 0% (0/94) | 0% (0/22) | 23.919 |
 | embedding_similarity_st (sentence-transformer, opt-in) | 23% (13/56)* | 0% (0/12)* | 47.443 |
-| scratch_classifier (in production) | 54% (51/94) | 9% (2/22) | 0.086 |
+| scratch_classifier (in production) | 54% (51/94) | 9% (2/22) | 0.540 |
 | distilbert_finetuned (comparison only) | 52% (29/56)* | 25% (3/12)* | 364.5† |
 
 \* measured on 72-case corpus; not re-run on expanded corpus — see [`docs/comparison_table.md`](docs/comparison_table.md).
@@ -148,7 +148,7 @@ different difficulty levels:
 | indirect_injection (19) | 10% (2/19) | 0% (0/19) | 53% (10/19) |
 | multi_turn_jailbreak (16) | 12% (2/16) | 0% (0/16) | 62% (10/16) |
 | encoding_obfuscation (24) | 21% (5/24) | 0% (0/24) | 42% (10/24) |
-| tool_scope_escalation (17) | **0% (0/17)** | 0% (0/17) | 29% (5/17) |
+| tool_scope_escalation (17) | 29% (5/17) | 0% (0/17) | 29% (5/17) |
 
 The classifier handles direct injection well (89%) but struggles with
 tool_scope_escalation (29%) — attacks that exploit the agent's tool-calling
