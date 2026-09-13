@@ -179,6 +179,22 @@ understanding bought nothing over a from-scratch model trained on the same
 (`docs/domain_shift_fix.md`). Full writeup, training run details, and the raw
 eval JSON: [`docs/distilbert_finetune_result.md`](docs/distilbert_finetune_result.md).
 
+### Paraphrase robustness & evasion hardening (scripts/paraphrase_robustness.py)
+
+Run `python scripts/paraphrase_robustness.py` to reproduce — applies 4 surface transforms to all 56 attack cases and measures per-layer detection rate with and without text normalization:
+
+| Transform | rule_based | embedding | classifier | Notes |
+|---|---|---|---|---|
+| original | 16.1% | 23.2% | 48.2% | baseline |
+| case_swap | 16.1% | 23.2% | 48.2% | no impact — all layers robust |
+| space_insert (no fix) | 0.0% | 23.2% | 3.6% | **critical gap** |
+| space_insert (with normalizer) | **17.9%** | 23.2% | **48.2%** | fully restored |
+| synonym_sub | 12.5% | 16.1% | 48.2% | minor semantic drift, acceptable |
+
+**Key finding:** inserting zero-width spaces (U+200B) between characters is visually invisible but breaks tokenization for both regex patterns and the MLP classifier's TF-IDF vectorizer — the classifier drops from 48.2% → 3.6% detection. Sentence transformer embeddings are inherently robust (contextual, not token-matching). The fix is a pre-detection text normalization pass (`gateway/text_normalizer.py`) that strips zero-width characters and Cyrillic/Greek homoglyphs before any detection layer. After normalization, space_insert detection is **identical to the unobfuscated baseline**.
+
+The normalizer runs at the earliest point in the middleware pipeline — after PII redaction, before the injection ensemble — so all three layers benefit simultaneously.
+
 ### Throughput and concurrency — measured, including a bottleneck found and diagnosed
 
 `scripts/measure_throughput.py` hits a live `uvicorn` process with a mixed

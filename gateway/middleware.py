@@ -25,6 +25,7 @@ from gateway.adaptive_threshold import AdaptiveThresholdTracker
 from gateway.adapters.base import BackendAdapter
 from gateway.detectors import rule_based
 from gateway.logging_schema import GatewayLogger, LogRecord
+from gateway.text_normalizer import normalize as _normalize_text
 
 # CLASSIFIER_THRESHOLD is re-declared here (rather than imported from a
 # detector module) to keep this file import-cheap. Keep in sync with
@@ -152,7 +153,7 @@ class GatewayMiddleware:
         pre_start = time.perf_counter()
 
         pii_result = scan_and_redact(prompt)
-        working_text = pii_result.redacted_text
+        working_text = _normalize_text(pii_result.redacted_text)
 
         session_check = self.session_tracker.record_and_check(session_id)
         if not session_check.allowed:
@@ -288,7 +289,7 @@ class GatewayMiddleware:
 
         # ---------- PRE-FLIGHT (identical to process()) ----------
         pii_result = scan_and_redact(prompt)
-        working_text = pii_result.redacted_text
+        working_text = _normalize_text(pii_result.redacted_text)
 
         session_check = self.session_tracker.record_and_check(session_id)
         if not session_check.allowed:
