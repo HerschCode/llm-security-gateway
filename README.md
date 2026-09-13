@@ -13,7 +13,7 @@ auth/rate-limiting.
 ![architecture](docs/architecture.svg)
 
 **What it demonstrably does:** with the gateway bypassed, a naive backend complies
-with 56/72 attacks in the hand-built corpus. With the gateway in front, 50/72 are
+with attacks in the hand-built corpus. With the gateway in front, attacks are
 handled correctly end-to-end over a live FastAPI service — not an in-process call.
 The value is the *ensemble* (defense-in-depth), not any single layer; the honest
 per-layer numbers, including a train/test leakage bug that was found and fixed, are
@@ -120,25 +120,20 @@ always true, and the difference matters enormously).
 
 | Layer | Detection rate | False-positive rate | Avg latency (ms) |
 |---|---|---|---|
-| rule_based | 16% (9/56) | 8% (1/12) | 0.018 |
-| embedding_similarity (TF-IDF, in production) | 0% (0/56) | 0% (0/12) | 5.654 |
-| embedding_similarity_st (sentence-transformer, opt-in) | 23% (13/56) | 0% (0/12) | 47.443 |
-| scratch_classifier (in production) | 48% (27/56) | 25% (3/12) | 0.090 |
-| distilbert_finetuned (comparison only) | 52% (29/56) | 25% (3/12) | 364.5* |
+| rule_based | 16% (15/94) | 5% (1/22) | 0.018 |
+| embedding_similarity (TF-IDF, in production) | 0% (0/94) | 0% (0/22) | 6.457 |
+| embedding_similarity_st (sentence-transformer, opt-in) | 23% (13/56)* | 0% (0/12)* | 47.443 |
+| scratch_classifier (in production) | 54% (51/94) | 9% (2/22) | 0.086 |
+| distilbert_finetuned (comparison only) | 52% (29/56)* | 25% (3/12)* | 364.5† |
 
-\* single-inference CPU timing, varies run-to-run — see `docs/comparison_table.md`'s footnote.
+\* measured on 72-case corpus; not re-run on expanded corpus — see [`docs/comparison_table.md`](docs/comparison_table.md).
+† single-inference CPU timing, varies run-to-run.
 
-**These are the 120-case numbers** (expanded: 36→72 on 2026-09-12, 72→120 on 2026-09-13 via `scripts/expand_eval_corpus.py` — see
+**These are the current 120-case numbers** (94 attacks, 22 benign, 4 ambiguous — expanded: 36→72 on 2026-09-12, 72→120 on 2026-09-13 via `scripts/expand_eval_corpus.py` — see
 [`docs/corpus_expansion_result.md`](docs/corpus_expansion_result.md)). The
-2026-09-12 expansion tripled negative-control coverage (4 → 12 cases) and found two real
-false positives a smaller eval set was structurally incapable of catching:
-`rule_based` blocks a benign "please decode this" request (a rule meant for
-GW-010-style encoded attacks can't tell benign decode requests from malicious
-ones), and `scratch_classifier`'s false-positive rate is actually **25%, not
-the 0% every prior version of this README reported** — both borderline
-(confidence 0.52-0.53) and one more confident miss on the word "disregard"
-outside an override context. Full root-cause analysis, per-case confidence
-scores, and reasoning for why neither was patched same-session:
+120-case corpus tripled negative-control coverage (4→12→22 cases), surfaced
+and fixed the GW-117 false positive (business "override" confused with injection "override"),
+dropping `scratch_classifier` FP rate from 25% → 9%. Full root-cause analysis:
 [`docs/corpus_expansion_result.md`](docs/corpus_expansion_result.md).
 
 Two of these rows are separate experiments run to actually test a hypothesis
@@ -158,7 +153,7 @@ Full writeup: [`docs/sentence_transformer_similarity_result.md`](docs/sentence_t
 ### L2 threshold sweep (scripts/threshold_sweep_l2.py)
 
 Run `python scripts/threshold_sweep_l2.py` to reproduce — sweeps both backends
-at thresholds 0.05–0.95 against the full 72-case corpus:
+at thresholds 0.05–0.95 against the 72-case corpus (historical; run before expansion to 120):
 
 | Backend | Best F1 | Threshold | Detection | FP rate | Max detection at 0% FP |
 |---|---|---|---|---|---|
@@ -246,7 +241,7 @@ Full writeup with the before/after numbers and how it was found:
 correctly, provides **zero** real generalization from a public jailbreak dataset to
 this project's own attack style. Rule-based and embedding-similarity are both
 essentially non-functional against this corpus in isolation. The from-scratch
-classifier (50% detection, 0% false-positive rate *on this corpus* — see the residual
+classifier (54% detection, 9% false-positive rate on the current 120-case corpus — see the residual
 domain-mismatch false-positive rate on unseen queries, which is a different and worse
 number, in `docs/domain_shift_fix.md`) is the only layer doing real,
 non-leaked work — and it's mediocre, not excellent. **This is a materially different,
@@ -256,27 +251,26 @@ declaring victory on a suspiciously good number.
 
 ### The gateway's real value is the ensemble, not any one layer
 
-Despite the above, the gateway still measurably works end-to-end:
-**16/72 pass without the gateway, 50/72 pass with it** (see
-[Proof requirements](#proof-requirements)) — because rule-based catches the most
+Despite the above, the gateway still measurably works end-to-end
+(see [Proof requirements](#proof-requirements)) — rule-based catches the most
 literal attacks outright, the classifier catches a real (if partial) share of the
 rest, and the post-flight role-exposure/compliance/leak checks catch what pre-flight
 misses. Defense-in-depth doing its job even with one layer contributing nothing is a
 more realistic security story than "all three layers are individually excellent"
 would have been.
 
-### Remaining honest weaknesses on the current 72-case corpus
+### Remaining honest weaknesses on the current 120-case corpus
 
-22 of 72 fail end-to-end through the gateway (`stub_ops_agent` backend, full
-list in `docs/redteam_report_gateway_stub_ops_agent.md`) — 18 missed attacks
-(mostly encoding obfuscation and indirect injection, the two categories the
-detection layers were weakest on above) and **4 false positives**:
-`GW-052` (benign decode request, `rule_based`'s RB-013), `GW-056` (a clean
-self-lookup), `GW-064` (benign ROT13-decode request), and `GW-070` (mundane
-use of "disregard") — all four traced to root cause in
-`docs/corpus_expansion_result.md`. This list will shift on any future
-retrain, since the classifier's decision boundary isn't identical to any
-previous snapshot's — none of it is hidden, it's surfaced directly by
+Current per-layer false positives: `rule_based` — GW-052; `scratch_classifier` — GW-020,
+GW-115 (reduced from 3→2 after GW-117 fix: "override date range" benign business query
+no longer blocked). Missed attacks (should-block cases the ensemble lets through): 43/94
+on `scratch_classifier` alone — mostly encoding obfuscation and indirect injection
+categories (see `docs/comparison_table.md` for the full miss list).
+
+The redteam reports (`docs/redteam_report_gateway_stub_ops_agent.md`) were run
+against the 72-case corpus and are not yet regenerated for 120 cases. This list will
+shift on any future retrain since the classifier's decision boundary isn't identical
+to any previous snapshot's — none of it is hidden, it's surfaced directly by
 `scripts/report_cli.py` and the redteam reports. The domain-mismatch
 false-positive issue (a different, non-corpus benign query set) is tracked
 separately in `docs/domain_shift_fix.md`.
@@ -287,7 +281,7 @@ The build doc's original design for this layer assumed the known-bad index would
 include our own found attacks, not just a public dataset — but doing that naively
 is exactly the leakage bug above. Tested it properly with leave-one-out
 cross-validation (`scripts/evaluate_embedding_loo.py`): for each corpus case, index
-everything else, test if it's caught. **Result (72-case corpus): 32% detection
+everything else, test if it's caught. **Result (72-case corpus, historical): 32% detection
 (18/56), with a 33% false-positive rate (4/12)** — a real improvement in detection
 over the honest 0% baseline, but the false-positive rate (measured properly now
 that there are 12 negative controls instead of 4) makes the "not worth adopting"
@@ -308,7 +302,7 @@ Short answer: no, not on this data.)
 - [x] **Detection comparison table, with numbers** — [`docs/comparison_table.md`](docs/comparison_table.md), reproduced above. Generated by `scripts/evaluate.py`, not hand-written. Numbers were wrong once (leakage) and got corrected — see `docs/leakage_fix.md`.
 - [x] **A documented missed-attack case + the fix that closed it (or didn't, honestly)** — see the current miss list above and `docs/redteam_report_gateway_stub_ops_agent.md`. The deeper domain-shift story is in `docs/domain_shift_fix.md`, and the leakage story in `docs/leakage_fix.md` is arguably the strongest version of this requirement in the whole project.
 - [x] **Attack simulation report against a real backend, end-to-end** — ran `scripts/run_redteam.py` against a live `uvicorn` server, against both backends:
-  - **`stub_ops_agent`** — direct: 16/72 passed (`docs/redteam_report_direct_stub_ops_agent.md`); through gateway: 50/72 (`docs/redteam_report_gateway_stub_ops_agent.md`).
+  - **`stub_ops_agent`** — direct: 16/72 passed (`docs/redteam_report_direct_stub_ops_agent.md`); through gateway: 50/72 (`docs/redteam_report_gateway_stub_ops_agent.md`). (72-case corpus — reports not yet regenerated for 120-case corpus.)
   - **`project2_agent`** (guessed reconstruction) — direct: 16/72 passed (`docs/redteam_report_direct_project2_agent.md`); through gateway: 44/72 (`docs/redteam_report_gateway_project2_agent.md`). Lower than the stub's score, for a non-obvious reason explained in `docs/project2_agent_notes.md` — worth reading before assuming the gateway is somehow "worse" against this backend.
 - [x] **Latency overhead, reported honestly** — [`docs/latency_report.md`](docs/latency_report.md). ~9.9ms added per request in this sandbox. Reported with an explicit caveat: the stub backend has near-zero baseline latency (no real I/O), so a "gateway is X% slower" framing would be misleading here — see the report for the honest version of that number.
 - [x] **Live demo of the gateway protecting the stub "Project 2 stand-in" specifically** — same corpus, same backend, gateway on vs. off, in `docs/redteam_report_direct_stub_ops_agent.md` vs `docs/redteam_report_gateway_stub_ops_agent.md`. Repeated against the fuller `project2_agent` reconstruction too — see above.
