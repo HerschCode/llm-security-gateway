@@ -155,6 +155,20 @@ classifier's 48%) at ~500x the classifier's latency, and it would re-introduce
 torch into the serving path this project deliberately removed (see below).
 Full writeup: [`docs/sentence_transformer_similarity_result.md`](docs/sentence_transformer_similarity_result.md).
 
+### L2 threshold sweep (scripts/threshold_sweep_l2.py)
+
+Run `python scripts/threshold_sweep_l2.py` to reproduce — sweeps both backends
+at thresholds 0.05–0.95 against the full 72-case corpus:
+
+| Backend | Best F1 | Threshold | Detection | FP rate | Max detection at 0% FP |
+|---|---|---|---|---|---|
+| TF-IDF | 0.867 | 0.05 | 92.9% (52/56) | 100% (12/12) | **25.0%** at t=0.15 |
+| sentence_transformer | 0.903 | 0.05 | 100% (56/56) | 100% (12/12) | **23.2%** at t=0.45 |
+
+**The key finding:** neither backend can achieve useful precision by threshold tuning alone. At the best F1 threshold (0.05), both block almost all attacks but also block every legitimate request — precision ~0.82. At the only threshold where FP rate = 0%, TF-IDF catches 25% of attacks and sentence_transformer catches 23%. This confirms that **Layer 2 (embedding similarity) is structurally a low-precision first-pass filter in front of the classifier, not a standalone detector** — its value is catching attacks the rule-based layer misses, at the cost of false positives the classifier then adjudicates. The 3-layer ensemble's defense-in-depth design is validated: no single layer is sufficient.
+
+Per-category breakdown at t=0.05 (both backends): direct_injection and multi_turn_jailbreak 100%, indirect_injection 100%, tool_scope_escalation 100%, encoding_obfuscation 71% (TF-IDF) / 100% (sentence_transformer). The only category where sentence_transformer beats TF-IDF at the optimal threshold is encoding_obfuscation — the obfuscated text fragments enough that TF-IDF's term-frequency signal breaks down, while sentence_transformer's contextual embedding still recognizes the semantic intent.
+
 `distilbert_finetuned` is a real fine-tuned `distilbert-base-uncased` run,
 re-scored on the expanded corpus (`scripts/rescore_distilbert.py`, inference
 only, no retraining needed), scored with the exact same methodology as every
