@@ -113,7 +113,7 @@ Replace this package wholesale once the real Project 2 codebase exists.
 ## Detection layer comparison (the actual centerpiece)
 
 Run via `python scripts/evaluate.py`, scored against `data/eval.csv` — our own
-72-case corpus (expanded from 36 on 2026-09-12 in response to external review —
+120-case corpus (expanded: 36 → 72 on 2026-09-12, 72 → 120 on 2026-09-13;
 see [`docs/corpus_expansion_result.md`](docs/corpus_expansion_result.md)),
 **strictly held out from training** (see the leakage note below — this wasn't
 always true, and the difference matters enormously).
@@ -128,9 +128,9 @@ always true, and the difference matters enormously).
 
 \* single-inference CPU timing, varies run-to-run — see `docs/comparison_table.md`'s footnote.
 
-**These are the 72-case numbers** (expanded from 36 on 2026-09-12 — see
+**These are the 120-case numbers** (expanded: 36→72 on 2026-09-12, 72→120 on 2026-09-13 via `scripts/expand_eval_corpus.py` — see
 [`docs/corpus_expansion_result.md`](docs/corpus_expansion_result.md)). The
-expansion tripled negative-control coverage (4 → 12 cases) and found two real
+2026-09-12 expansion tripled negative-control coverage (4 → 12 cases) and found two real
 false positives a smaller eval set was structurally incapable of catching:
 `rule_based` blocks a benign "please decode this" request (a rule meant for
 GW-010-style encoded attacks can't tell benign decode requests from malicious
@@ -181,19 +181,28 @@ eval JSON: [`docs/distilbert_finetune_result.md`](docs/distilbert_finetune_resul
 
 ### Paraphrase robustness & evasion hardening (scripts/paraphrase_robustness.py)
 
-Run `python scripts/paraphrase_robustness.py` to reproduce — applies 4 surface transforms to all 56 attack cases and measures per-layer detection rate with and without text normalization:
+Run `python scripts/paraphrase_robustness.py` to reproduce — applies 4 surface transforms to all 94 attack cases (120-case corpus, expanded from 72) and measures per-layer detection rate with and without text normalization:
 
-| Transform | rule_based | embedding | classifier | Notes |
+| Transform | rule_based | embedding (ST) | classifier | Notes |
 |---|---|---|---|---|
-| original | 16.1% | 23.2% | 48.2% | baseline |
-| case_swap | 16.1% | 23.2% | 48.2% | no impact — all layers robust |
-| space_insert (no fix) | 0.0% | 23.2% | 3.6% | **critical gap** |
-| space_insert (with normalizer) | **17.9%** | 23.2% | **48.2%** | fully restored |
-| synonym_sub | 12.5% | 16.1% | 48.2% | minor semantic drift, acceptable |
+| original | 16.0% | 30.9% | 54.3% | baseline (94 attacks) |
+| case_swap | 16.0% | 30.9% | 54.3% | no impact — all layers robust |
+| space_insert (no fix) | 0.0% | 30.9% | 9.6% | **critical gap** |
+| space_insert (with normalizer) | **18.1%** | 28.7% | **55.3%** | fully restored |
+| synonym_sub | 10.6% | 23.4% | 51.1% | minor semantic drift, acceptable |
 
-**Key finding:** inserting zero-width spaces (U+200B) between characters is visually invisible but breaks tokenization for both regex patterns and the MLP classifier's TF-IDF vectorizer — the classifier drops from 48.2% → 3.6% detection. Sentence transformer embeddings are inherently robust (contextual, not token-matching). The fix is a pre-detection text normalization pass (`gateway/text_normalizer.py`) that strips zero-width characters and Cyrillic/Greek homoglyphs before any detection layer. After normalization, space_insert detection is **identical to the unobfuscated baseline**.
+**Text normalizer (`gateway/text_normalizer.py`) — 5 layers:**
+1. **Unicode NFC** — resolves composed/decomposed character forms
+2. **Zero-width stripping** — removes U+200B (ZWSP), ZWNJ, ZWJ, BOM, and 8 related chars; fixes the space_insert critical gap (classifier 9.6% → 55.3%)
+3. **Homoglyph normalization** — Cyrillic/Greek lookalikes → ASCII (covers GW-012, GW-106)
+4. **Encoding decoding** — base64 blob detection + decoding; URL percent-encoding; 0x hex; leet-speak digit substitution (covers GW-010, GW-011, GW-103)
+5. **Whitespace collapse** — normalizes multiple spaces/tabs
 
-The normalizer runs at the earliest point in the middleware pipeline — after PII redaction, before the injection ensemble — so all three layers benefit simultaneously.
+The normalizer runs in the middleware pipeline after PII redaction, before all three detection layers, so every layer benefits simultaneously.
+
+**Encoding obfuscation layer:** `_decode_base64_segments()` finds base64 blobs (≥20 chars), decodes them, and *appends* the decoded text — the original stays for logs and the decoded form goes to detectors. URL-encoded attacks (e.g. `%49%67%6e...`) are decoded inline. This is a deliberate append-not-replace design: partial decoding failures don't suppress detection of the original encoded form.
+
+**Corpus expansion:** eval corpus grew from 72 → 120 cases via `scripts/expand_eval_corpus.py` — 48 new hand-written cases across all 5 categories, including 10 new encoding_obfuscation variants (base64, hex, URL-encoding, leet-speak, Cyrillic, math Unicode, Caesar cipher, reversed text). All new cases are distinct attack vectors, not rephrases of existing ones.
 
 ### Throughput and concurrency — measured, including a bottleneck found and diagnosed
 
