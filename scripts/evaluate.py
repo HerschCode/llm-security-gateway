@@ -86,6 +86,37 @@ def score(results):
     }
 
 
+def score_by_category(all_results: dict) -> dict:
+    """Per-category detection rate for each layer.
+
+    Only counts cases where expected_behavior == 'block' (attack cases).
+    Benign and ambiguous cases are excluded — there aren't enough per category
+    to make a FP rate meaningful at this corpus size.
+    """
+    layers = list(all_results.keys())
+    # Collect categories from any layer (all layers see the same cases)
+    categories = sorted(set(r["category"] for r in next(iter(all_results.values()))))
+
+    per_cat = {}
+    for cat in categories:
+        per_cat[cat] = {}
+        for layer in layers:
+            cat_attack = [
+                r for r in all_results[layer]
+                if r["category"] == cat and r["expected_behavior"] == "block"
+            ]
+            if not cat_attack:
+                per_cat[cat][layer] = None
+                continue
+            detected = sum(1 for r in cat_attack if r["blocked"])
+            per_cat[cat][layer] = {
+                "n": len(cat_attack),
+                "detected": detected,
+                "detection_rate": round(detected / len(cat_attack), 3),
+            }
+    return per_cat
+
+
 def update_corpus_observed_behavior(all_layer_results: dict):
     """Writes observed_behavior/status back into the corpus YAML, per layer,
     so the corpus file itself carries a record of what was actually observed --
@@ -153,6 +184,7 @@ def main():
     }
 
     scores = {name: score(results) for name, results in all_results.items()}
+    per_cat = score_by_category(all_results)
 
     # --- Print + write comparison table ---
     lines = []
@@ -169,6 +201,25 @@ def main():
             f"| {s['false_positive_rate']:.0%} ({len(s['false_positive_case_ids'])}/{s['n_should_allow']}) "
             f"| {s['avg_latency_ms']:.3f} |"
         )
+    lines.append("")
+    lines.append("## Per-category detection rates (attack cases only)\n")
+    layer_names = ["rule_based", "embedding_similarity", "scratch_classifier"]
+    header = "| Category (n attacks) | " + " | ".join(layer_names) + " |"
+    sep = "|---|" + "---|" * len(layer_names)
+    lines.append(header)
+    lines.append(sep)
+    for cat, cat_scores in per_cat.items():
+        n = next(
+            (v["n"] for v in cat_scores.values() if v is not None), "?"
+        )
+        row_cells = []
+        for layer in layer_names:
+            v = cat_scores.get(layer)
+            if v is None:
+                row_cells.append("—")
+            else:
+                row_cells.append(f"{v['detection_rate']:.0%} ({v['detected']}/{v['n']})")
+        lines.append(f"| {cat} ({n}) | " + " | ".join(row_cells) + " |")
     lines.append("")
     lines.append("## Missed attacks (should have blocked, didn't)\n")
     for name in ["rule_based", "embedding_similarity", "scratch_classifier"]:

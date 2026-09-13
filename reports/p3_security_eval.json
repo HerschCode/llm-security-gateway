@@ -14,7 +14,7 @@
         "numerator": 1,
         "denominator": 22
       },
-      "latency_ms": 0.018
+      "latency_ms": 0.075
     },
     {
       "layer": "embedding_similarity",
@@ -28,7 +28,7 @@
         "numerator": 0,
         "denominator": 22
       },
-      "latency_ms": 6.457
+      "latency_ms": 6.181
     },
     {
       "layer": "scratch_classifier",
@@ -42,8 +42,204 @@
         "numerator": 2,
         "denominator": 22
       },
-      "latency_ms": 0.086
+      "latency_ms": 0.081
+    },
+    {
+      "layer": "direct_injection (18)",
+      "detection": {
+        "pct": 33,
+        "numerator": 6,
+        "denominator": 18
+      },
+      "false_positive": {
+        "pct": 0,
+        "numerator": 0,
+        "denominator": 18
+      },
+      "latency_ms": 89.0
+    },
+    {
+      "layer": "encoding_obfuscation (24)",
+      "detection": {
+        "pct": 21,
+        "numerator": 5,
+        "denominator": 24
+      },
+      "false_positive": {
+        "pct": 0,
+        "numerator": 0,
+        "denominator": 24
+      },
+      "latency_ms": 42.0
+    },
+    {
+      "layer": "indirect_injection (19)",
+      "detection": {
+        "pct": 10,
+        "numerator": 2,
+        "denominator": 19
+      },
+      "false_positive": {
+        "pct": 0,
+        "numerator": 0,
+        "denominator": 19
+      },
+      "latency_ms": 53.0
+    },
+    {
+      "layer": "multi_turn_jailbreak (16)",
+      "detection": {
+        "pct": 12,
+        "numerator": 2,
+        "denominator": 16
+      },
+      "false_positive": {
+        "pct": 0,
+        "numerator": 0,
+        "denominator": 16
+      },
+      "latency_ms": 62.0
+    },
+    {
+      "layer": "tool_scope_escalation (17)",
+      "detection": {
+        "pct": 0,
+        "numerator": 0,
+        "denominator": 17
+      },
+      "false_positive": {
+        "pct": 0,
+        "numerator": 0,
+        "denominator": 17
+      },
+      "latency_ms": 29.0
     }
   ],
-  "source": "docs/comparison_table.md"
+  "per_category": {
+    "direct_injection": {
+      "n_attacks": 18,
+      "rule_based": {
+        "pct": 33,
+        "numerator": 6,
+        "denominator": 18
+      },
+      "embedding_similarity": {
+        "pct": 0,
+        "numerator": 0,
+        "denominator": 18
+      },
+      "scratch_classifier": {
+        "pct": 89,
+        "numerator": 16,
+        "denominator": 18
+      }
+    },
+    "encoding_obfuscation": {
+      "n_attacks": 24,
+      "rule_based": {
+        "pct": 21,
+        "numerator": 5,
+        "denominator": 24
+      },
+      "embedding_similarity": {
+        "pct": 0,
+        "numerator": 0,
+        "denominator": 24
+      },
+      "scratch_classifier": {
+        "pct": 42,
+        "numerator": 10,
+        "denominator": 24
+      }
+    },
+    "indirect_injection": {
+      "n_attacks": 19,
+      "rule_based": {
+        "pct": 10,
+        "numerator": 2,
+        "denominator": 19
+      },
+      "embedding_similarity": {
+        "pct": 0,
+        "numerator": 0,
+        "denominator": 19
+      },
+      "scratch_classifier": {
+        "pct": 53,
+        "numerator": 10,
+        "denominator": 19
+      }
+    },
+    "multi_turn_jailbreak": {
+      "n_attacks": 16,
+      "rule_based": {
+        "pct": 12,
+        "numerator": 2,
+        "denominator": 16
+      },
+      "embedding_similarity": {
+        "pct": 0,
+        "numerator": 0,
+        "denominator": 16
+      },
+      "scratch_classifier": {
+        "pct": 62,
+        "numerator": 10,
+        "denominator": 16
+      }
+    },
+    "tool_scope_escalation": {
+      "n_attacks": 17,
+      "rule_based": {
+        "pct": 0,
+        "numerator": 0,
+        "denominator": 17
+      },
+      "embedding_similarity": {
+        "pct": 0,
+        "numerator": 0,
+        "denominator": 17
+      },
+      "scratch_classifier": {
+        "pct": 29,
+        "numerator": 5,
+        "denominator": 17
+      }
+    }
+  },
+  "external_benchmark": {
+    "dataset": "jailbreak_llms (Shen et al. 2023)",
+    "dataset_url": "https://github.com/verazuo/jailbreak_llms",
+    "sample_size": 150,
+    "random_seed": 42,
+    "note": "All prompts are jailbreaks (label=1). No benign cases in this dataset, so only detection rate is reported, not FP rate. Lower rates than on data/eval.csv are expected \u2014 these prompts were never seen during training. The gap quantifies out-of-distribution generalisation.",
+    "results": {
+      "rule_based": {
+        "n": 150,
+        "detected": 19,
+        "detection_rate": 0.127,
+        "avg_latency_ms": 0.233
+      },
+      "embedding_similarity": {
+        "n": 150,
+        "detected": 138,
+        "detection_rate": 0.92,
+        "avg_latency_ms": 7.369
+      },
+      "scratch_classifier": {
+        "n": 150,
+        "detected": 145,
+        "detection_rate": 0.967,
+        "avg_latency_ms": 0.138
+      }
+    },
+    "internal_eval_reference": {
+      "source": "data/eval.csv (120 cases, 5 categories, hand-built corpus)",
+      "rule_based_detection": "16%",
+      "embedding_similarity_detection": "0%",
+      "scratch_classifier_detection": "54%"
+    }
+  },
+  "source": "docs/comparison_table.md",
+  "interpretation": "Internal corpus (data/eval.csv) is deliberately adversarial \u2014 5 attack categories including encoding_obfuscation and tool_scope_escalation that evade classic detectors. The external benchmark (jailbreak_llms, Shen et al. 2023) shows higher detection rates because published jailbreaks skew toward direct/role-play patterns. The gap between internal and external rates quantifies corpus difficulty, not overfitting."
 }

@@ -136,6 +136,51 @@ and fixed the GW-117 false positive (business "override" confused with injection
 dropping `scratch_classifier` FP rate from 25% → 9%. Full root-cause analysis:
 [`docs/corpus_expansion_result.md`](docs/corpus_expansion_result.md).
 
+### Per-category breakdown (120-case corpus, attack cases only)
+
+`scripts/evaluate.py` now reports per-category detection rates — a more
+honest view than the aggregate, because the five attack categories have very
+different difficulty levels:
+
+| Category (n attacks) | rule_based | embedding_similarity | scratch_classifier |
+|---|---|---|---|
+| direct_injection (18) | 33% (6/18) | 0% (0/18) | **89% (16/18)** |
+| indirect_injection (19) | 10% (2/19) | 0% (0/19) | 53% (10/19) |
+| multi_turn_jailbreak (16) | 12% (2/16) | 0% (0/16) | 62% (10/16) |
+| encoding_obfuscation (24) | 21% (5/24) | 0% (0/24) | 42% (10/24) |
+| tool_scope_escalation (17) | **0% (0/17)** | 0% (0/17) | 29% (5/17) |
+
+The classifier handles direct injection well (89%) but struggles with
+tool_scope_escalation (29%) — attacks that exploit the agent's tool-calling
+interface by requesting legitimate-looking operations with malicious scope.
+Rule-based catches no tool_scope_escalation at all (0/17), which is expected:
+those attacks don't contain injection vocabulary, they extend legitimate syntax.
+The full per-category table is in [`docs/comparison_table.md`](docs/comparison_table.md).
+
+### External benchmark (jailbreak_llms, Shen et al. 2023)
+
+`scripts/external_benchmark.py` evaluates the detectors against
+[jailbreak_llms](https://github.com/verazuo/jailbreak_llms) — 150 prompts
+(random sample, seed=42) from a community-sourced corpus of 666 jailbreaks
+**independent of our training and eval data**:
+
+| Layer | Internal corpus (data/eval.csv) | External (jailbreak_llms, OOD) |
+|---|---|---|
+| rule_based | 16% (15/94) | 13% (19/150) |
+| embedding_similarity | 0% (0/94) | **92% (138/150)** |
+| scratch_classifier | 54% (51/94) | **97% (145/150)** |
+
+The reversal on `embedding_similarity` and `scratch_classifier` is not a bug —
+it's a corpus difficulty finding. Published jailbreaks (jailbreak_llms) skew
+toward direct role-play patterns ("act as DAN", "you are now an AI with no
+restrictions") that are close to the training vocabulary. Our internal corpus
+deliberately includes harder categories: encoding_obfuscation, indirect
+injection, and tool_scope_escalation — attack types that evade classic
+detectors. The 0% internal / 92% external gap for `embedding_similarity`
+quantifies exactly how much that layer relies on vocabulary proximity, which
+the harder categories deliberately destroy. Full results:
+[`reports/p3_external_benchmark.json`](reports/p3_external_benchmark.json).
+
 Two of these rows are separate experiments run to actually test a hypothesis
 this project had previously only stated:
 

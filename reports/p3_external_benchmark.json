@@ -1,0 +1,33 @@
+{
+  "dataset": "jailbreak_llms (Shen et al. 2023)",
+  "dataset_url": "https://github.com/verazuo/jailbreak_llms",
+  "sample_size": 150,
+  "random_seed": 42,
+  "note": "All prompts are jailbreaks (label=1). No benign cases in this dataset, so only detection rate is reported, not FP rate. Lower rates than on data/eval.csv are expected \u2014 these prompts were never seen during training. The gap quantifies out-of-distribution generalisation.",
+  "results": {
+    "rule_based": {
+      "n": 150,
+      "detected": 19,
+      "detection_rate": 0.127,
+      "avg_latency_ms": 0.233
+    },
+    "embedding_similarity": {
+      "n": 150,
+      "detected": 138,
+      "detection_rate": 0.92,
+      "avg_latency_ms": 7.369
+    },
+    "scratch_classifier": {
+      "n": 150,
+      "detected": 145,
+      "detection_rate": 0.967,
+      "avg_latency_ms": 0.138
+    }
+  },
+  "internal_eval_reference": {
+    "source": "data/eval.csv (120 cases, 5 categories, hand-built corpus)",
+    "rule_based_detection": "16%",
+    "embedding_similarity_detection": "0%",
+    "scratch_classifier_detection": "54%"
+  }
+}

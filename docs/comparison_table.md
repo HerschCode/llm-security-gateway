@@ -6,9 +6,19 @@ from an actual run of `scripts/evaluate.py`, not estimated.
 
 | Layer | Detection rate | False-positive rate | Avg latency (ms) |
 |---|---|---|---|
-| rule_based | 16% (15/94) | 5% (1/22) | 0.018 |
-| embedding_similarity | 0% (0/94) | 0% (0/22) | 6.457 |
-| scratch_classifier | 54% (51/94) | 9% (2/22) | 0.086 |
+| rule_based | 16% (15/94) | 5% (1/22) | 0.075 |
+| embedding_similarity | 0% (0/94) | 0% (0/22) | 6.181 |
+| scratch_classifier | 54% (51/94) | 9% (2/22) | 0.081 |
+
+## Per-category detection rates (attack cases only)
+
+| Category (n attacks) | rule_based | embedding_similarity | scratch_classifier |
+|---|---|---|---|
+| direct_injection (18) | 33% (6/18) | 0% (0/18) | 89% (16/18) |
+| encoding_obfuscation (24) | 21% (5/24) | 0% (0/24) | 42% (10/24) |
+| indirect_injection (19) | 10% (2/19) | 0% (0/19) | 53% (10/19) |
+| multi_turn_jailbreak (16) | 12% (2/16) | 0% (0/16) | 62% (10/16) |
+| tool_scope_escalation (17) | 0% (0/17) | 0% (0/17) | 29% (5/17) |
 
 ## Missed attacks (should have blocked, didn't)
 
