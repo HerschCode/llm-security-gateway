@@ -13,7 +13,13 @@ sys.path.insert(0, str(REPO_ROOT))
 
 from gateway.detectors import rule_based
 from gateway.detectors.embedding_similarity import EmbeddingSimilarityDetector
-from gateway.detectors.classifier import ScratchClassifierDetector
+
+try:
+    from gateway.detectors.classifier import ScratchClassifierDetector
+    _HAS_TORCH = True
+except ImportError:
+    ScratchClassifierDetector = None  # type: ignore[assignment,misc]
+    _HAS_TORCH = False
 
 
 def test_rule_based_blocks_direct_injection():
@@ -61,6 +67,8 @@ def test_embedding_detector_result_shape(embedding_detector):
 
 @pytest.fixture(scope="module")
 def classifier_detector():
+    if not _HAS_TORCH:
+        pytest.skip("torch not installed -- classifier tests require full requirements.txt")
     detector = ScratchClassifierDetector()
     model_dir = REPO_ROOT / "models" / "scratch_classifier"
     if not model_dir.exists():

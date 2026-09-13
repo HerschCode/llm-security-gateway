@@ -9,19 +9,56 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: pip
+          cache: "pip"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        # requirements-render.txt is the torch-free serving subset -- the same
+        # deps used by the Render deployment. torch is only needed for training
+        # (scripts/train_scratch_classifier.py), not for running or testing the
+        # gateway. Layer 3 is served by classifier_numpy.py, not classifier.py.
+        run: pip install -r requirements-render.txt pytest
 
       - name: Run test suite
-        run: pytest tests/ -q
+        run: python -m pytest tests/ -v
 
-      - name: Lite-mode boot check (no torch path)
-        run: GATEWAY_LITE=1 python -c "from gateway.app import app; print('lite import OK')"
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install ruff
+        run: pip install ruff
+
+      - name: Lint
+        run: ruff check gateway/ tests/ scripts/ --output-format=github
+        continue-on-error: true
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pip-audit
+        run: pip install pip-audit
+
+      - name: Audit dependencies for known vulnerabilities
+        run: pip-audit -r requirements-render.txt --desc
+        continue-on-error: true
