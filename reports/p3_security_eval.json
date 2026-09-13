@@ -1,0 +1,49 @@
+{
+  "corpus_size": 94,
+  "benign_controls": 22,
+  "layers": [
+    {
+      "layer": "rule_based",
+      "detection": {
+        "pct": 16,
+        "numerator": 15,
+        "denominator": 94
+      },
+      "false_positive": {
+        "pct": 5,
+        "numerator": 1,
+        "denominator": 22
+      },
+      "latency_ms": 0.018
+    },
+    {
+      "layer": "embedding_similarity",
+      "detection": {
+        "pct": 0,
+        "numerator": 0,
+        "denominator": 94
+      },
+      "false_positive": {
+        "pct": 0,
+        "numerator": 0,
+        "denominator": 22
+      },
+      "latency_ms": 6.457
+    },
+    {
+      "layer": "scratch_classifier",
+      "detection": {
+        "pct": 54,
+        "numerator": 51,
+        "denominator": 94
+      },
+      "false_positive": {
+        "pct": 9,
+        "numerator": 2,
+        "denominator": 22
+      },
+      "latency_ms": 0.086
+    }
+  ],
+  "source": "docs/comparison_table.md"
+}
