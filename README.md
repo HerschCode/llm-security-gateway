@@ -64,11 +64,11 @@ Caller → Gateway
 ```mermaid
 graph TD
     A[User Request] --> B[PII Detection & Redaction]
-    B --> C["Layer 1: Rule-Based\n14 regex patterns\n~0.02ms"]
+    B --> C["Layer 1: Rule-Based\n14 regex patterns\n~0.06ms"]
     C -->|block| Z[Block + Audit Log]
-    C -->|pass| D["Layer 2: Embedding Similarity\nTF-IDF cosine · opt-in sentence-transformers\n~5.7ms / ~47ms"]
+    C -->|pass| D["Layer 2: Embedding Similarity\nTF-IDF cosine · opt-in sentence-transformers\n~21ms / ~47ms"]
     D -->|block| Z
-    D -->|pass| E["Layer 3: MLP Classifier\npure NumPy · torch-free\n~0.09ms"]
+    D -->|pass| E["Layer 3: MLP Classifier\npure NumPy · torch-free\n~0.57ms"]
     E -->|block| Z
     E -->|pass| F[Rate Limiting & Session Check]
     F -->|block| Z
@@ -120,10 +120,10 @@ always true, and the difference matters enormously).
 
 | Layer | Detection rate | False-positive rate | Avg latency (ms) |
 |---|---|---|---|
-| rule_based | 28% (26/94) | 5% (1/22) | 0.28 |
-| embedding_similarity (TF-IDF, in production) | 0% (0/94) | 0% (0/22) | 23.919 |
+| rule_based | 28% (26/94) | 5% (1/22) | 0.056 |
+| embedding_similarity (TF-IDF, in production) | 0% (0/94) | 0% (0/22) | 20.928 |
 | embedding_similarity_st (sentence-transformer, opt-in) | 23% (13/56)* | 0% (0/12)* | 47.443 |
-| scratch_classifier (in production) | 54% (51/94) | 9% (2/22) | 0.540 |
+| scratch_classifier (in production) | 54% (51/94) | 9% (2/22) | 0.565 |
 | distilbert_finetuned (comparison only) | 52% (29/56)* | 25% (3/12)* | 364.5† |
 
 \* measured on 72-case corpus; not re-run on expanded corpus — see [`docs/comparison_table.md`](docs/comparison_table.md).
