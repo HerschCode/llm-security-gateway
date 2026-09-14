@@ -286,6 +286,20 @@ __SHARED_CSS__
   .explanation { font-size: 12px; color: var(--muted); margin-top: 8px; font-style: italic; }
   .foot { margin-top: 20px; font-size: 12px; color: var(--muted); }
   .foot a { color: var(--accent); }
+  .guide { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; margin-bottom: 20px; max-width: 780px; }
+  .guide-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; cursor: pointer; user-select: none; font-size: 13px; }
+  .guide-header:hover { background: var(--surface2); border-radius: 7px; }
+  .guide-toggle { font-size: 11px; color: var(--muted); }
+  .guide-body { padding: 0 14px 14px; }
+  .guide-steps { display: flex; flex-direction: column; gap: 10px; margin: 8px 0 14px; }
+  .guide-step { display: flex; gap: 12px; align-items: flex-start; }
+  .step-num { background: var(--accent); color: var(--bg); font-weight: 700; font-size: 11px; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .guide-step div { font-size: 13px; }
+  .guide-step p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
+  .guide-glossary { font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 5px; border-top: 1px solid var(--border); padding-top: 10px; }
+  .gterm { display: inline-block; font-weight: 700; font-size: 11px; padding: 1px 6px; border-radius: 3px; margin-right: 4px; }
+  .gterm.blocked { color: var(--good); }
+  .gterm.allowed { color: var(--bad); }
 </style>
 </head>
 <body>
@@ -300,6 +314,41 @@ __NAV__
     <a href="/gateway/dashboard">Live traffic dashboard &rarr;</a>
   </div>
   __LITE_BANNER__
+
+  <div class="guide">
+    <div class="guide-header" onclick="toggleGuide()">
+      <span>&#8505; <b>How to use this demo</b></span>
+      <span class="guide-toggle" id="guide-toggle">&#x25B2; hide</span>
+    </div>
+    <div class="guide-body" id="guide-body">
+      <div class="guide-steps">
+        <div class="guide-step">
+          <span class="step-num">1</span>
+          <div><b>Pick a sample attack</b>
+            <p>Choose one from the dropdown &mdash; attacks are grouped by technique. The payload loads into the text box automatically. Or type your own prompt.</p>
+          </div>
+        </div>
+        <div class="guide-step">
+          <span class="step-num">2</span>
+          <div><b>Choose a backend</b>
+            <p>The backend is the LLM application the gateway wraps. <em>stub_ops_agent</em> returns a canned response instantly &mdash; good for testing detection. <em>operations_assistant</em> calls the real procurement agent (slower; requires the backend to be up).</p>
+          </div>
+        </div>
+        <div class="guide-step">
+          <span class="step-num">3</span>
+          <div><b>Hit Run &mdash; compare the two panels</b>
+            <p><b>Left panel</b>: the prompt is sent straight to the backend with zero protection &mdash; this is what an attacker sees without the gateway.
+            &nbsp;<b>Right panel</b>: the same prompt goes through all seven gateway layers first. Compare the verdicts to see exactly what each layer caught.</p>
+          </div>
+        </div>
+      </div>
+      <div class="guide-glossary">
+        <div><span class="gterm blocked">BLOCKED</span> Gateway stopped the request &mdash; attack contained.&nbsp;&nbsp;<span class="gterm allowed">ALLOWED (left panel)</span> Backend answered with no protection &mdash; the attack worked.</div>
+        <div><b>layer</b> &mdash; which stage triggered the block: <em>rule_based</em> (regex / keyword patterns), <em>embedding_similarity</em> (distance to known attack embeddings), <em>scratch_classifier</em> (NumPy MLP trained on the attack corpus), or <em>post_flight_checks</em> (response-side scan for leaks &amp; compliance).</div>
+        <div><b>Attack categories:</b> &#x1F534;&nbsp;Direct Injection (override system prompt) &middot; &#x1F7E0;&nbsp;Indirect Injection (payload hidden in content) &middot; &#x1F7E1;&nbsp;Multi-turn Jailbreak (gradual behavioural drift) &middot; &#x1F7E3;&nbsp;Encoding Obfuscation (base64&nbsp;/&nbsp;Unicode evasion) &middot; &#x1F535;&nbsp;Tool Scope Escalation (out-of-scope tool calls)</div>
+      </div>
+    </div>
+  </div>
 
   <div class="controls">
     <div>
@@ -492,6 +541,14 @@ $('run').addEventListener('click', async () => {
     $('run').disabled = false; $('run').textContent = 'Run';
   }
 });
+
+function toggleGuide() {
+  const body = document.getElementById('guide-body');
+  const lbl = document.getElementById('guide-toggle');
+  const hidden = body.style.display === 'none';
+  body.style.display = hidden ? '' : 'none';
+  lbl.textContent = hidden ? '▲ hide' : '▼ show';
+}
 
 loadCases();
 loadBackends();
