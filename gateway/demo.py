@@ -445,9 +445,10 @@ async function loadBackends() {
       o.textContent = b.name || b.key;
       sel.appendChild(o);
     }
-    // Prefer the real agent as default; fall back to whatever is first
+    // Prefer stub backend by default -- shows attack compliance clearly without
+    // requiring the real agent to be up; switch to operations_assistant to test end-to-end.
     const keys = (data.backends || []).map(b => b.key);
-    if (keys.includes('operations_assistant')) sel.value = 'operations_assistant';
+    if (keys.includes('stub_ops_agent')) sel.value = 'stub_ops_agent';
   } catch (e) {
     const o = document.createElement('option');
     o.value = 'stub_ops_agent'; o.textContent = 'stub_ops_agent';
@@ -501,7 +502,8 @@ function renderLayers(r) {
     const info = pl[n];
     if (!info) return `<span>${n}: n/a</span>`;
     if (info.skipped) return `<span>${n}: skipped (${info.skipped})</span>`;
-    return `<span class="${info.blocked ? 'hit' : ''}">${n}: ${info.blocked ? 'BLOCK' : 'pass'}</span>`;
+    const lat = info.latency_ms != null ? ` (${info.latency_ms.toFixed(1)}ms)` : '';
+    return `<span class="${info.blocked ? 'hit' : ''}">${n}: ${info.blocked ? 'BLOCK' : 'pass'}${lat}</span>`;
   }).join('');
   // Plain-English explanation of the verdict
   const activeCount = names.filter(n => pl[n] && !pl[n].skipped).length;
