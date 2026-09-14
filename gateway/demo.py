@@ -72,8 +72,8 @@ _FEATURED_CASES = [
 _FEATURED_IDS = [cid for cid, _ in _FEATURED_CASES]
 _FEATURED_LABELS = {cid: label for cid, label in _FEATURED_CASES}
 
-_RATE_LIMIT = int(os.environ.get("DEMO_RATE_LIMIT", "20"))
-_RATE_WINDOW = float(os.environ.get("DEMO_RATE_WINDOW", "60"))
+_DEFAULT_RATE_LIMIT = 20
+_DEFAULT_RATE_WINDOW = 60.0
 _DEMO_API_KEY = os.environ.get("DEMO_API_KEY", "")
 _LITE = os.environ.get("GATEWAY_LITE", "").lower() in ("1", "true", "yes")
 
@@ -92,14 +92,16 @@ def _client_ip(request: Request) -> str:
 
 def _rate_limited(ip: str) -> bool:
     now = time.time()
+    limit = int(os.environ.get("DEMO_RATE_LIMIT", str(_DEFAULT_RATE_LIMIT)))
+    window = float(os.environ.get("DEMO_RATE_WINDOW", str(_DEFAULT_RATE_WINDOW)))
     dq = _hits.setdefault(ip, deque())
-    while dq and now - dq[0] > _RATE_WINDOW:
+    while dq and now - dq[0] > window:
         dq.popleft()
-    if len(dq) >= _RATE_LIMIT:
+    if len(dq) >= limit:
         return True
     dq.append(now)
     if len(_hits) > 2000:  # crude cap so a spray of IPs can't grow this forever
-        for k in [k for k, v in _hits.items() if not v or now - v[-1] > _RATE_WINDOW][:1000]:
+        for k in [k for k, v in _hits.items() if not v or now - v[-1] > window][:1000]:
             _hits.pop(k, None)
     return False
 
@@ -169,7 +171,7 @@ def demo_run(req: DemoRunRequest, request: Request):
         return JSONResponse({"error": "missing_or_invalid_x_demo_key"}, status_code=401)
     if _rate_limited(_client_ip(request)):
         return JSONResponse(
-            {"error": f"rate_limited: max {_RATE_LIMIT} requests per {int(_RATE_WINDOW)}s"},
+            {"error": f"rate_limited: max {int(os.environ.get('DEMO_RATE_LIMIT', str(_DEFAULT_RATE_LIMIT)))} requests per {int(float(os.environ.get('DEMO_RATE_WINDOW', str(_DEFAULT_RATE_WINDOW))))}s"},
             status_code=429,
         )
 

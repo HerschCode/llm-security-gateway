@@ -64,6 +64,24 @@ PATTERNS = [
     ("RB-022", r"\bimpersonat(e|ing)\s+(another\s+|a\s+)?(user|admin|role)\b"),
     ("RB-023", r"bypass\s+(the\s+)?(rate[\s\-]?limit|access[\s\-]?control|permission\s+check|auth)"),
     ("RB-024", r"\b(pull|fetch|export|download|retrieve)\s+(all|every)\s+(employee|user|customer|staff)\s+(records?|data|entries)"),
+    # Fake authority / social-engineering delegation: attacker claims a manager or test
+    # scenario grants permission for an action the agent shouldn't perform. "for this
+    # test only" is the strongest signal; "my director/manager asked me to" + bulk data
+    # request is the delegation variant.
+    ("RB-025", r"\b(for\s+this\s+test\s+only|scheduled\s+internal\s+(security\s+)?test)\b"),
+    ("RB-026", r"\b(my\s+)?(director|manager|supervisor|head\s+of)\s+asked\s+me\s+to\b.{0,80}\b(pull|fetch|export|all|every|full|entire)\b"),
+    # Automated bulk-export to an external destination — "weekly export of all" is a
+    # reliable signal; the "to my email" variant anchors it to an exfiltration channel.
+    ("RB-027", r"\b(set\s+up\s+a?\s+)?(weekly|daily|automated?)\s+(export|send|deliver).{0,60}(all|every|entire|bulk)\b"),
+    # Cross-user tool impersonation: using a requester/user ID that differs from the
+    # actor ("use requester_id 'mgr-0042' instead of my own"). Pattern anchors on the
+    # explicit substitution phrase without constraining the specific ID format.
+    ("RB-028", r"(use|set)\s+(requester|user|member|account)[\s_]?id\b.{0,40}\binstead\s+of\s+(my|mine|my\s+own)\b"),
+    # Cross-team or cross-department scope escalation: "all tickets across every team"
+    # or "another department's data". The agent may legitimately list a user's own team
+    # data, but requests spanning ALL teams or a DIFFERENT department are out-of-scope.
+    ("RB-029", r"\b(all|every)\s+(open\s+)?(tickets?|records?|cases?|data)\s+(across|for)\s+(every|all)\s+team"),
+    ("RB-030", r"\banother\s+(department|team|group|org)'?s?\s+\b(data|records?|budget|files?)\b"),
 ]
 
 _COMPILED = [(pid, re.compile(pattern, re.IGNORECASE)) for pid, pattern in PATTERNS]

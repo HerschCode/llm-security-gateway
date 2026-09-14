@@ -1,6 +1,5 @@
 """Tests for the interactive demo endpoint: the side-by-side run, upstream-error
 surfacing, and the per-IP rate limit."""
-import importlib
 import sys
 from pathlib import Path
 
@@ -16,16 +15,15 @@ def client(monkeypatch):
     monkeypatch.setenv("DEMO_RATE_LIMIT", "3")
     monkeypatch.setenv("DEMO_RATE_WINDOW", "60")
     import gateway.demo as demo_mod
-    importlib.reload(demo_mod)
     import gateway.app as app_mod
-    importlib.reload(app_mod)
+    # Clear any cross-test hit history so each test starts at 0/3.
+    # _rate_limited() now reads env vars at call time, so no module reload
+    # is needed -- monkeypatch.setenv is enough.
+    demo_mod._hits.clear()
     try:
         yield TestClient(app_mod.app)
     finally:
-        monkeypatch.delenv("DEMO_RATE_LIMIT", raising=False)
-        monkeypatch.delenv("DEMO_RATE_WINDOW", raising=False)
-        importlib.reload(demo_mod)
-        importlib.reload(app_mod)
+        demo_mod._hits.clear()
 
 
 def test_home_and_pages_are_html_with_shared_nav(client):

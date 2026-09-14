@@ -120,7 +120,7 @@ always true, and the difference matters enormously).
 
 | Layer | Detection rate | False-positive rate | Avg latency (ms) |
 |---|---|---|---|
-| rule_based | 21% (20/94) | 5% (1/22) | 0.064 |
+| rule_based | 28% (26/94) | 5% (1/22) | 0.28 |
 | embedding_similarity (TF-IDF, in production) | 0% (0/94) | 0% (0/22) | 23.919 |
 | embedding_similarity_st (sentence-transformer, opt-in) | 23% (13/56)* | 0% (0/12)* | 47.443 |
 | scratch_classifier (in production) | 54% (51/94) | 9% (2/22) | 0.540 |
@@ -148,13 +148,14 @@ different difficulty levels:
 | indirect_injection (19) | 10% (2/19) | 0% (0/19) | 53% (10/19) |
 | multi_turn_jailbreak (16) | 12% (2/16) | 0% (0/16) | 62% (10/16) |
 | encoding_obfuscation (24) | 21% (5/24) | 0% (0/24) | 42% (10/24) |
-| tool_scope_escalation (17) | 29% (5/17) | 0% (0/17) | 29% (5/17) |
+| tool_scope_escalation (17) | **65% (11/17)** | 0% (0/17) | 29% (5/17) |
 
-The classifier handles direct injection well (89%) but struggles with
-tool_scope_escalation (29%) — attacks that exploit the agent's tool-calling
-interface by requesting legitimate-looking operations with malicious scope.
-Rule-based catches no tool_scope_escalation at all (0/17), which is expected:
-those attacks don't contain injection vocabulary, they extend legitimate syntax.
+The classifier handles direct injection well (89%), and rule_based now covers
+**65% of tool_scope_escalation** attacks — up from 29% — thanks to targeted patterns
+for social-engineering delegation ("my director asked me to"), fake-authority claims
+("scheduled internal security test"), automated bulk-export requests, and cross-user
+tool impersonation. These attack types don't use injection vocabulary; they exploit
+legitimate-looking business framing, which is why a distinct pattern set was needed.
 The full per-category table is in [`docs/comparison_table.md`](docs/comparison_table.md).
 
 ### External benchmark (jailbreak_llms, Shen et al. 2023)
@@ -166,7 +167,7 @@ The full per-category table is in [`docs/comparison_table.md`](docs/comparison_t
 
 | Layer | Internal corpus (data/eval.csv) | External (jailbreak_llms, OOD) |
 |---|---|---|
-| rule_based | 16% (15/94) | 13% (19/150) |
+| rule_based | 28% (26/94) | 13% (19/150) |
 | embedding_similarity | 0% (0/94) | **92% (138/150)** |
 | scratch_classifier | 54% (51/94) | **97% (145/150)** |
 
