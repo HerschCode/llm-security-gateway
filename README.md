@@ -534,6 +534,90 @@ knowing:
 
 ---
 
+## Path to improvement
+
+The 68% ensemble detection rate (64/94 attacks, 120-case corpus) is an honest
+number from a real methodology. This section documents the concrete path from here
+to a production-grade system — named specifically so a reader understands what
+"production-grade" would actually require, and what it would cost.
+
+### Why the leakage fix matters more than the detection number
+
+The most significant engineering moment in this project was **finding and fixing
+train/test leakage** that had inflated embedding-similarity's detection from a real
+0% to a fabricated 97%. This matters not because the fix changed the system's
+end-to-end behavior much (the rule-based + classifier combination was already doing
+the work), but because:
+
+- It demonstrates the **methodology discipline** that separates a real measurement
+  from a plausible-looking number. A candidate who reports honest 0% alongside
+  an explanation is more credible than one reporting 97% with no discussion of
+  how it was validated.
+- It changed the **architectural conclusion**: if embedding-similarity were genuinely
+  contributing, it would be worth optimizing. Learning it contributes nothing
+  against this attack style makes the priority clearer — invest in rule coverage
+  and classifier quality, not in bigger embedding models.
+- The fix narrative (similarity score of exactly 1.000 on brand-new test cases as
+  the tell) is **reproducible reasoning** that any engineer can apply to their
+  own eval pipelines.
+
+Full details: [`docs/leakage_fix.md`](docs/leakage_fix.md).
+
+### Concrete next steps (in priority order)
+
+**1. Expand the corpus to 500+ cases — the highest-leverage action**
+
+The 120-case corpus is the tightest constraint on the ensemble's measured
+performance. Rule-based and classifier both show saturating or degrading behavior
+on novel attack patterns precisely because the training distribution is small.
+A 500-case corpus (roughly 4× the current attack count, split across the same
+five categories) would surface real generalization failures hidden by the current
+sample size, and give the classifier enough signal to move from 54% detection to
+something defensible. This is not a modeling problem — it's a data-collection and
+annotation problem.
+
+**2. Distilled detection model — faster and more portable than fine-tuning**
+
+The `train_distilbert_finetune.py` path was tested and found to cost 675× the
+latency of the NumPy classifier for comparable (not better) accuracy on the
+current corpus. The next sensible model investment is **knowledge distillation**:
+train a small teacher on the ensemble's block/pass decisions (not just the raw
+labels), then distill into a <1ms model. The ensemble's combined signal is richer
+than any single label; a distilled student benefits from that.
+
+**3. Streaming intercept for partial-prompt detection**
+
+The gateway currently inspects complete, finalized prompts. Streaming LLM APIs
+send tokens incrementally, which means a streaming caller can send an injected
+prefix before the gateway has seen enough context to classify it. Adding a
+streaming intercept (accumulate until a delimiter or token budget, then classify)
+is a known unsolved case documented in `gateway/middleware.py`. It is the most
+realistic attack surface for adversarial callers and the gap most worth closing
+before production deployment.
+
+**4. Multi-turn context modeling**
+
+The gateway treats each turn independently. Conversation-level injection (benign
+turns priming a later malicious one) is completely invisible to the current
+pre-flight checks. A session-context window (last N turns hashed + classified
+jointly) is listed as a known limitation in the Known limitations section below;
+it requires `gateway/session_checks.py` to carry message history, not just
+per-turn state.
+
+### 2027 positioning
+
+LLM security is shifting from "optional hardening" to a named discipline with
+formal requirements: OWASP LLM Top 10, EU AI Act enforcement timelines, and
+enterprise security questionnaires are all converging on prompt injection
+defenses as a first-class concern. The architectural patterns here — pre-flight
+ensemble, post-flight compliance checks, pluggable backends, audit logging — are
+the same patterns that will appear in production-grade LLM security middleware
+by 2027. Being early means the honest methodology story (leakage bug found and
+fixed, negative results reported plainly) is already the differentiator it
+needs to be, not a hurdle.
+
+---
+
 ## Project structure
 
 ```
