@@ -38,32 +38,54 @@ from sentence_transformers import SentenceTransformer
 # ── Teacher: the production ensemble ─────────────────────────────────────────
 
 def _load_teacher():
-    """Return the gateway's real DetectionEnsemble (teacher)."""
+    """Construct a simple teacher wrapper over the three gateway detectors.
+
+    The gateway has no standalone DetectionEnsemble class — the block-on-any
+    logic lives in middleware._run_injection_ensemble. This function assembles
+    the same three layers in the same order and exposes a .predict(text) method
+    that returns "BLOCK" or "ALLOW", matching the action vocabulary used by
+    _teacher_predict below.
+    """
     import sys
     sys.path.insert(0, str(Path(__file__).parent.parent))
-    from src.detection.ensemble import DetectionEnsemble
-    return DetectionEnsemble()
+    from gateway.detectors import rule_based
+    from gateway.detectors.embedding_similarity import EmbeddingSimilarityDetector
+    from gateway.detectors.classifier import ScratchClassifierDetector
+
+    embed_det = EmbeddingSimilarityDetector()
+    embed_det.load()
+    clf_det = ScratchClassifierDetector()
+    clf_det.load()
+
+    class _Teacher:
+        def predict(self, text: str) -> str:
+            if rule_based.detect(text).blocked:
+                return "BLOCK"
+            if embed_det.detect(text).blocked:
+                return "BLOCK"
+            if clf_det.detect(text).blocked:
+                return "BLOCK"
+            return "ALLOW"
+
+    return _Teacher()
 
 
-def _teacher_predict(ensemble, texts: list[str]) -> np.ndarray:
+def _teacher_predict(teacher, texts: list[str]) -> np.ndarray:
     """Run the teacher on each text; return (N, 3) soft probabilities.
 
-    The ensemble returns a DetectionResult with a string action (BLOCK/FLAG/ALLOW)
-    and a float score. We map that to a 3-class soft-label vector:
+    Maps BLOCK/ALLOW decisions to one-hot soft labels:
       BLOCK  → [1.0, 0.0, 0.0]
-      FLAG   → [0.0, 1.0, 0.0]
       ALLOW  → [0.0, 0.0, 1.0]
 
-    A real distillation run would use the raw probability outputs from each
-    sub-model, not a one-hot encoding of the final decision. This skeleton uses
-    the binary decision as a stand-in so it runs without modifying the ensemble
-    API — replace _soft_label() with real probability extraction when ready.
+    A real distillation run would use per-layer probability scores
+    (temperature-scaled at T=4 per Hinton et al.) rather than hard decisions.
+    Replace this mapping with actual probability extraction when ready.
     """
-    action_to_index = {"BLOCK": 0, "FLAG": 1, "ALLOW": 2}
+    action_to_index = {"BLOCK": 0, "ALLOW": 2}
     probs = np.zeros((len(texts), 3), dtype=float)
     for i, text in enumerate(texts):
-        result = ensemble.check(text)
-        idx = action_to_index.get(result.action, 2)
+        action = teacher.predict(text)
+        idx = action_to_index.get(action, 2)
         probs[i, idx] = 1.0
     return probs
 
@@ -87,7 +109,6 @@ def _train_student(X: np.ndarray, soft_labels: np.ndarray) -> LogisticRegression
     clf = LogisticRegression(
         max_iter=1000,
         C=1.0,
-        multi_class="multinomial",
         solver="lbfgs",
         random_state=42,
     )
@@ -106,9 +127,9 @@ def main():
     args = parser.parse_args()
 
     print(f"Loading corpus from {args.corpus}")
-    with open(args.corpus) as f:
-        cases = yaml.safe_load(f)["cases"]
-    texts = [c["text"] for c in cases]
+    with open(args.corpus, encoding="utf-8") as f:
+        cases = yaml.safe_load(f)
+    texts = [c.get("payload", c.get("text", "")) for c in cases]
     print(f"  {len(texts)} cases loaded")
 
     print("Loading teacher (detection ensemble)…")

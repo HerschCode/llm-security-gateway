@@ -22,8 +22,9 @@ import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
+import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.preprocessing import normalize
 
 MODEL_DIR = Path(__file__).resolve().parents[2] / "models" / "embedding_similarity"
 SIMILARITY_THRESHOLD = 0.35  # tuned empirically, see docs/decisions.md
@@ -42,7 +43,9 @@ class DetectionResult:
 class EmbeddingSimilarityDetector:
     def __init__(self):
         self.vectorizer: TfidfVectorizer | None = None
-        self.known_bad_vectors = None
+        # Pre-normalised (L2) rows so detect() reduces cosine similarity to a
+        # single sparse dot product: no per-call cosine_similarity() overhead.
+        self._known_bad_norm = None  # shape (N, vocab), L2-normalised rows
         self.known_bad_ids: list[str] = []
 
     def fit(self, known_bad_texts: list[str], known_bad_ids: list[str]):
@@ -55,7 +58,8 @@ class EmbeddingSimilarityDetector:
             max_features=20000,
             sublinear_tf=True,
         )
-        self.known_bad_vectors = self.vectorizer.fit_transform(known_bad_texts)
+        raw = self.vectorizer.fit_transform(known_bad_texts)
+        self._known_bad_norm = normalize(raw, norm="l2")
         self.known_bad_ids = known_bad_ids
 
     def save(self, path: Path = MODEL_DIR):
@@ -63,13 +67,15 @@ class EmbeddingSimilarityDetector:
         with open(path / "vectorizer.pkl", "wb") as f:
             pickle.dump(self.vectorizer, f)
         with open(path / "known_bad.pkl", "wb") as f:
-            pickle.dump((self.known_bad_vectors, self.known_bad_ids), f)
+            pickle.dump((self._known_bad_norm, self.known_bad_ids), f)
 
     def load(self, path: Path = MODEL_DIR):
         with open(path / "vectorizer.pkl", "rb") as f:
             self.vectorizer = pickle.load(f)
         with open(path / "known_bad.pkl", "rb") as f:
-            self.known_bad_vectors, self.known_bad_ids = pickle.load(f)
+            stored, self.known_bad_ids = pickle.load(f)
+        # Re-normalise on load in case an older pickle stores the raw vectors.
+        self._known_bad_norm = normalize(stored, norm="l2")
 
     def detect(self, text: str, threshold: float | None = None) -> DetectionResult:
         start = time.perf_counter()
@@ -79,10 +85,11 @@ class EmbeddingSimilarityDetector:
 
         effective_threshold = threshold if threshold is not None else SIMILARITY_THRESHOLD
 
-        query_vector = self.vectorizer.transform([text])
-        similarities = cosine_similarity(query_vector, self.known_bad_vectors)[0]
+        # Cosine similarity = dot(normalised_query, normalised_corpus.T)
+        query_norm = normalize(self.vectorizer.transform([text]), norm="l2")
+        similarities = (query_norm @ self._known_bad_norm.T).toarray()[0]
 
-        best_idx = similarities.argmax()
+        best_idx = int(np.argmax(similarities))
         best_score = float(similarities[best_idx])
         best_match_id = self.known_bad_ids[best_idx]
 
