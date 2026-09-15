@@ -1,18 +1,18 @@
 """
-Runs all three detection layers against data/eval.csv (our 20-case corpus, held
-out from the layers' own fitting/training) and produces:
+Runs all three detection layers against corpus/injection_cases.yaml (the
+canonical 100-case corpus, held out from each layer's fitting/training) and
+produces:
   - per-case pass/fail per layer, written back into corpus/injection_cases.yaml's
-    observed_behavior/status fields (per-layer, since each layer can differ)
+    observed_behavior_by_layer/status_by_layer fields (per-layer, since each layer
+    can differ)
   - a comparison table: detection rate, false-positive rate, latency, saved to
     docs/comparison_table.md and printed to stdout
 
-Detection rate here = recall on cases where expected_behavior != "allow".
+Detection rate here = recall on cases where expected_behavior == "block".
 False-positive rate = block rate on cases where expected_behavior == "allow".
-The single "flag" case (GW-018) is reported separately, not folded into either
-rate, since neither block nor allow is strictly "correct" for it -- that's the
-point of including an ambiguous case (see corpus notes on GW-018).
+Cases with expected_behavior == "flag" (ambiguous/contested) are reported
+separately — neither block nor allow is strictly correct for those.
 """
-import csv
 import sys
 import time
 from pathlib import Path
@@ -27,13 +27,27 @@ from gateway.detectors.embedding_similarity import EmbeddingSimilarityDetector
 from gateway.detectors.classifier import ScratchClassifierDetector
 
 CORPUS_PATH = REPO_ROOT / "corpus" / "injection_cases.yaml"
-EVAL_PATH = REPO_ROOT / "data" / "eval.csv"
 COMPARISON_TABLE_PATH = REPO_ROOT / "docs" / "comparison_table.md"
 
 
 def load_eval_cases():
-    with open(EVAL_PATH, encoding="utf-8") as f:
-        return list(csv.DictReader(f))
+    """Load eval cases from the canonical corpus YAML.
+
+    The YAML is the single source of truth — eval.csv was a derived CSV export
+    that drifted out of sync as the corpus grew. Loading directly from the YAML
+    ensures evaluate.py always runs against the current corpus version.
+    """
+    with open(CORPUS_PATH, encoding="utf-8") as f:
+        cases = yaml.safe_load(f)
+    return [
+        {
+            "case_id": c["id"],
+            "text": c.get("payload", c.get("text", "")),
+            "category": c.get("category", ""),
+            "expected_behavior": c.get("expected_behavior", "block"),
+        }
+        for c in cases
+    ]
 
 
 def run_layer(name, detect_fn, cases):
@@ -162,7 +176,7 @@ def update_corpus_observed_behavior(all_layer_results: dict):
 
 def main():
     cases = load_eval_cases()
-    print(f"Loaded {len(cases)} eval cases from {EVAL_PATH}\n")
+    print(f"Loaded {len(cases)} eval cases from {CORPUS_PATH}\n")
 
     # --- Layer 1: rule-based ---
     layer1_results = run_layer("rule_based", rule_based.detect, cases)
@@ -189,7 +203,7 @@ def main():
     # --- Print + write comparison table ---
     lines = []
     lines.append("# Detection Layer Comparison\n")
-    lines.append(f"Evaluated against `data/eval.csv` — our own {len(cases)}-case red-team")
+    lines.append(f"Evaluated against `corpus/injection_cases.yaml` — our own {len(cases)}-case red-team")
     lines.append("corpus, held out from each layer's fitting/training. Numbers below are")
     lines.append("from an actual run of `scripts/evaluate.py`, not estimated.\n")
     lines.append("| Layer | Detection rate | False-positive rate | Avg latency (ms) |")

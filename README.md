@@ -112,7 +112,7 @@ Replace this package wholesale once the real Project 2 codebase exists.
 
 ## Detection layer comparison (the actual centerpiece)
 
-Run via `python scripts/evaluate.py`, scored against `data/eval.csv` — our own
+Run via `python scripts/evaluate.py`, scored against `corpus/injection_cases.yaml` — our own
 100-case corpus (expanded: 36 → 72 on 2026-09-12, 72 → 100 on 2026-09-15;
 see [`docs/corpus_expansion_result.md`](docs/corpus_expansion_result.md)),
 **strictly held out from training** (see the leakage note below — this wasn't
@@ -120,21 +120,18 @@ always true, and the difference matters enormously).
 
 | Layer | Detection rate | False-positive rate | Avg latency (ms) |
 |---|---|---|---|
-| rule_based | 28% (26/94) | 5% (1/22) | 0.056 |
-| embedding_similarity (TF-IDF, in production) | 0% (0/94) | 0% (0/22) | 20.928 |
+| rule_based | 27% (21/78) | 6% (1/17) | 0.262 |
+| embedding_similarity (TF-IDF, in production) | 0% (0/78) | 0% (0/17) | 23.643 |
 | embedding_similarity_st (sentence-transformer, opt-in) | 23% (13/56)* | 0% (0/12)* | 47.443 |
-| scratch_classifier (in production) | 54% (51/94) | 9% (2/22) | 0.565 |
+| scratch_classifier (in production) | 49% (38/78) | 18% (3/17) | 0.530 |
 | distilbert_finetuned (comparison only) | 52% (29/56)* | 25% (3/12)* | 364.5† |
 
 \* measured on 72-case corpus; not re-run on expanded corpus — see [`docs/comparison_table.md`](docs/comparison_table.md).
 † single-inference CPU timing, varies run-to-run.
 
-**These are the current 100-case numbers** (78 block + 5 ambiguous + 17 benign — expanded: 36→72 on 2026-09-12, 72→100 on 2026-09-15 via `scripts/expand_eval_corpus.py` — see
-[`docs/corpus_expansion_result.md`](docs/corpus_expansion_result.md)). The
-100-case corpus expanded negative-control coverage (4→12→22 cases), surfaced
-and fixed the GW-117 false positive (business "override" confused with injection "override"),
-dropping `scratch_classifier` FP rate from 25% → 9%. Full root-cause analysis:
-[`docs/corpus_expansion_result.md`](docs/corpus_expansion_result.md).
+**Corpus composition (100 cases):** 78 block + 5 ambiguous + 17 benign — expanded:
+36→72 on 2026-09-12, 72→100 on 2026-09-15, adding underrepresented attack vectors
+and tripling negative-control coverage. See [`docs/corpus_expansion_result.md`](docs/corpus_expansion_result.md).
 
 ### Per-category breakdown (100-case corpus, attack cases only)
 
@@ -144,18 +141,18 @@ different difficulty levels:
 
 | Category (n attacks) | rule_based | embedding_similarity | scratch_classifier |
 |---|---|---|---|
-| direct_injection (18) | 33% (6/18) | 0% (0/18) | **89% (16/18)** |
-| indirect_injection (19) | 10% (2/19) | 0% (0/19) | 53% (10/19) |
-| multi_turn_jailbreak (16) | 12% (2/16) | 0% (0/16) | 62% (10/16) |
-| encoding_obfuscation (24) | 21% (5/24) | 0% (0/24) | 42% (10/24) |
-| tool_scope_escalation (17) | **65% (11/17)** | 0% (0/17) | 29% (5/17) |
+| direct_injection (13) | 46% (6/13) | 0% (0/13) | **62% (8/13)** |
+| encoding_obfuscation (20) | 15% (3/20) | 0% (0/20) | 40% (8/20) |
+| indirect_injection (15) | 13% (2/15) | 0% (0/15) | 60% (9/15) |
+| multi_turn_jailbreak (15) | 7% (1/15) | 0% (0/15) | 47% (7/15) |
+| tool_scope_escalation (15) | **60% (9/15)** | 0% (0/15) | 40% (6/15) |
 
-The classifier handles direct injection well (89%), and rule_based now covers
-**65% of tool_scope_escalation** attacks — up from 29% — thanks to targeted patterns
-for social-engineering delegation ("my director asked me to"), fake-authority claims
-("scheduled internal security test"), automated bulk-export requests, and cross-user
-tool impersonation. These attack types don't use injection vocabulary; they exploit
-legitimate-looking business framing, which is why a distinct pattern set was needed.
+The classifier handles direct injection best at 62%, while rule_based leads on
+**tool_scope_escalation at 60%** — thanks to targeted patterns for social-engineering
+delegation ("my director asked me to"), fake-authority claims ("scheduled internal
+security test"), automated bulk-export requests, and cross-user tool impersonation.
+These attack types don't use injection vocabulary; they exploit legitimate-looking
+business framing, which is why a distinct pattern set was needed.
 The full per-category table is in [`docs/comparison_table.md`](docs/comparison_table.md).
 
 ### External benchmark (jailbreak_llms, Shen et al. 2023)
@@ -165,11 +162,11 @@ The full per-category table is in [`docs/comparison_table.md`](docs/comparison_t
 (random sample, seed=42) from a community-sourced corpus of 666 jailbreaks
 **independent of our training and eval data**:
 
-| Layer | Internal corpus (data/eval.csv) | External (jailbreak_llms, OOD) |
+| Layer | Internal corpus (corpus/injection_cases.yaml) | External (jailbreak_llms, OOD) |
 |---|---|---|
-| rule_based | 28% (26/94) | 13% (19/150) |
-| embedding_similarity | 0% (0/94) | **92% (138/150)** |
-| scratch_classifier | 54% (51/94) | **97% (145/150)** |
+| rule_based | 27% (21/78) | 13% (19/150) |
+| embedding_similarity | 0% (0/78) | **92% (138/150)** |
+| scratch_classifier | 49% (38/78) | **97% (145/150)** |
 
 The reversal on `embedding_similarity` and `scratch_classifier` is not a bug —
 it's a corpus difficulty finding. Published jailbreaks (jailbreak_llms) skew
@@ -287,7 +284,7 @@ Full writeup with the before/after numbers and how it was found:
 correctly, provides **zero** real generalization from a public jailbreak dataset to
 this project's own attack style. Rule-based and embedding-similarity are both
 essentially non-functional against this corpus in isolation. The from-scratch
-classifier (54% detection, 9% false-positive rate on the current 100-case corpus — see the residual
+classifier (49% detection, 18% false-positive rate on the current 100-case corpus — see the residual
 domain-mismatch false-positive rate on unseen queries, which is a different and worse
 number, in `docs/domain_shift_fix.md`) is the only layer doing real,
 non-leaked work — and it's mediocre, not excellent. **This is a materially different,
@@ -308,13 +305,12 @@ would have been.
 ### Remaining honest weaknesses on the current 100-case corpus
 
 Current per-layer false positives: `rule_based` — GW-052; `scratch_classifier` — GW-020,
-GW-115 (reduced from 3→2 after GW-117 fix: "override date range" benign business query
-no longer blocked). Missed attacks (should-block cases the ensemble lets through): 43/94
-on `scratch_classifier` alone — mostly encoding obfuscation and indirect injection
-categories (see `docs/comparison_table.md` for the full miss list).
+GW-089, GW-093. Missed attacks: `scratch_classifier` misses 40/78 attack cases; the
+ensemble (block-on-any) reduces this to 30/78 — mostly encoding obfuscation and
+multi-turn jailbreak categories (see `docs/comparison_table.md` for the full miss list).
 
 The redteam reports (`docs/redteam_report_gateway_stub_ops_agent.md`) were run
-against the 72-case corpus and are not yet regenerated for 120 cases. This list will
+against the 72-case corpus and are not yet regenerated for 100 cases. This list will
 shift on any future retrain since the classifier's decision boundary isn't identical
 to any previous snapshot's — none of it is hidden, it's surfaced directly by
 `scripts/report_cli.py` and the redteam reports. The domain-mismatch
@@ -536,7 +532,7 @@ knowing:
 
 ## Path to improvement
 
-The 68% ensemble detection rate (64/83 attacks on the 100-case corpus (eval run pending re-run)) is an honest
+The 62% ensemble detection rate (48/78 attacks on the 100-case corpus) is an honest
 number from a real methodology. This section documents the concrete path from here
 to a production-grade system — named specifically so a reader understands what
 "production-grade" would actually require, and what it would cost.
@@ -572,7 +568,7 @@ performance. Rule-based and classifier both show saturating or degrading behavio
 on novel attack patterns precisely because the training distribution is small.
 A 500-case corpus (roughly 4× the current attack count, split across the same
 five categories) would surface real generalization failures hidden by the current
-sample size, and give the classifier enough signal to move from 54% detection to
+sample size, and give the classifier enough signal to move from 49% detection to
 something defensible. This is not a modeling problem — it's a data-collection and
 annotation problem.
 
