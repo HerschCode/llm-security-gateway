@@ -113,7 +113,7 @@ Replace this package wholesale once the real Project 2 codebase exists.
 ## Detection layer comparison (the actual centerpiece)
 
 Run via `python scripts/evaluate.py`, scored against `data/eval.csv` — our own
-120-case corpus (expanded: 36 → 72 on 2026-09-12, 72 → 120 on 2026-09-13;
+100-case corpus (expanded: 36 → 72 on 2026-09-12, 72 → 100 on 2026-09-15;
 see [`docs/corpus_expansion_result.md`](docs/corpus_expansion_result.md)),
 **strictly held out from training** (see the leakage note below — this wasn't
 always true, and the difference matters enormously).
@@ -129,14 +129,14 @@ always true, and the difference matters enormously).
 \* measured on 72-case corpus; not re-run on expanded corpus — see [`docs/comparison_table.md`](docs/comparison_table.md).
 † single-inference CPU timing, varies run-to-run.
 
-**These are the current 120-case numbers** (94 attacks, 22 benign, 4 ambiguous — expanded: 36→72 on 2026-09-12, 72→120 on 2026-09-13 via `scripts/expand_eval_corpus.py` — see
+**These are the current 100-case numbers** (78 block + 5 ambiguous + 17 benign — expanded: 36→72 on 2026-09-12, 72→100 on 2026-09-15 via `scripts/expand_eval_corpus.py` — see
 [`docs/corpus_expansion_result.md`](docs/corpus_expansion_result.md)). The
-120-case corpus tripled negative-control coverage (4→12→22 cases), surfaced
+100-case corpus expanded negative-control coverage (4→12→22 cases), surfaced
 and fixed the GW-117 false positive (business "override" confused with injection "override"),
 dropping `scratch_classifier` FP rate from 25% → 9%. Full root-cause analysis:
 [`docs/corpus_expansion_result.md`](docs/corpus_expansion_result.md).
 
-### Per-category breakdown (120-case corpus, attack cases only)
+### Per-category breakdown (100-case corpus, attack cases only)
 
 `scripts/evaluate.py` now reports per-category detection rates — a more
 honest view than the aggregate, because the five attack categories have very
@@ -222,11 +222,11 @@ eval JSON: [`docs/distilbert_finetune_result.md`](docs/distilbert_finetune_resul
 
 ### Paraphrase robustness & evasion hardening (scripts/paraphrase_robustness.py)
 
-Run `python scripts/paraphrase_robustness.py` to reproduce — applies 4 surface transforms to all 94 attack cases (120-case corpus, expanded from 72) and measures per-layer detection rate with and without text normalization:
+Run `python scripts/paraphrase_robustness.py` to reproduce — applies 4 surface transforms to all 83 attack cases (100-case corpus, expanded from 72) and measures per-layer detection rate with and without text normalization:
 
 | Transform | rule_based | embedding (ST) | classifier | Notes |
 |---|---|---|---|---|
-| original | 16.0% | 30.9% | 54.3% | baseline (94 attacks) |
+| original | 16.0% | 30.9% | 54.3% | baseline (72-case corpus, not yet re-run on 100-case) |
 | case_swap | 16.0% | 30.9% | 54.3% | no impact — all layers robust |
 | space_insert (no fix) | 0.0% | 30.9% | 9.6% | **critical gap** |
 | space_insert (with normalizer) | **18.1%** | 28.7% | **55.3%** | fully restored |
@@ -287,7 +287,7 @@ Full writeup with the before/after numbers and how it was found:
 correctly, provides **zero** real generalization from a public jailbreak dataset to
 this project's own attack style. Rule-based and embedding-similarity are both
 essentially non-functional against this corpus in isolation. The from-scratch
-classifier (54% detection, 9% false-positive rate on the current 120-case corpus — see the residual
+classifier (54% detection, 9% false-positive rate on the current 100-case corpus — see the residual
 domain-mismatch false-positive rate on unseen queries, which is a different and worse
 number, in `docs/domain_shift_fix.md`) is the only layer doing real,
 non-leaked work — and it's mediocre, not excellent. **This is a materially different,
@@ -305,7 +305,7 @@ misses. Defense-in-depth doing its job even with one layer contributing nothing 
 more realistic security story than "all three layers are individually excellent"
 would have been.
 
-### Remaining honest weaknesses on the current 120-case corpus
+### Remaining honest weaknesses on the current 100-case corpus
 
 Current per-layer false positives: `rule_based` — GW-052; `scratch_classifier` — GW-020,
 GW-115 (reduced from 3→2 after GW-117 fix: "override date range" benign business query
@@ -536,7 +536,7 @@ knowing:
 
 ## Path to improvement
 
-The 68% ensemble detection rate (64/94 attacks, 120-case corpus) is an honest
+The 68% ensemble detection rate (64/83 attacks on the 100-case corpus (eval run pending re-run)) is an honest
 number from a real methodology. This section documents the concrete path from here
 to a production-grade system — named specifically so a reader understands what
 "production-grade" would actually require, and what it would cost.
@@ -567,7 +567,7 @@ Full details: [`docs/leakage_fix.md`](docs/leakage_fix.md).
 
 **1. Expand the corpus to 500+ cases — the highest-leverage action**
 
-The 120-case corpus is the tightest constraint on the ensemble's measured
+The 100-case corpus is the tightest constraint on the ensemble's measured
 performance. Rule-based and classifier both show saturating or degrading behavior
 on novel attack patterns precisely because the training distribution is small.
 A 500-case corpus (roughly 4× the current attack count, split across the same
@@ -621,7 +621,7 @@ needs to be, not a hurdle.
 ## Project structure
 
 ```
-corpus/injection_cases.yaml           # 72 attack cases, versioned (v0.3.0)
+corpus/injection_cases.yaml           # 100 cases (v0.4.0): 78 block + 5 flag + 17 benign
 corpus/benign_indomain_queries.yaml   # domain-shift fix data
 project2_agent/                       # best-effort Project 2 reconstruction (guess)
   agent.py, auth.py, refusal_policy.py, tools.py, documents.py, eval_corpus.yaml
