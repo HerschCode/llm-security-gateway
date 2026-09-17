@@ -132,6 +132,11 @@ always true, and the difference matters enormously).
 **Corpus composition (100 cases):** 78 block + 5 ambiguous + 17 benign — expanded:
 36→72 on 2026-09-12, 72→100 on 2026-09-15, adding underrepresented attack vectors
 and tripling negative-control coverage. See [`docs/corpus_expansion_result.md`](docs/corpus_expansion_result.md).
+26 of the 100 are labeled `origin: public_pattern` — each mapped to a specific
+named technique and real-world citation (OWASP LLM01, the Shen et al. 2024
+jailbreak taxonomy, Unicode bidi-override CVEs, etc.), not just a label:
+[`docs/corpus-references.md`](docs/corpus-references.md). The rest are
+`self_devised`, invented for this project rather than sourced.
 
 ### Per-category breakdown (100-case corpus, attack cases only)
 

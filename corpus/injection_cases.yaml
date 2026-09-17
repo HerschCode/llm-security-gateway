@@ -11,7 +11,9 @@
 #   public_pattern  -> mechanism is a documented pattern (e.g. OWASP LLM01,
 #                       known jailbreak families, known Unicode-obfuscation
 #                       techniques). Payload text is still hand-written for
-#                       this project, not copy-pasted from a source.
+#                       this project, not copy-pasted from a source. See
+#                       docs/corpus-references.md for the specific real-world
+#                       source each public_pattern case is modeled on.
 #   self_devised    -> mechanism and phrasing invented for this project.
 #
 # v0.1.0 (2026-09-05): initial 20 cases across 5 categories (direct_injection,
