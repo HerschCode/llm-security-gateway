@@ -508,7 +508,10 @@ function renderLayers(r) {
   // Plain-English explanation of the verdict
   const activeCount = names.filter(n => pl[n] && !pl[n].skipped).length;
   if (!r.allowed) {
-    if (pl.rule_based && pl.rule_based.blocked) {
+    if (r.upstream_error) {
+      expl.textContent = 'Not a detection-layer decision — the backend itself errored ' +
+        '(see the response panel above). All detection layers ran and passed.';
+    } else if (pl.rule_based && pl.rule_based.blocked) {
       const pid = r.block_reason || 'a known pattern';
       expl.textContent = `Matched ${pid} — classic instruction-override pattern.`;
     } else if (pl.embedding_similarity && pl.embedding_similarity.blocked) {

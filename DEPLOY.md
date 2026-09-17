@@ -41,6 +41,19 @@ operations-assistant and uses its **public, keyless, IP-rate-limited**
 `operations_assistant` backend works in the live demo without any secret. Remove
 those two lines from `render.yaml` to hide that backend instead.
 
+**Known limitation: the rate limit is shared across every visitor, not
+per-visitor.** operations-assistant's `/demo/chat` rate-limits by caller IP —
+but the caller it sees is always the gateway's own server IP, since the
+gateway doesn't forward the original visitor's IP (no `X-Forwarded-For`
+passthrough in `gateway/adapters/operations_assistant_adapter.py`). That
+means the 5-requests-per-10-minutes quota is one shared pool across *every*
+concurrent demo visitor, not 5 per visitor — a burst of visitors can exhaust
+it quickly, surfacing as `UPSTREAM ERROR: HTTP 429` on the demo page (a
+real error rendered correctly as "not a detection-layer decision," not
+silently miscounted as a block). Fixing this properly means forwarding the
+real client IP through the adapter and having operations-assistant trust it
+specifically from the gateway's known origin — not built here.
+
 Check wiring any time at `…/gateway/connectivity` — it reports, per backend,
 whether the gateway can actually reach it.
 
