@@ -175,8 +175,7 @@ def demo_run(req: DemoRunRequest, request: Request):
             status_code=429,
         )
 
-    from gateway.app import BACKENDS
-    from gateway.middleware import GatewayMiddleware
+    from gateway.app import BACKENDS, middleware as mw
 
     if req.backend not in BACKENDS:
         return {"error": f"unknown_backend:{req.backend}", "available": list(BACKENDS.keys())}
@@ -200,7 +199,20 @@ def demo_run(req: DemoRunRequest, request: Request):
     bypass_ms = (time.perf_counter() - t0) * 1000
 
     # --- 2. Same prompt through the full gateway pipeline ---
-    mw = GatewayMiddleware()
+    # Reuses gateway.app's singleton middleware (the same one /gateway/chat
+    # uses) instead of building a fresh GatewayMiddleware() per request.
+    # Found via a slow/flaky test: constructing a new instance every call
+    # means reloading EVERY detector from scratch on every single demo
+    # request -- fine when the default embedding backend was TF-IDF
+    # (cheap to unpickle), but the default is now sentence_transformer
+    # (docs/sentence_transformer_similarity_result.md), which loads a real
+    # torch-backed model. That turned every demo request into a ~20-30s
+    # model reload instead of a real detection call, and made
+    # test_demo_run_rate_limited_after_threshold's 5-requests-in-a-row
+    # assumption flaky once total wall-clock started approaching the test's
+    # own rate-limit window. Reusing the singleton also makes the demo's
+    # session/adaptive-threshold behavior match real /gateway/chat traffic,
+    # not an artificially fresh state every call.
     t0 = time.perf_counter()
     gw = mw.process(
         prompt=req.prompt, session_id=f"{req.session_id}-gw",

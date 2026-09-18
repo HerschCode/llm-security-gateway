@@ -4,6 +4,37 @@ Running log, written as decisions are made. Not reconstructed after the fact.
 
 ---
 
+## 2026-09-18 — Found via a flaky test: the demo endpoint rebuilt every detector on every request
+
+`tests/test_demo.py::test_demo_run_rate_limited_after_threshold` (5 rapid
+`/gateway/demo/run` calls) passed in isolation at 129.7s for one test and
+failed intermittently as part of the full suite -- slow enough to look like a
+timing-sensitive flake, but the actual cause was a real, severe performance
+bug: `gateway/demo.py::demo_run()` built a brand-new `GatewayMiddleware()`
+on every single request instead of reusing `gateway.app`'s existing
+module-level singleton (which `/gateway/chat` already correctly reuses).
+
+This was cheap and invisible back when the default layer-2 backend was
+TF-IDF (unpickling a small sklearn object). It stopped being cheap the
+moment `EMBEDDING_BACKEND`'s default changed to `sentence_transformer`
+(2026-09-12 -- see the embedding-backend entries above): every demo request
+was now loading a real torch-backed sentence-transformer model from disk,
+turning a millisecond detection call into a ~20-30 second one, five times
+per test run. The 60-second rate-limit window in the test fixture made this
+a genuine race once total wall-clock started approaching it, not just a slow
+test.
+
+**Fixed:** `demo_run()` now imports and reuses `gateway.app.middleware`
+instead of constructing its own. Verified: `test_demo_run_rate_limited_after_threshold`
+alone dropped from 129.7s to a share of an 82s four-test run, and passes
+reliably (previously flaky) once real per-request latency is back to
+milliseconds instead of tens of seconds. Reusing the singleton also makes
+the demo's session/adaptive-threshold behavior match real `/gateway/chat`
+traffic instead of an artificially fresh state on every call -- a
+correctness improvement, not just a speed one.
+
+---
+
 ## 2026-09-12 — Corpus expanded 36 → 72 cases; found two real false positives the old one couldn't
 
 External review flagged the 36-case corpus, and specifically its 4 negative
