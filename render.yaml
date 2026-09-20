@@ -27,7 +27,7 @@ services:
         value: "/demo/chat"
       - key: OPS_ASSISTANT_TIMEOUT
         value: "120"
-      # Free-tier deploy: force TF-IDF backend (torch-free, fits 512MB RAM).
-      # The code default is sentence_transformer for full installs.
+      # TF-IDF backend: torch-free, fits 512MB RAM. This is also the code
+      # default; kept explicit here so the intent is clear.
       - key: EMBEDDING_BACKEND
         value: "tfidf"
