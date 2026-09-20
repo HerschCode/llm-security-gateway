@@ -50,3 +50,13 @@ requests, not prompt-injection-against-a-tool-calling-agent attacks, so
 adapting rather than copying its payloads would still be needed to stay
 on-topic for this corpus's actual threat model. Not done in this pass —
 flagged as the honest next step rather than silently left unconsidered.
+
+## External evaluation datasets (not used for training)
+
+Downloaded by `scripts/external_benchmark_v2.py` into the gitignored `data/external/`:
+
+| Dataset | Use | Licence (per the dataset card; verify before redistributing) |
+|---|---|---|
+| deepset/prompt-injections (Hugging Face; 662 rows: 546 train + 116 test) | Injection detection and benign false-positive rate | cc-by-4.0 (card also lists apache-2.0) |
+| JailbreakBench/JBB-Behaviors, `benign-behaviors.csv` (100 rows) | Hard false-positive set | see dataset card |
+| verazuo/jailbreak_llms (2023-05-07 prompts) | Only the 244 prompts NOT found verbatim in `data/train.csv`; the rest overlap training | MIT (per the repo) |

@@ -1,4 +1,7 @@
 """
+SUPERSEDED by scripts/external_benchmark_v2.py: this scores jailbreak_llms, which overlaps the
+training set (63% verbatim), so its numbers measure memorisation. Kept only for history.
+
 External benchmark: evaluate detection layers against the jailbreak_llms dataset
 (Shen et al. 2023, https://github.com/verazuo/jailbreak_llms), a community-sourced
 corpus of 666 jailbreak prompts that is independent of our training and eval data.

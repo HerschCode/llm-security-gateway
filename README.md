@@ -160,29 +160,31 @@ These attack types don't use injection vocabulary; they exploit legitimate-looki
 business framing, which is why a distinct pattern set was needed.
 The full per-category table is in [`docs/comparison_table.md`](docs/comparison_table.md).
 
-### External benchmark (jailbreak_llms, Shen et al. 2023)
+### External benchmark (contamination-audited)
 
-`scripts/external_benchmark.py` evaluates the detectors against
-[jailbreak_llms](https://github.com/verazuo/jailbreak_llms) — 150 prompts
-(random sample, seed=42) from a community-sourced corpus of 666 jailbreaks
-**independent of our training and eval data**:
+**Correction.** An earlier version of this section scored the detectors on a sample of jailbreak_llms and called it "independent of our training and eval data" (92% embedding / 97% classifier). That was wrong: `data/train.csv` is itself built from jailbreak_llms. `scripts/external_benchmark_v2.py` audits this by exact match (lowercased, whitespace-normalised): **422 of the 666 prompts (63%) are verbatim in the training positives**, and 93 of the 150 in the old sample. On those, the layers score 100% (embedding) and 97% (classifier), which is memorisation. Near-duplicates are not detected by this check, so true contamination is at least this high.
 
-| Layer | Internal corpus (corpus/injection_cases.yaml) | External (jailbreak_llms, OOD) |
-|---|---|---|
-| rule_based | 27% (21/78) | 13% (19/150) |
-| embedding_similarity | 0% (0/78) | **92% (138/150)** |
-| scratch_classifier | 49% (38/78) | **97% (145/150)** |
+Results on data the detectors did not train on (raw output: [`reports/p3_external_benchmark_v2.json`](reports/p3_external_benchmark_v2.json); Wilson 95% CIs in the JSON):
 
-The reversal on `embedding_similarity` and `scratch_classifier` is not a bug —
-it's a corpus difficulty finding. Published jailbreaks (jailbreak_llms) skew
-toward direct role-play patterns ("act as DAN", "you are now an AI with no
-restrictions") that are close to the training vocabulary. Our internal corpus
-deliberately includes harder categories: encoding_obfuscation, indirect
-injection, and tool_scope_escalation — attack types that evade classic
-detectors. The 0% internal / 92% external gap for `embedding_similarity`
-quantifies exactly how much that layer relies on vocabulary proximity, which
-the harder categories deliberately destroy. Full results:
-[`reports/p3_external_benchmark.json`](reports/p3_external_benchmark.json).
+| Dataset | Layer | Detection (attacks) | False positives (benign) |
+|---|---|---|---|
+| jailbreak_llms, 244 prompts not found in training | rule_based | 15.6% | n/a |
+| | embedding_similarity | 65.2% | n/a |
+| | scratch_classifier | 92.6% | n/a |
+| | any layer blocks | 94.7% | n/a |
+| deepset/prompt-injections (cc-by-4.0, unrelated authors; 263 injections / 399 benign) | rule_based | **0.8%** | 0.0% |
+| | embedding_similarity | 22.1% | 16.8% |
+| | scratch_classifier | 49.4% | **39.8%** |
+| | any layer blocks | 63.9% | **48.6%** |
+| JailbreakBench benign behaviours (100 borderline-benign requests) | scratch_classifier | n/a | **25.0%** |
+| | any layer blocks | n/a | **26.0%** |
+
+What this means, stated plainly:
+
+- **Generalisation is much weaker than the earlier README claimed.** On a genuinely different injection dataset the whole ensemble catches about 64% while blocking about 49% of benign prompts; the classifier alone is close to a coin flip (49% detection at 40% false positives). The rule-based layer catches almost nothing there (2 of 263), because deepset's injections are short natural-language instructions rather than the patterns it encodes.
+- **The false-positive rate is the biggest problem**, not detection. The README's "~10% residual false positives" was measured on hand-written in-domain benign queries and does not transfer: 25-40% on external benign sets. As deployed, this gateway would block a large share of legitimate traffic from these distributions.
+- Caveats: deepset includes German text and some short, ambiguous labels; JailbreakBench's "benign" requests are deliberately borderline (they mirror harmful topics), so a high false-positive rate there is partly a harder test; the jailbreak_llms "clean" subset may still contain near-duplicates of training data, so its 92.6% is an upper bound on true generalisation.
+- The "0% internal / 92% external" narrative for `embedding_similarity` in earlier versions is withdrawn. It scores 0% on our hand-written attacks, 65% on the clean jailbreak_llms subset (likely inflated by near-duplicates) and 22% on deepset.
 
 Two of these rows are separate experiments run to actually test a hypothesis
 this project had previously only stated:
@@ -487,6 +489,7 @@ knowing:
   than silently left unfixed — not made the default because it's still the
   weakest real detector at the highest cost, and it would re-introduce torch
   into the serving path. See `docs/sentence_transformer_similarity_result.md`.
+- **False positives on external benign data are far higher (25-40%)** than the in-domain figure below; see the contamination-audited external benchmark above. This is the largest open weakness.
 - **~10% residual false-positive rate** on unseen in-domain benign queries after the
   domain-shift fix (down from a genuine, reproducible 60% before it — see
   `docs/domain_shift_fix.md`). Not necessarily 10% on the next retrain: see the next
