@@ -14,12 +14,16 @@ matched_pattern_id), and when (timestamp) -- see the "Audit logging" section
 in README.md for how it's used (compliance framing, dashboard queries).
 """
 import json
+import queue
+import threading
 import time
 import uuid
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 LOG_PATH = Path(__file__).resolve().parents[1] / "logs" / "gateway.jsonl"
+
+_SENTINEL = object()  # signals writer thread to drain and exit
 
 
 @dataclass
@@ -37,13 +41,49 @@ class LogRecord:
 
 
 class GatewayLogger:
+    """
+    Thread-safe append logger backed by a queue + single writer thread.
+    Hot path: queue.put() — no file I/O, no lock contention under concurrency.
+    """
+
     def __init__(self, path: Path = LOG_PATH):
         self.path = path
         self.path.parent.mkdir(parents=True, exist_ok=True)
+        self._queue: queue.Queue = queue.Queue()
+        self._fh = open(self.path, "a", encoding="utf-8")  # noqa: SIM115
+        self._thread = threading.Thread(
+            target=self._writer, daemon=True, name="gateway-log-writer"
+        )
+        self._thread.start()
+
+    def _writer(self):
+        """Drain queue in batches; one flush per batch keeps disk I/O low."""
+        while True:
+            item = self._queue.get()
+            if item is _SENTINEL:
+                break
+            self._fh.write(item)
+            # Coalesce any items that arrived while we were writing
+            while True:
+                try:
+                    extra = self._queue.get_nowait()
+                except queue.Empty:
+                    break
+                if extra is _SENTINEL:
+                    self._fh.flush()
+                    return
+                self._fh.write(extra)
+            self._fh.flush()
 
     def log(self, record: LogRecord):
-        with open(self.path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(asdict(record)) + "\n")
+        line = json.dumps(asdict(record)) + "\n"
+        self._queue.put(line)
+
+    def close(self):
+        """Flush remaining records and close the file handle."""
+        self._queue.put(_SENTINEL)
+        self._thread.join(timeout=5)
+        self._fh.close()
 
     def new_request_id(self) -> str:
         return str(uuid.uuid4())[:8]

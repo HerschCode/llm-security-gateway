@@ -69,9 +69,42 @@ scheduling overhead inside each worker, or contention writing to the shared
   scaling.
 - **This is a real, previously-undocumented limitation, found by actually
   measuring instead of assuming FastAPI's "it's async" story meant this was
-  fine.** Filed here rather than fixed in code — fixing it properly (moving
-  detection off-thread, or benchmarking the JSONL-contention hypothesis) is
-  follow-up work, not a same-session patch.
+  fine.** The GIL bottleneck remains; the logging fix below addressed the
+  secondary contention.
+
+## Follow-up: logging contention fixed
+
+The multi-worker result hinted at a secondary bottleneck beyond the GIL:
+`GatewayLogger.log()` was calling `open(path, "a")` on every single request,
+forcing each thread to acquire an OS file lock, write, and release it. Under
+concurrent load (even single-worker with many threads waiting for the GIL),
+those open/close calls serialized on the filesystem.
+
+Fixed in `gateway/logging_schema.py`: replaced the per-request `open()` with a
+**queue-backed background writer thread**. The hot path now does one
+`queue.put()` (≈1 µs, no file I/O); a daemon thread drains the queue in
+batches and flushes once per batch.
+
+Re-ran the single-worker benchmark after the fix:
+
+| Concurrency | req/s | p50 | p95 | p99 | max |
+|---|---|---|---|---|---|
+| 1 | 31.7 | 32.7ms | 49.6ms | 77.7ms | 283.4ms |
+| 10 | 36.6 | 289.0ms | 510.0ms | 778.3ms | 790.8ms |
+| 50 | 31.2 | 1643.0ms | 1923.5ms | 2041.3ms | 2141.1ms |
+
+vs. before (same single-worker, same machine):
+
+| Concurrency | req/s | p50 | Δ req/s |
+|---|---|---|---|
+| 1 | 26.3 | 38.7ms | +20% |
+| 10 | 21.1 | 405.0ms | **+73%** |
+| 50 | 22.5 | 1948.7ms | +39% |
+
+The improvement is largest at c=10 — exactly where multiple threads were
+contending most heavily on the file handle. At c=50 the GIL still dominates;
+at c=1 the file I/O was a small fraction of total request time. The GIL
+ceiling remains, but the audit log no longer adds to it.
 
 ## Reproducing this
 

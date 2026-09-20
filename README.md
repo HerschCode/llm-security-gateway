@@ -247,19 +247,31 @@ The normalizer runs in the middleware pipeline after PII redaction, before all t
 
 **Corpus expansion:** eval corpus grew from 72 → 100 cases via `scripts/expand_eval_corpus.py` — 48 new hand-written cases across all 5 categories, including 10 new encoding_obfuscation variants (base64, hex, URL-encoding, leet-speak, Cyrillic, math Unicode, Caesar cipher, reversed text). All new cases are distinct attack vectors, not rephrases of existing ones.
 
-### Throughput and concurrency — measured, including a bottleneck found and diagnosed
+### Throughput and concurrency — measured, including two bottlenecks found and fixed
 
 `scripts/measure_throughput.py` hits a live `uvicorn` process with a mixed
-benign+attack payload set at concurrency 1/10/50. Single worker: **req/s stays
-flat (~21-26) as concurrency rises to 50, while p50 latency grows almost
-linearly with it (38.7ms → 405.0ms → 1948.7ms)** — a serialization signature,
-not real parallelism. Diagnosed (not just observed): the detection work is
-CPU-bound Python/numpy running inside a thread pool, and the GIL prevents that
-from actually running concurrently across threads. Verified the diagnosis by
-testing the fix: `--workers 4` (separate processes, separate GILs) roughly
-doubles throughput and halves p50 latency at concurrency 50 — real, but not a
-clean 4x, an unresolved second-order bottleneck reported rather than rounded
-away. Full writeup: [`docs/throughput_report.md`](docs/throughput_report.md).
+benign+attack payload set at concurrency 1/10/50.
+
+**Primary bottleneck (GIL):** detection work is CPU-bound Python/numpy in a
+thread pool — the GIL serializes threads, so more concurrency means more
+waiting, not more throughput. Diagnosed and verified: `--workers 4` (separate
+GILs) roughly doubles throughput at c=50. Remains the ceiling.
+
+**Secondary bottleneck (logging, fixed):** `GatewayLogger` was calling
+`open(path, "a")` on every single request, causing file-lock contention across
+threads. Fixed: a queue-backed background writer thread moves all file I/O off
+the hot path. Result: **+73% req/s at c=10** (21.1 → 36.6), +39% at c=50,
++20% at c=1 — measured on the same machine before/after the fix.
+
+After fix, single worker:
+
+| Concurrency | req/s | p50 |
+|---|---|---|
+| 1 | 31.7 | 32.7ms |
+| 10 | 36.6 | 289ms |
+| 50 | 31.2 | 1643ms |
+
+Full writeup with before/after tables: [`docs/throughput_report.md`](docs/throughput_report.md).
 
 **In-process benchmark** (`scripts/benchmark_throughput.py`, no HTTP overhead, no
 server process — direct function calls against the full detection pipeline):
@@ -527,8 +539,9 @@ knowing:
   not assumed: req/s stays flat from concurrency 1 to 50 while p50 latency grows
   almost linearly, because the CPU-bound detection work runs in a GIL-bound
   thread pool. `--workers N` measurably helps (throughput roughly doubled at
-  N=4) but doesn't scale cleanly even then — a second, undiagnosed bottleneck
-  remains. Full measurement and diagnosis: `docs/throughput_report.md`.
+  N=4). The logging file-contention bottleneck (secondary) has been fixed —
+  `GatewayLogger` now uses a queue-backed background writer. Full measurement and
+  before/after comparison: `docs/throughput_report.md`.
 - **The append-only JSONL audit log (`logs/gateway.jsonl`) is single-file,
   single-node.** Fine for a portfolio demo's traffic volume; a real production
   deployment would need it shipped to something built for this (e.g. a
