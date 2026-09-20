@@ -1,8 +1,8 @@
 """Verifies GatewayMiddleware's layer-2 backend selection (EMBEDDING_BACKEND
-env var). Default is "sentence_transformer" (real semantic embeddings, the
-better-measured layer -- see docs/sentence_transformer_similarity_result.md);
-render.yaml explicitly pins EMBEDDING_BACKEND=tfidf for the free-tier deploy
-to stay torch-free within 512MB. Both paths need coverage, not just one."""
+env var). Default is "tfidf" (torch-free, production default). The
+"sentence_transformer" backend (better-measured layer, see
+docs/sentence_transformer_similarity_result.md) is opt-in via
+EMBEDDING_BACKEND=sentence_transformer. Both paths need coverage."""
 import importlib
 import sys
 from pathlib import Path
@@ -31,26 +31,22 @@ def _sentence_transformer_available() -> bool:
         return False
 
 
-def test_default_backend_is_sentence_transformer(monkeypatch):
-    if not _sentence_transformer_available():
-        pytest.skip("sentence-transformers not installed / models/embedding_similarity_st not built.")
-
+def test_default_backend_is_tfidf(monkeypatch):
+    """Default (no env var) must be tfidf -- torch-free, always available."""
     monkeypatch.delenv("EMBEDDING_BACKEND", raising=False)
     mw_module = _reload_middleware()
     middleware = mw_module.GatewayMiddleware()
     try:
-        assert middleware.embedding_backend == "sentence_transformer"
-        from gateway.detectors.embedding_similarity_st import SentenceTransformerSimilarityDetector
-        assert isinstance(middleware.embedding_detector, SentenceTransformerSimilarityDetector)
-        assert middleware.similarity_threshold == 0.45
+        assert middleware.embedding_backend == "tfidf"
+        from gateway.detectors.embedding_similarity import EmbeddingSimilarityDetector
+        assert isinstance(middleware.embedding_detector, EmbeddingSimilarityDetector)
+        assert middleware.similarity_threshold == 0.35
     finally:
         _reload_middleware()
 
 
 def test_tfidf_backend_when_explicitly_selected(monkeypatch):
-    """This is the path render.yaml actually pins for the free-tier deploy --
-    torch-free, fits 512MB. Must keep working even though it's no longer the
-    code default."""
+    """Explicit EMBEDDING_BACKEND=tfidf is still honoured (belt-and-suspenders)."""
     monkeypatch.setenv("EMBEDDING_BACKEND", "tfidf")
     mw_module = _reload_middleware()
     middleware = mw_module.GatewayMiddleware()
