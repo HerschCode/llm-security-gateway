@@ -192,8 +192,8 @@ on the *same* known-bad index, threshold independently swept (0.35 isn't
 comparable across different similarity distributions). **Confirms TF-IDF's 0%
 is an architecture ceiling, not a tuning problem** — a real embedding finds
 signal TF-IDF structurally can't, non-leaked, from the same public dataset. Set
-`EMBEDDING_BACKEND=sentence_transformer` to run it — kept opt-in rather than
-default because it's still the weakest real detector (23% vs. the
+`EMBEDDING_BACKEND=sentence_transformer` (the code's default for full installs; `render.yaml`
+forces `tfidf` for the 512 MB free tier, which is why the TF-IDF row is labelled "in production"). It is kept off the free-tier deploy because it's still the weakest real detector (23% vs. the
 classifier's 48%) at ~500x the classifier's latency, and it would re-introduce
 torch into the serving path this project deliberately removed (see below).
 Full writeup: [`docs/sentence_transformer_similarity_result.md`](docs/sentence_transformer_similarity_result.md).
@@ -497,9 +497,13 @@ knowing:
   within one session, gets flagged the same as an automated attack script would.
   Stated plainly in `gateway/session_checks.py`'s own comments: closing this
   detection gap cost some precision, not a free improvement.
-- **`stub_ops_agent` is a simulation, not Project 2's real agent.** The
-  integration with the actual Project 2 codebase (real tools, real
-  refusal-policy table) is separate follow-up work, not done here.
+- **`stub_ops_agent` is a simulation, not Project 2's real agent** — the red-team
+  numbers against it measure the gateway against a scripted backend. The real
+  Project 2 is wired in as a separate backend, `operations_assistant`
+  (`gateway/adapters/operations_assistant_adapter.py`, unit-tested in
+  `tests/test_ops_assistant_adapter.py`, run end to end via
+  `docker-compose.trilogy.yml` — see `DEPLOY.md`). The corpus-level detection
+  numbers in this README are not re-measured against that live backend.
 - **Real per-turn session-context chaining now exists**
   (`gateway/session_checks.py::SessionContentTracker`) — closes the gap where multi-turn
   detection only ever worked against a whole transcript pre-concatenated into one message
@@ -596,14 +600,14 @@ is a known unsolved case documented in `gateway/middleware.py`. It is the most
 realistic attack surface for adversarial callers and the gap most worth closing
 before production deployment.
 
-**4. Multi-turn context modeling**
+**4. Multi-turn context modeling — partly done, still the weakest category**
 
-The gateway treats each turn independently. Conversation-level injection (benign
-turns priming a later malicious one) is completely invisible to the current
-pre-flight checks. A session-context window (last N turns hashed + classified
-jointly) is listed as a known limitation in the Known limitations section below;
-it requires `gateway/session_checks.py` to carry message history, not just
-per-turn state.
+Per-session context reconstruction exists (`SessionContentTracker`, last 5 turns,
+10-minute TTL) and is proven on a split-payload test
+(`tests/test_multi_turn_detection.py`). What remains open is detection *quality*,
+not the mechanism: on the current corpus the `multi_turn_jailbreak` category is
+caught 7% (rule-based) and 47% (classifier) of the time, because the reconstructed
+context is still scored by the same single-message detectors.
 
 ### 2027 positioning
 
