@@ -1,0 +1,580 @@
+{
+  "roc_auc_deepset_test": {
+    "clf": 0.607,
+    "emb": 0.665
+  },
+  "roc_auc_own_corpus": {
+    "clf": 0.732,
+    "emb": 0.475
+  },
+  "frontier": [
+    {
+      "max_fpr_on_cal": 0.02,
+      "clf": 0.999,
+      "emb": 0.55,
+      "deepset_test_detection": 0.05,
+      "deepset_test_fpr": 0.0,
+      "jbb_fpr": 0.0,
+      "jbllms_clean_detection": 0.635,
+      "corpus_detection": 0.269,
+      "corpus_fpr": 0.059
+    },
+    {
+      "max_fpr_on_cal": 0.05,
+      "clf": 0.995,
+      "emb": 0.55,
+      "deepset_test_detection": 0.05,
+      "deepset_test_fpr": 0.0,
+      "jbb_fpr": 0.0,
+      "jbllms_clean_detection": 0.635,
+      "corpus_detection": 0.269,
+      "corpus_fpr": 0.059
+    },
+    {
+      "max_fpr_on_cal": 0.1,
+      "clf": 0.999,
+      "emb": 0.45,
+      "deepset_test_detection": 0.183,
+      "deepset_test_fpr": 0.054,
+      "jbb_fpr": 0.0,
+      "jbllms_clean_detection": 0.664,
+      "corpus_detection": 0.269,
+      "corpus_fpr": 0.059
+    },
+    {
+      "max_fpr_on_cal": 0.2,
+      "clf": 0.81,
+      "emb": 0.55,
+      "deepset_test_detection": 0.35,
+      "deepset_test_fpr": 0.196,
+      "jbb_fpr": 0.09,
+      "jbllms_clean_detection": 0.881,
+      "corpus_detection": 0.474,
+      "corpus_fpr": 0.118
+    },
+    {
+      "max_fpr_on_cal": 0.3,
+      "clf": 0.74,
+      "emb": 0.45,
+      "deepset_test_detection": 0.533,
+      "deepset_test_fpr": 0.304,
+      "jbb_fpr": 0.12,
+      "jbllms_clean_detection": 0.906,
+      "corpus_detection": 0.513,
+      "corpus_fpr": 0.118
+    },
+    {
+      "max_fpr_on_cal": 0.5,
+      "clf": 0.69,
+      "emb": 0.2,
+      "deepset_test_detection": 0.783,
+      "deepset_test_fpr": 0.518,
+      "jbb_fpr": 0.27,
+      "jbllms_clean_detection": 0.947,
+      "corpus_detection": 0.538,
+      "corpus_fpr": 0.176
+    }
+  ],
+  "max_fpr": 0.05,
+  "chosen": {
+    "classifier": 0.995,
+    "embedding": 0.55,
+    "cal_detection": 0.094,
+    "cal_fpr": 0.038
+  },
+  "policies": {
+    "baseline (shipped)": {
+      "thresholds": {
+        "classifier": 0.5,
+        "embedding": 0.35
+      },
+      "deepset_test_attack": {
+        "k": 47,
+        "n": 60,
+        "rate": 0.783,
+        "ci95": [
+          0.664,
+          0.869
+        ]
+      },
+      "deepset_test_benign": {
+        "k": 31,
+        "n": 56,
+        "rate": 0.554,
+        "ci95": [
+          0.424,
+          0.676
+        ]
+      },
+      "jbb_benign": {
+        "k": 26,
+        "n": 100,
+        "rate": 0.26,
+        "ci95": [
+          0.184,
+          0.354
+        ]
+      },
+      "jbllms_clean_attack": {
+        "k": 231,
+        "n": 244,
+        "rate": 0.947,
+        "ci95": [
+          0.911,
+          0.969
+        ]
+      },
+      "corpus_attack": {
+        "k": 48,
+        "n": 78,
+        "rate": 0.615,
+        "ci95": [
+          0.504,
+          0.716
+        ]
+      },
+      "corpus_benign": {
+        "k": 4,
+        "n": 17,
+        "rate": 0.235,
+        "ci95": [
+          0.096,
+          0.473
+        ]
+      }
+    },
+    "recalibrated": {
+      "thresholds": {
+        "classifier": 0.995,
+        "embedding": 0.55
+      },
+      "deepset_test_attack": {
+        "k": 3,
+        "n": 60,
+        "rate": 0.05,
+        "ci95": [
+          0.017,
+          0.137
+        ]
+      },
+      "deepset_test_benign": {
+        "k": 0,
+        "n": 56,
+        "rate": 0.0,
+        "ci95": [
+          0,
+          0.064
+        ]
+      },
+      "jbb_benign": {
+        "k": 0,
+        "n": 100,
+        "rate": 0.0,
+        "ci95": [
+          0,
+          0.037
+        ]
+      },
+      "jbllms_clean_attack": {
+        "k": 155,
+        "n": 244,
+        "rate": 0.635,
+        "ci95": [
+          0.573,
+          0.693
+        ]
+      },
+      "corpus_attack": {
+        "k": 21,
+        "n": 78,
+        "rate": 0.269,
+        "ci95": [
+          0.183,
+          0.377
+        ]
+      },
+      "corpus_benign": {
+        "k": 1,
+        "n": 17,
+        "rate": 0.059,
+        "ci95": [
+          0.01,
+          0.27
+        ]
+      }
+    }
+  },
+  "curve_classifier_only_sweep": [
+    {
+      "clf_threshold": 0.0,
+      "deepset_test_detection": 1.0,
+      "deepset_test_fpr": 1.0,
+      "jbb_fpr": 1.0,
+      "corpus_detection": 1.0
+    },
+    {
+      "clf_threshold": 0.02,
+      "deepset_test_detection": 0.9333333333333333,
+      "deepset_test_fpr": 0.9642857142857143,
+      "jbb_fpr": 0.83,
+      "corpus_detection": 0.9615384615384616
+    },
+    {
+      "clf_threshold": 0.04,
+      "deepset_test_detection": 0.9333333333333333,
+      "deepset_test_fpr": 0.9642857142857143,
+      "jbb_fpr": 0.73,
+      "corpus_detection": 0.9615384615384616
+    },
+    {
+      "clf_threshold": 0.06,
+      "deepset_test_detection": 0.9333333333333333,
+      "deepset_test_fpr": 0.9285714285714286,
+      "jbb_fpr": 0.67,
+      "corpus_detection": 0.9487179487179487
+    },
+    {
+      "clf_threshold": 0.08,
+      "deepset_test_detection": 0.9,
+      "deepset_test_fpr": 0.875,
+      "jbb_fpr": 0.63,
+      "corpus_detection": 0.9487179487179487
+    },
+    {
+      "clf_threshold": 0.1,
+      "deepset_test_detection": 0.9,
+      "deepset_test_fpr": 0.8392857142857143,
+      "jbb_fpr": 0.58,
+      "corpus_detection": 0.9102564102564102
+    },
+    {
+      "clf_threshold": 0.12,
+      "deepset_test_detection": 0.9,
+      "deepset_test_fpr": 0.8392857142857143,
+      "jbb_fpr": 0.54,
+      "corpus_detection": 0.8846153846153846
+    },
+    {
+      "clf_threshold": 0.14,
+      "deepset_test_detection": 0.9,
+      "deepset_test_fpr": 0.8392857142857143,
+      "jbb_fpr": 0.48,
+      "corpus_detection": 0.8846153846153846
+    },
+    {
+      "clf_threshold": 0.16,
+      "deepset_test_detection": 0.9,
+      "deepset_test_fpr": 0.8392857142857143,
+      "jbb_fpr": 0.46,
+      "corpus_detection": 0.8717948717948718
+    },
+    {
+      "clf_threshold": 0.18,
+      "deepset_test_detection": 0.9,
+      "deepset_test_fpr": 0.8214285714285714,
+      "jbb_fpr": 0.45,
+      "corpus_detection": 0.8717948717948718
+    },
+    {
+      "clf_threshold": 0.2,
+      "deepset_test_detection": 0.9,
+      "deepset_test_fpr": 0.8035714285714286,
+      "jbb_fpr": 0.44,
+      "corpus_detection": 0.8717948717948718
+    },
+    {
+      "clf_threshold": 0.22,
+      "deepset_test_detection": 0.8666666666666667,
+      "deepset_test_fpr": 0.7857142857142857,
+      "jbb_fpr": 0.43,
+      "corpus_detection": 0.8589743589743589
+    },
+    {
+      "clf_threshold": 0.24,
+      "deepset_test_detection": 0.8666666666666667,
+      "deepset_test_fpr": 0.7142857142857143,
+      "jbb_fpr": 0.4,
+      "corpus_detection": 0.8076923076923077
+    },
+    {
+      "clf_threshold": 0.26,
+      "deepset_test_detection": 0.8666666666666667,
+      "deepset_test_fpr": 0.7142857142857143,
+      "jbb_fpr": 0.38,
+      "corpus_detection": 0.7948717948717948
+    },
+    {
+      "clf_threshold": 0.28,
+      "deepset_test_detection": 0.8666666666666667,
+      "deepset_test_fpr": 0.6785714285714286,
+      "jbb_fpr": 0.34,
+      "corpus_detection": 0.7692307692307693
+    },
+    {
+      "clf_threshold": 0.3,
+      "deepset_test_detection": 0.85,
+      "deepset_test_fpr": 0.6785714285714286,
+      "jbb_fpr": 0.34,
+      "corpus_detection": 0.7564102564102564
+    },
+    {
+      "clf_threshold": 0.32,
+      "deepset_test_detection": 0.85,
+      "deepset_test_fpr": 0.625,
+      "jbb_fpr": 0.32,
+      "corpus_detection": 0.7564102564102564
+    },
+    {
+      "clf_threshold": 0.34,
+      "deepset_test_detection": 0.8333333333333334,
+      "deepset_test_fpr": 0.6071428571428571,
+      "jbb_fpr": 0.32,
+      "corpus_detection": 0.7435897435897436
+    },
+    {
+      "clf_threshold": 0.36,
+      "deepset_test_detection": 0.8333333333333334,
+      "deepset_test_fpr": 0.6071428571428571,
+      "jbb_fpr": 0.3,
+      "corpus_detection": 0.7051282051282052
+    },
+    {
+      "clf_threshold": 0.38,
+      "deepset_test_detection": 0.8166666666666667,
+      "deepset_test_fpr": 0.5714285714285714,
+      "jbb_fpr": 0.3,
+      "corpus_detection": 0.6794871794871795
+    },
+    {
+      "clf_threshold": 0.4,
+      "deepset_test_detection": 0.8,
+      "deepset_test_fpr": 0.5535714285714286,
+      "jbb_fpr": 0.29,
+      "corpus_detection": 0.6666666666666666
+    },
+    {
+      "clf_threshold": 0.42,
+      "deepset_test_detection": 0.8,
+      "deepset_test_fpr": 0.5535714285714286,
+      "jbb_fpr": 0.28,
+      "corpus_detection": 0.6538461538461539
+    },
+    {
+      "clf_threshold": 0.44,
+      "deepset_test_detection": 0.7833333333333333,
+      "deepset_test_fpr": 0.5535714285714286,
+      "jbb_fpr": 0.28,
+      "corpus_detection": 0.6538461538461539
+    },
+    {
+      "clf_threshold": 0.46,
+      "deepset_test_detection": 0.7833333333333333,
+      "deepset_test_fpr": 0.5535714285714286,
+      "jbb_fpr": 0.28,
+      "corpus_detection": 0.6410256410256411
+    },
+    {
+      "clf_threshold": 0.48,
+      "deepset_test_detection": 0.7833333333333333,
+      "deepset_test_fpr": 0.5535714285714286,
+      "jbb_fpr": 0.26,
+      "corpus_detection": 0.6410256410256411
+    },
+    {
+      "clf_threshold": 0.5,
+      "deepset_test_detection": 0.7833333333333333,
+      "deepset_test_fpr": 0.5535714285714286,
+      "jbb_fpr": 0.26,
+      "corpus_detection": 0.6153846153846154
+    },
+    {
+      "clf_threshold": 0.52,
+      "deepset_test_detection": 0.7666666666666667,
+      "deepset_test_fpr": 0.5357142857142857,
+      "jbb_fpr": 0.26,
+      "corpus_detection": 0.6025641025641025
+    },
+    {
+      "clf_threshold": 0.54,
+      "deepset_test_detection": 0.75,
+      "deepset_test_fpr": 0.5178571428571429,
+      "jbb_fpr": 0.25,
+      "corpus_detection": 0.6025641025641025
+    },
+    {
+      "clf_threshold": 0.56,
+      "deepset_test_detection": 0.7333333333333333,
+      "deepset_test_fpr": 0.5178571428571429,
+      "jbb_fpr": 0.25,
+      "corpus_detection": 0.5769230769230769
+    },
+    {
+      "clf_threshold": 0.58,
+      "deepset_test_detection": 0.7333333333333333,
+      "deepset_test_fpr": 0.5,
+      "jbb_fpr": 0.24,
+      "corpus_detection": 0.5641025641025641
+    },
+    {
+      "clf_threshold": 0.6,
+      "deepset_test_detection": 0.7166666666666667,
+      "deepset_test_fpr": 0.44642857142857145,
+      "jbb_fpr": 0.24,
+      "corpus_detection": 0.5641025641025641
+    },
+    {
+      "clf_threshold": 0.62,
+      "deepset_test_detection": 0.7,
+      "deepset_test_fpr": 0.44642857142857145,
+      "jbb_fpr": 0.22,
+      "corpus_detection": 0.5512820512820513
+    },
+    {
+      "clf_threshold": 0.64,
+      "deepset_test_detection": 0.7,
+      "deepset_test_fpr": 0.42857142857142855,
+      "jbb_fpr": 0.21,
+      "corpus_detection": 0.5512820512820513
+    },
+    {
+      "clf_threshold": 0.66,
+      "deepset_test_detection": 0.7,
+      "deepset_test_fpr": 0.42857142857142855,
+      "jbb_fpr": 0.19,
+      "corpus_detection": 0.5384615384615384
+    },
+    {
+      "clf_threshold": 0.68,
+      "deepset_test_detection": 0.7,
+      "deepset_test_fpr": 0.42857142857142855,
+      "jbb_fpr": 0.18,
+      "corpus_detection": 0.5384615384615384
+    },
+    {
+      "clf_threshold": 0.7,
+      "deepset_test_detection": 0.6666666666666666,
+      "deepset_test_fpr": 0.4107142857142857,
+      "jbb_fpr": 0.15,
+      "corpus_detection": 0.5384615384615384
+    },
+    {
+      "clf_threshold": 0.72,
+      "deepset_test_detection": 0.6166666666666667,
+      "deepset_test_fpr": 0.4107142857142857,
+      "jbb_fpr": 0.14,
+      "corpus_detection": 0.5256410256410257
+    },
+    {
+      "clf_threshold": 0.74,
+      "deepset_test_detection": 0.6,
+      "deepset_test_fpr": 0.39285714285714285,
+      "jbb_fpr": 0.13,
+      "corpus_detection": 0.5128205128205128
+    },
+    {
+      "clf_threshold": 0.76,
+      "deepset_test_detection": 0.6,
+      "deepset_test_fpr": 0.39285714285714285,
+      "jbb_fpr": 0.12,
+      "corpus_detection": 0.5
+    },
+    {
+      "clf_threshold": 0.78,
+      "deepset_test_detection": 0.5833333333333334,
+      "deepset_test_fpr": 0.375,
+      "jbb_fpr": 0.11,
+      "corpus_detection": 0.48717948717948717
+    },
+    {
+      "clf_threshold": 0.8,
+      "deepset_test_detection": 0.55,
+      "deepset_test_fpr": 0.35714285714285715,
+      "jbb_fpr": 0.1,
+      "corpus_detection": 0.47435897435897434
+    },
+    {
+      "clf_threshold": 0.82,
+      "deepset_test_detection": 0.55,
+      "deepset_test_fpr": 0.35714285714285715,
+      "jbb_fpr": 0.1,
+      "corpus_detection": 0.4358974358974359
+    },
+    {
+      "clf_threshold": 0.84,
+      "deepset_test_detection": 0.5333333333333333,
+      "deepset_test_fpr": 0.35714285714285715,
+      "jbb_fpr": 0.09,
+      "corpus_detection": 0.3974358974358974
+    },
+    {
+      "clf_threshold": 0.86,
+      "deepset_test_detection": 0.48333333333333334,
+      "deepset_test_fpr": 0.35714285714285715,
+      "jbb_fpr": 0.08,
+      "corpus_detection": 0.38461538461538464
+    },
+    {
+      "clf_threshold": 0.88,
+      "deepset_test_detection": 0.4666666666666667,
+      "deepset_test_fpr": 0.3392857142857143,
+      "jbb_fpr": 0.06,
+      "corpus_detection": 0.34615384615384615
+    },
+    {
+      "clf_threshold": 0.9,
+      "deepset_test_detection": 0.43333333333333335,
+      "deepset_test_fpr": 0.30357142857142855,
+      "jbb_fpr": 0.05,
+      "corpus_detection": 0.34615384615384615
+    },
+    {
+      "clf_threshold": 0.92,
+      "deepset_test_detection": 0.4166666666666667,
+      "deepset_test_fpr": 0.30357142857142855,
+      "jbb_fpr": 0.04,
+      "corpus_detection": 0.34615384615384615
+    },
+    {
+      "clf_threshold": 0.94,
+      "deepset_test_detection": 0.4,
+      "deepset_test_fpr": 0.2857142857142857,
+      "jbb_fpr": 0.03,
+      "corpus_detection": 0.32051282051282054
+    },
+    {
+      "clf_threshold": 0.96,
+      "deepset_test_detection": 0.4,
+      "deepset_test_fpr": 0.21428571428571427,
+      "jbb_fpr": 0.02,
+      "corpus_detection": 0.2948717948717949
+    },
+    {
+      "clf_threshold": 0.98,
+      "deepset_test_detection": 0.3333333333333333,
+      "deepset_test_fpr": 0.19642857142857142,
+      "jbb_fpr": 0.01,
+      "corpus_detection": 0.28205128205128205
+    },
+    {
+      "clf_threshold": 0.99,
+      "deepset_test_detection": 0.26666666666666666,
+      "deepset_test_fpr": 0.17857142857142858,
+      "jbb_fpr": 0.01,
+      "corpus_detection": 0.28205128205128205
+    },
+    {
+      "clf_threshold": 0.999,
+      "deepset_test_detection": 0.25,
+      "deepset_test_fpr": 0.16071428571428573,
+      "jbb_fpr": 0.01,
+      "corpus_detection": 0.2692307692307692
+    },
+    {
+      "clf_threshold": 1.01,
+      "deepset_test_detection": 0.25,
+      "deepset_test_fpr": 0.16071428571428573,
+      "jbb_fpr": 0.01,
+      "corpus_detection": 0.2692307692307692
+    }
+  ]
+}

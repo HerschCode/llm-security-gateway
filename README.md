@@ -179,6 +179,8 @@ Results on data the detectors did not train on (raw output: [`reports/p3_externa
 | JailbreakBench benign behaviours (100 borderline-benign requests) | scratch_classifier | n/a | **25.0%** |
 | | any layer blocks | n/a | **26.0%** |
 
+**Can recalibration fix it?** Tried, held-out: thresholds chosen on deepset's train split cut false positives to near zero only by collapsing detection (5% at 0% FP on deepset test; own-corpus detection 62% to 27%), because the raw classifier score has ROC-AUC just 0.61 there. Full step-by-step story, chart and table: [`docs/recalibration-flow.md`](docs/recalibration-flow.md).
+
 What this means, stated plainly:
 
 - **Generalisation is much weaker than the earlier README claimed.** On a genuinely different injection dataset the whole ensemble catches about 64% while blocking about 49% of benign prompts; the classifier alone is close to a coin flip (49% detection at 40% false positives). The rule-based layer catches almost nothing there (2 of 263), because deepset's injections are short natural-language instructions rather than the patterns it encodes.
