@@ -19,7 +19,7 @@ is memorisation. Result: the headline number was measuring the training set. It 
 | Data (not seen in training) | Detection | False positives |
 |---|---|---|
 | jailbreak_llms, 244 prompts not found in training | ensemble 94.7% | n/a |
-| deepset/prompt-injections (663 rows: 263 injections, 399 benign) | ensemble 63.9% | **48.6%** |
+| deepset/prompt-injections (662 rows: 263 injections, 399 benign) | ensemble 63.9% | **48.6%** |
 | JailbreakBench benign requests (100) | n/a | **26.0%** |
 
 Detection was worse than claimed, and the false-positive rate was the real problem: the
