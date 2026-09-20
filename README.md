@@ -196,10 +196,11 @@ on the *same* known-bad index, threshold independently swept (0.35 isn't
 comparable across different similarity distributions). **Confirms TF-IDF's 0%
 is an architecture ceiling, not a tuning problem** — a real embedding finds
 signal TF-IDF structurally can't, non-leaked, from the same public dataset. Set
-`EMBEDDING_BACKEND=sentence_transformer` (the code's default for full installs; `render.yaml`
-forces `tfidf` for the 512 MB free tier, which is why the TF-IDF row is labelled "in production"). It is kept off the free-tier deploy because it's still the weakest real detector (23% vs. the
-classifier's 48%) at ~500x the classifier's latency, and it would re-introduce
-torch into the serving path this project deliberately removed (see below).
+`EMBEDDING_BACKEND=sentence_transformer` (opt-in; code default is `tfidf` — set at the
+source in `gateway/middleware.py`, also explicit in `render.yaml`). Kept off by default because
+it is still the weakest real detector (23% vs. the classifier's 48%) at ~500x the classifier's
+latency, and it would re-introduce torch into the serving path this project deliberately removed
+(see below).
 Full writeup: [`docs/sentence_transformer_similarity_result.md`](docs/sentence_transformer_similarity_result.md).
 
 ### L2 threshold sweep (scripts/threshold_sweep_l2.py)
