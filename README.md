@@ -201,14 +201,14 @@ Full writeup: [`docs/sentence_transformer_similarity_result.md`](docs/sentence_t
 ### L2 threshold sweep (scripts/threshold_sweep_l2.py)
 
 Run `python scripts/threshold_sweep_l2.py` to reproduce — sweeps both backends
-at thresholds 0.05–0.95 against the 72-case corpus (historical; run before expansion to 100):
+at thresholds 0.05–0.95 against the current 100-case corpus (78 attacks, 17 benign; regenerated 2026-09-20 -- an earlier version of this script read a stale `data/eval.csv` export instead of the YAML corpus and is now fixed):
 
 | Backend | Best F1 | Threshold | Detection | FP rate | Max detection at 0% FP |
 |---|---|---|---|---|---|
-| TF-IDF | 0.867 | 0.05 | 92.9% (52/56) | 100% (12/12) | **25.0%** at t=0.15 |
-| sentence_transformer | 0.903 | 0.05 | 100% (56/56) | 100% (12/12) | **23.2%** at t=0.45 |
+| TF-IDF | 0.869 | 0.05 | 93.6% (73/78) | 100% (17/17) | **20.5%** at t=0.15 |
+| sentence_transformer | 0.902 | 0.05 | 100% (78/78) | 100% (17/17) | **20.5%** at t=0.45 |
 
-**The key finding:** neither backend can achieve useful precision by threshold tuning alone. At the best F1 threshold (0.05), both block almost all attacks but also block every legitimate request — precision ~0.82. At the only threshold where FP rate = 0%, TF-IDF catches 25% of attacks and sentence_transformer catches 23%. This confirms that **Layer 2 (embedding similarity) is structurally a low-precision first-pass filter in front of the classifier, not a standalone detector** — its value is catching attacks the rule-based layer misses, at the cost of false positives the classifier then adjudicates. The 3-layer ensemble's defense-in-depth design is validated: no single layer is sufficient.
+**The key finding:** neither backend can achieve useful precision by threshold tuning alone. At the best F1 threshold (0.05), both block almost all attacks but also block every legitimate request — precision ~0.82 (0.82 = 78 attacks / 95 total at 100% flagged). At the only threshold where FP rate = 0%, both backends catch about 20.5% of attacks. This confirms that **Layer 2 (embedding similarity) is structurally a low-precision first-pass filter in front of the classifier, not a standalone detector** — its value is catching attacks the rule-based layer misses, at the cost of false positives the classifier then adjudicates. The 3-layer ensemble's defense-in-depth design is validated: no single layer is sufficient.
 
 Per-category breakdown at t=0.05 (both backends): direct_injection and multi_turn_jailbreak 100%, indirect_injection 100%, tool_scope_escalation 100%, encoding_obfuscation 71% (TF-IDF) / 100% (sentence_transformer). The only category where sentence_transformer beats TF-IDF at the optimal threshold is encoding_obfuscation — the obfuscated text fragments enough that TF-IDF's term-frequency signal breaks down, while sentence_transformer's contextual embedding still recognizes the semantic intent.
 
@@ -226,17 +226,21 @@ eval JSON: [`docs/distilbert_finetune_result.md`](docs/distilbert_finetune_resul
 
 Run `python scripts/paraphrase_robustness.py` to reproduce — applies 4 surface transforms to all 83 attack cases (100-case corpus, expanded from 72) and measures per-layer detection rate with and without text normalization:
 
-| Transform | rule_based | embedding (ST) | classifier | Notes |
+Regenerated 2026-09-20 on the 78 attack cases of the current corpus, with the served (TF-IDF) embedding backend and the raw detectors (no normalizer) unless stated. The earlier version of this script scored a stale CSV export, so the older numbers here (72-case corpus, sentence-transformer column) are replaced, not supplemented.
+
+| Transform | rule_based | embedding (TF-IDF) | classifier | Notes |
 |---|---|---|---|---|
-| original | 16.0% | 30.9% | 54.3% | baseline (72-case corpus, not yet re-run on 100-case) |
-| case_swap | 16.0% | 30.9% | 54.3% | no impact — all layers robust |
-| space_insert (no fix) | 0.0% | 30.9% | 9.6% | **critical gap** |
-| space_insert (with normalizer) | **18.1%** | 28.7% | **55.3%** | fully restored |
-| synonym_sub | 10.6% | 23.4% | 51.1% | minor semantic drift, acceptable |
+| original | 26.9% | 0.0% | 48.7% | baseline |
+| case_swap | 26.9% | 0.0% | 48.7% | no impact |
+| space_insert (no normalizer) | 0.0% | 0.0% | 74.4% | rule_based fully evaded; classifier goes **up** (see below) |
+| space_insert (with normalizer) | 28.2% | 0.0% | **44.9%** | rule_based restored; classifier drops |
+| synonym_sub | 19.2% | 0.0% | 50.0% | minor drift for rule_based |
+
+**A finding that contradicts an earlier claim in this README.** The previous version said the normalizer "fully restored" the classifier (9.6% to 55.3%). On the current corpus the un-normalized classifier scores *74.4%* on zero-width-space-inserted text, higher than its 48.7% baseline, and the normalizer brings it down to 44.9%. The likely reason (not separately verified) is that zero-width characters push text off the classifier's training distribution toward "attack-looking" inputs, so it blocks more, including things it would otherwise miss; that is an accident, not robustness, and it would also raise false positives on benign text containing such characters (not measured here). What the normalizer demonstrably does is restore the rule-based layer (0% to 28.2%). Treat the classifier's behaviour on obfuscated input as unreliable in both directions.
 
 **Text normalizer (`gateway/text_normalizer.py`) — 5 layers:**
 1. **Unicode NFC** — resolves composed/decomposed character forms
-2. **Zero-width stripping** — removes U+200B (ZWSP), ZWNJ, ZWJ, BOM, and 8 related chars; fixes the space_insert critical gap (classifier 9.6% → 55.3%)
+2. **Zero-width stripping** — removes U+200B (ZWSP), ZWNJ, ZWJ, BOM, and 8 related chars; restores the rule-based layer on space_insert (0% → 28.2%; see the finding above for the classifier)
 3. **Homoglyph normalization** — Cyrillic/Greek lookalikes → ASCII (covers GW-012, GW-106)
 4. **Encoding decoding** — base64 blob detection + decoding; URL percent-encoding; 0x hex; leet-speak digit substitution (covers GW-010, GW-011, GW-103)
 5. **Whitespace collapse** — normalizes multiple spaces/tabs
@@ -326,8 +330,8 @@ GW-089, GW-093. Missed attacks: `scratch_classifier` misses 40/78 attack cases; 
 ensemble (block-on-any) reduces this to 30/78 — mostly encoding obfuscation and
 multi-turn jailbreak categories (see `docs/comparison_table.md` for the full miss list).
 
-The redteam reports (`docs/redteam_report_gateway_stub_ops_agent.md`) were run
-against the 72-case corpus and are not yet regenerated for 100 cases. This list will
+The redteam reports (`docs/redteam_report_gateway_stub_ops_agent.md`) were regenerated
+on 2026-09-20 against the 100-case corpus. This list will
 shift on any future retrain since the classifier's decision boundary isn't identical
 to any previous snapshot's — none of it is hidden, it's surfaced directly by
 `scripts/report_cli.py` and the redteam reports. The domain-mismatch
@@ -361,8 +365,8 @@ Short answer: no, not on this data.)
 - [x] **Detection comparison table, with numbers** — [`docs/comparison_table.md`](docs/comparison_table.md), reproduced above. Generated by `scripts/evaluate.py`, not hand-written. Numbers were wrong once (leakage) and got corrected — see `docs/leakage_fix.md`.
 - [x] **A documented missed-attack case + the fix that closed it (or didn't, honestly)** — see the current miss list above and `docs/redteam_report_gateway_stub_ops_agent.md`. The deeper domain-shift story is in `docs/domain_shift_fix.md`, and the leakage story in `docs/leakage_fix.md` is arguably the strongest version of this requirement in the whole project.
 - [x] **Attack simulation report against a real backend, end-to-end** — ran `scripts/run_redteam.py` against a live `uvicorn` server, against both backends:
-  - **`stub_ops_agent`** — direct: 16/72 passed (`docs/redteam_report_direct_stub_ops_agent.md`); through gateway: 50/72 (`docs/redteam_report_gateway_stub_ops_agent.md`). (72-case corpus — reports not yet regenerated for 100-case corpus.)
-  - **`project2_agent`** (guessed reconstruction) — direct: 16/72 passed (`docs/redteam_report_direct_project2_agent.md`); through gateway: 44/72 (`docs/redteam_report_gateway_project2_agent.md`). Lower than the stub's score, for a non-obvious reason explained in `docs/project2_agent_notes.md` — worth reading before assuming the gateway is somehow "worse" against this backend.
+  - **`stub_ops_agent`** — direct: 22/100 passed (`docs/redteam_report_direct_stub_ops_agent.md`); through gateway: 71/100 (`docs/redteam_report_gateway_stub_ops_agent.md`). (Regenerated 2026-09-20 on the 100-case corpus; "passed" counts benign requests allowed as well as attacks blocked.)
+  - **`project2_agent`** (guessed reconstruction) — direct: 22/100 passed (`docs/redteam_report_direct_project2_agent.md`); through gateway: 68/100 (`docs/redteam_report_gateway_project2_agent.md`). Lower than the stub's score, for a non-obvious reason explained in `docs/project2_agent_notes.md` — worth reading before assuming the gateway is somehow "worse" against this backend.
 - [x] **Latency overhead, reported honestly** — [`docs/latency_report.md`](docs/latency_report.md). ~9.9ms added per request in this sandbox. Reported with an explicit caveat: the stub backend has near-zero baseline latency (no real I/O), so a "gateway is X% slower" framing would be misleading here — see the report for the honest version of that number.
 - [x] **Live demo of the gateway protecting the stub "Project 2 stand-in" specifically** — same corpus, same backend, gateway on vs. off, in `docs/redteam_report_direct_stub_ops_agent.md` vs `docs/redteam_report_gateway_stub_ops_agent.md`. Repeated against the fuller `project2_agent` reconstruction too — see above.
 
@@ -453,7 +457,7 @@ knowing:
 
 | Component | Status |
 |---|---|
-| Attack corpus (72 cases, 5 categories, expanded from 36 on 2026-09-12), rule-based detector, FastAPI middleware, adaptive thresholding, streaming cutoff, live dashboard | **Real**, run and measured. |
+| Attack corpus (100 cases, 5 categories, expanded 36 → 72 → 100), rule-based detector, FastAPI middleware, adaptive thresholding, streaming cutoff, live dashboard | **Real**, run and measured. |
 | Embedding-similarity layer | **Real technique, honest substitution, tested against the real thing.** Production default is TF-IDF + cosine similarity, detects **0%** of this corpus (the earlier 97% was train/test leakage — [`HIGHLIGHTS.md`](HIGHLIGHTS.md)). A real sentence-transformer alternative was built and measured (**23% at 0% FP** on the identical index) — confirms 0% is an architecture ceiling, not a tuning miss. Available opt-in (`EMBEDDING_BACKEND=sentence_transformer`), not default (still weakest detector, ~440x the latency, re-adds torch). See `docs/sentence_transformer_similarity_result.md`. |
 | "Fine-tuned classifier" layer | **Real from-scratch torch model**, not a DistilBERT fine-tune. Real training loop, seeded/reproducible, **50%** detection. |
 | `scripts/train_distilbert_finetune.py` | **Run for real (2026-09-11).** Tied `scratch_classifier` exactly on detection rate, false-positive rate, *and* domain-shift false-positive rate — at ~325x the latency. The "pretrained should meaningfully outperform" hypothesis this script carried for months did not hold. See [`docs/distilbert_finetune_result.md`](docs/distilbert_finetune_result.md). |

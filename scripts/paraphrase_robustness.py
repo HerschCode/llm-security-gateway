@@ -118,8 +118,15 @@ def evaluate_detector(name: str, detector, attack_cases: list, transform_name: s
     return {"transform": transform_name, "detector": name, "detection": det, "tp": tp, "fn": fn}
 
 
+def _load_yaml_rows():
+    import yaml
+    cases = yaml.safe_load(open(REPO_ROOT / "corpus" / "injection_cases.yaml", encoding="utf-8"))
+    return [{"case_id": c["id"], "text": c.get("payload", c.get("text", "")), "category": c.get("category", ""),
+             "expected_behavior": c.get("expected_behavior", "block")} for c in cases]
+
+
 def main():
-    rows = list(csv.DictReader(open(EVAL_PATH, encoding="utf-8")))
+    rows = _load_yaml_rows()  # canonical corpus; data/eval.csv is a stale derived export
     attack = [r for r in rows if r["expected_behavior"] == "block"]
 
     print(f"\n{'='*70}")

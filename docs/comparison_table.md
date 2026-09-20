@@ -6,9 +6,9 @@ from an actual run of `scripts/evaluate.py`, not estimated.
 
 | Layer | Detection rate | False-positive rate | Avg latency (ms) |
 |---|---|---|---|
-| rule_based | 27% (21/78) | 6% (1/17) | 0.262 |
-| embedding_similarity | 0% (0/78) | 0% (0/17) | 23.643 |
-| scratch_classifier | 49% (38/78) | 18% (3/17) | 0.530 |
+| rule_based | 27% (21/78) | 6% (1/17) | 0.064 |
+| embedding_similarity | 0% (0/78) | 0% (0/17) | 5.427 |
+| scratch_classifier | 49% (38/78) | 18% (3/17) | 0.299 |
 
 ## Per-category detection rates (attack cases only)
 

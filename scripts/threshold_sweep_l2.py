@@ -28,9 +28,15 @@ EVAL_PATH = REPO_ROOT / "data" / "eval.csv"
 THRESHOLDS = np.round(np.arange(0.05, 0.96, 0.05), 2).tolist()
 
 
+def _load_yaml_rows():
+    import yaml
+    cases = yaml.safe_load(open(REPO_ROOT / "corpus" / "injection_cases.yaml", encoding="utf-8"))
+    return [{"case_id": c["id"], "text": c.get("payload", c.get("text", "")), "category": c.get("category", ""),
+             "expected_behavior": c.get("expected_behavior", "block")} for c in cases]
+
+
 def load_eval():
-    with open(EVAL_PATH, encoding="utf-8") as f:
-        rows = list(csv.DictReader(f))
+    rows = _load_yaml_rows()  # canonical corpus; data/eval.csv is a stale derived export
     attack  = [r for r in rows if r["expected_behavior"] == "block"]
     legit   = [r for r in rows if r["expected_behavior"] == "allow"]
     flag    = [r for r in rows if r["expected_behavior"] == "flag"]
