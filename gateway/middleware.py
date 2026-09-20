@@ -43,12 +43,12 @@ from gateway.text_normalizer import normalize as _normalize_text
 CLASSIFIER_THRESHOLD = 0.5
 LITE_MODE = os.environ.get("GATEWAY_LITE", "").lower() in ("1", "true", "yes")
 
-# Layer 2 backend: "sentence_transformer" (default, real semantic embeddings,
-# needs `pip install sentence-transformers` -- pulls in torch) or "tfidf"
-# (torch-free, what the free-tier render.yaml deploy pins via env var). See
+# Layer 2 backend: "tfidf" (default, torch-free) or "sentence_transformer"
+# (opt-in: real semantic embeddings, needs `pip install sentence-transformers`
+# which pulls in torch; not in requirements.txt). See
 # gateway/detectors/embedding_similarity_st.py's docstring and
 # docs/sentence_transformer_similarity_result.md for the measured trade-off.
-EMBEDDING_BACKEND = os.environ.get("EMBEDDING_BACKEND", "sentence_transformer").lower()
+EMBEDDING_BACKEND = os.environ.get("EMBEDDING_BACKEND", "tfidf").lower()
 from gateway.pii import scan_and_redact
 from gateway.response_checks import check_jailbreak_compliance, check_system_prompt_leak
 from gateway.role_exposure import check as check_role_exposure
