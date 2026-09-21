@@ -90,7 +90,8 @@ def test_adaptive_thresholding_tightens_for_risky_sessions(middleware):
     borderline after the next retrain. If no candidate qualifies, the test
     is skipped with a clear reason rather than failing confusingly.
     """
-    from gateway.detectors.classifier import CLASSIFIER_THRESHOLD
+    # torch-free module: CI installs requirements-render.txt (no torch), and the serving path is numpy
+    from gateway.detectors.classifier_numpy import CLASSIFIER_THRESHOLD
     from gateway.adaptive_threshold import MIN_THRESHOLD_MULTIPLIER
 
     # Needs: baseline-allowed (prob < CLASSIFIER_THRESHOLD) but high enough

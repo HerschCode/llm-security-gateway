@@ -22,6 +22,7 @@ def _corpus_texts():
 
 @pytest.fixture(scope="module")
 def both_detectors():
+    pytest.importorskip("torch", reason="parity test compares against the torch model; CI is torch-free")
     if not (REPO_ROOT / "models" / "scratch_classifier" / "weights.npz").exists():
         pytest.skip("weights.npz not exported -- run scripts/export_classifier_to_numpy.py first.")
     from gateway.detectors.classifier import ScratchClassifierDetector
