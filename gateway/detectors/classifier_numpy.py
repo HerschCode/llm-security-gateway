@@ -34,6 +34,19 @@ MODEL_DIR = Path(__file__).resolve().parents[2] / "models" / "scratch_classifier
 CLASSIFIER_THRESHOLD = 0.5
 
 
+# Inputs shorter than this many word tokens are not classified. The classifier mean-pools token
+# embeddings, so a 1-2 word message is dominated by one embedding and scores erratically
+# ("ok" scored 1.0, "hello" 0.4-0.8 across trained versions). Measured on held-out data
+# (docs/retraining-flow.md): removes almost all short-message false positives while only ~2 of
+# ~1,250 held-out attacks are this short; the rule-based layer still inspects every input.
+CLASSIFIER_MIN_TOKENS = 3
+
+
+def _too_short(text: str) -> bool:
+    import re
+    return len(re.findall(r"\w+", text)) < CLASSIFIER_MIN_TOKENS
+
+
 @dataclass
 class DetectionResult:
     blocked: bool
@@ -103,6 +116,11 @@ class ScratchClassifierDetectorNumpy:
 
         if self.model is None:
             raise RuntimeError("Detector not loaded. Call load() first.")
+
+        if _too_short(text):
+            return DetectionResult(blocked=False, layer="scratch_classifier", confidence=0.0,
+                                   matched_pattern_id=None, latency_ms=(time.perf_counter() - start) * 1000,
+                                   details={"skipped": "input shorter than CLASSIFIER_MIN_TOKENS"})
 
         effective_threshold = threshold if threshold is not None else CLASSIFIER_THRESHOLD
 

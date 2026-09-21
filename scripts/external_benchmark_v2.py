@@ -9,7 +9,7 @@ training positives. Its 92%/97% figures therefore mostly measure memorisation.
 
 This script (1) reports that overlap, (2) re-scores jailbreak_llms on only the prompts NOT
 found in training, and (3) adds two datasets from unrelated authors:
-  * deepset/prompt-injections (Hugging Face, cc-by-4.0): 662 labelled prompts, both
+  * deepset/prompt-injections (Hugging Face, cc-by-4.0): 662 labelled prompts (only the 116-row TEST split is scored, because the retrained classifier trains on its train split), both
     injections (label 1) and benign (label 0), some in German -- gives a false-positive rate.
   * JailbreakBench JBB-Behaviors "benign-behaviors" (100 borderline-but-benign requests):
     a hard false-positive set. (Its "harmful-behaviors" are plain harmful requests, not
@@ -113,7 +113,8 @@ def main():
 
     # C: deepset/prompt-injections
     import pandas as pd
-    ds = pd.concat([pd.read_parquet(p) for p in sorted(DEEPSET.glob("*.parquet"))], ignore_index=True)
+    # TEST split only: the retrained classifier (scripts/retrain_classifier_v2.py) trains on deepset's TRAIN split
+    ds = pd.read_parquet(next(DEEPSET.glob("test-*.parquet")))
     ds["n"] = ds["text"].map(norm)
     overlap_train = ds["n"].isin(train_all)
     overlap_corpus = ds["n"].isin(corpus_payloads)

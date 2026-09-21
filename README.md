@@ -123,7 +123,7 @@ always true, and the difference matters enormously).
 | rule_based | 27% (21/78) | 6% (1/17) | 0.262 |
 | embedding_similarity (TF-IDF, in production) | 0% (0/78) | 0% (0/17) | 23.643 |
 | embedding_similarity_st (sentence-transformer, opt-in) | 23% (13/56)* | 0% (0/12)* | 47.443 |
-| scratch_classifier (in production) | 49% (38/78) | 18% (3/17) | 0.530 |
+| scratch_classifier (in production; retrained 2026-09-21, see below) | 50% (39/78) | 24% (4/17) | 0.112 |
 | distilbert_finetuned (comparison only) | 52% (29/56)* | 25% (3/12)* | 364.5† |
 
 \* measured on 72-case corpus; not re-run on expanded corpus — see [`docs/comparison_table.md`](docs/comparison_table.md).
@@ -144,13 +144,13 @@ jailbreak taxonomy, Unicode bidi-override CVEs, etc.), not just a label:
 honest view than the aggregate, because the five attack categories have very
 different difficulty levels:
 
-| Category (n attacks) | rule_based | embedding_similarity | scratch_classifier |
+| Category (n attacks) | rule_based | embedding_similarity | scratch_classifier (retrained) |
 |---|---|---|---|
-| direct_injection (13) | 46% (6/13) | 0% (0/13) | **62% (8/13)** |
-| encoding_obfuscation (20) | 15% (3/20) | 0% (0/20) | 40% (8/20) |
+| direct_injection (13) | 46% (6/13) | 0% (0/13) | **85% (11/13)** |
+| encoding_obfuscation (20) | 15% (3/20) | 0% (0/20) | 45% (9/20) |
 | indirect_injection (15) | 13% (2/15) | 0% (0/15) | 60% (9/15) |
-| multi_turn_jailbreak (15) | 7% (1/15) | 0% (0/15) | 47% (7/15) |
-| tool_scope_escalation (15) | **60% (9/15)** | 0% (0/15) | 40% (6/15) |
+| multi_turn_jailbreak (15) | 7% (1/15) | 0% (0/15) | 33% (5/15) |
+| tool_scope_escalation (15) | 60% (9/15) | 0% (0/15) | 33% (5/15) |
 
 The classifier handles direct injection best at 62%, while rule_based leads on
 **tool_scope_escalation at 60%** — thanks to targeted patterns for social-engineering
@@ -164,7 +164,7 @@ The full per-category table is in [`docs/comparison_table.md`](docs/comparison_t
 
 **Correction.** An earlier version of this section scored the detectors on a sample of jailbreak_llms and called it "independent of our training and eval data" (92% embedding / 97% classifier). That was wrong: `data/train.csv` is itself built from jailbreak_llms. `scripts/external_benchmark_v2.py` audits this by exact match (lowercased, whitespace-normalised): **422 of the 666 prompts (63%) are verbatim in the training positives**, and 93 of the 150 in the old sample. On those, the layers score 100% (embedding) and 97% (classifier), which is memorisation. Near-duplicates are not detected by this check, so true contamination is at least this high.
 
-Results on data the detectors did not train on (raw output: [`reports/p3_external_benchmark_v2.json`](reports/p3_external_benchmark_v2.json); Wilson 95% CIs in the JSON):
+**Before retraining (v1 classifier).** Results on data the detectors did not train on (raw output as of 2026-09-20; the current numbers are further below; [`reports/p3_external_benchmark_v2.json`](reports/p3_external_benchmark_v2.json); Wilson 95% CIs in the JSON):
 
 | Dataset | Layer | Detection (attacks) | False positives (benign) |
 |---|---|---|---|
@@ -178,6 +178,20 @@ Results on data the detectors did not train on (raw output: [`reports/p3_externa
 | | any layer blocks | 63.9% | **48.6%** |
 | JailbreakBench benign behaviours (100 borderline-benign requests) | scratch_classifier | n/a | **25.0%** |
 | | any layer blocks | n/a | **26.0%** |
+
+**After retraining (2026-09-21).** The classifier was retrained on a much more diverse set (deepset train, gandalf, jackhhao, safe-guard, alpaca, dolly, plus short chat messages) with all evaluation sets held out, and now skips inputs shorter than 3 word tokens. Full method, ablation, and what did not improve: [`docs/retraining-flow.md`](docs/retraining-flow.md); raw output: [`reports/p3_shipped_heldout.json`](reports/p3_shipped_heldout.json). Ensemble = block if any layer blocks:
+
+| Held-out set | v1 ensemble | Retrained ensemble | Note |
+|---|---|---|---|
+| JailbreakBench benign, false positives (n=100) | 26% | **7%** | never trained on |
+| Short messages, false positives (n=40) | 22.5% | **5%** | |
+| deepset test benign, false positives (n=56) | 55% | **23%** | same-source split: deepset train is now in training |
+| jailbreak_llms not in training, detection (n=244) | 94.3% | 90.6% | small detection cost |
+| deepset test, detection (n=60) | 78% | 60% | same-source split |
+| Own corpus, detection (n=78) | 61.5% | 61.5% | unchanged |
+| **Own corpus, benign false positives (n=17)** | 23.5% | **29.4%** | **slightly worse (1 of 17), interval 13-53%** |
+
+The cleanest evidence is leave-one-source-out (train without a source, test on it): classifier ROC-AUC on deepset 0.56 to 0.71, on safe-guard 0.55 to 0.90, on jackhhao 0.91 to 0.94. Held-out splits of sources that are in training (safe-guard, jackhhao, gandalf: ~0.99 AUC) are same-distribution and overstate generalisation. In-domain benign false positives (our own corpus) were **not** improved, and false positives are still high on deepset (23%).
 
 **Can recalibration fix it?** Tried, held-out: thresholds chosen on deepset's train split cut false positives to near zero only by collapsing detection (5% at 0% FP on deepset test; own-corpus detection 62% to 27%), because the raw classifier score has ROC-AUC just 0.61 there. Full step-by-step story, chart and table: [`docs/recalibration-flow.md`](docs/recalibration-flow.md).
 
@@ -310,7 +324,7 @@ Full writeup with the before/after numbers and how it was found:
 correctly, provides **zero** real generalization from a public jailbreak dataset to
 this project's own attack style. Rule-based and embedding-similarity are both
 essentially non-functional against this corpus in isolation. The from-scratch
-classifier (49% detection, 18% false-positive rate on the current 100-case corpus — see the residual
+classifier (50% detection, 24% false-positive rate on the current 100-case corpus, after the 2026-09-21 retrain — see the residual
 domain-mismatch false-positive rate on unseen queries, which is a different and worse
 number, in `docs/domain_shift_fix.md`) is the only layer doing real,
 non-leaked work — and it's mediocre, not excellent. **This is a materially different,
@@ -492,7 +506,7 @@ knowing:
   than silently left unfixed — not made the default because it's still the
   weakest real detector at the highest cost, and it would re-introduce torch
   into the serving path. See `docs/sentence_transformer_similarity_result.md`.
-- **False positives on external benign data are far higher (25-40%)** than the in-domain figure below; see the contamination-audited external benchmark above. This is the largest open weakness.
+- **False positives are still the largest open weakness.** Before the 2026-09-21 retrain they were 25-55% on external benign data; after it, 7% on JailbreakBench benign and 23% on deepset test benign, but **24-29% on our own in-domain benign queries (n=17)**. See the external benchmark section and [`docs/retraining-flow.md`](docs/retraining-flow.md).
 - **~10% residual false-positive rate** on unseen in-domain benign queries after the
   domain-shift fix (down from a genuine, reproducible 60% before it — see
   `docs/domain_shift_fix.md`). Not necessarily 10% on the next retrain: see the next

@@ -30,12 +30,12 @@
       ]
     },
     "scratch_classifier": {
-      "blocked": 410,
+      "blocked": 349,
       "n": 422,
-      "rate": 0.972,
+      "rate": 0.827,
       "ci95": [
-        0.951,
-        0.984
+        0.788,
+        0.86
       ]
     },
     "ensemble_any": {
@@ -68,102 +68,102 @@
       ]
     },
     "scratch_classifier": {
-      "blocked": 226,
+      "blocked": 209,
       "n": 244,
-      "rate": 0.926,
+      "rate": 0.857,
       "ci95": [
-        0.886,
-        0.953
+        0.807,
+        0.895
       ]
     },
     "ensemble_any": {
-      "blocked": 231,
+      "blocked": 221,
       "n": 244,
-      "rate": 0.947,
+      "rate": 0.906,
       "ci95": [
-        0.911,
-        0.969
+        0.863,
+        0.936
       ]
     }
   },
   "C_deepset": {
-    "rows": 662,
+    "rows": 116,
     "removed_in_train": 0,
     "removed_in_corpus": 0,
-    "scored": 662,
+    "scored": 116,
     "injection_detection": {
       "rule_based": {
-        "blocked": 2,
-        "n": 263,
-        "rate": 0.008,
+        "blocked": 0,
+        "n": 60,
+        "rate": 0.0,
         "ci95": [
-          0.002,
-          0.027
+          -0.0,
+          0.06
         ]
       },
       "embedding_similarity": {
-        "blocked": 58,
-        "n": 263,
-        "rate": 0.221,
+        "blocked": 15,
+        "n": 60,
+        "rate": 0.25,
         "ci95": [
-          0.175,
-          0.274
+          0.158,
+          0.372
         ]
       },
       "scratch_classifier": {
-        "blocked": 130,
-        "n": 263,
-        "rate": 0.494,
+        "blocked": 31,
+        "n": 60,
+        "rate": 0.517,
         "ci95": [
-          0.434,
-          0.554
+          0.393,
+          0.638
         ]
       },
       "ensemble_any": {
-        "blocked": 168,
-        "n": 263,
-        "rate": 0.639,
+        "blocked": 36,
+        "n": 60,
+        "rate": 0.6,
         "ci95": [
-          0.579,
-          0.694
+          0.474,
+          0.714
         ]
       }
     },
     "benign_false_positive": {
       "rule_based": {
         "blocked": 0,
-        "n": 399,
+        "n": 56,
         "rate": 0.0,
         "ci95": [
-          -0.0,
-          0.01
+          0.0,
+          0.064
         ]
       },
       "embedding_similarity": {
-        "blocked": 67,
-        "n": 399,
-        "rate": 0.168,
+        "blocked": 9,
+        "n": 56,
+        "rate": 0.161,
         "ci95": [
-          0.134,
-          0.208
+          0.087,
+          0.278
         ]
       },
       "scratch_classifier": {
-        "blocked": 159,
-        "n": 399,
-        "rate": 0.398,
+        "blocked": 6,
+        "n": 56,
+        "rate": 0.107,
         "ci95": [
-          0.352,
-          0.447
+          0.05,
+          0.215
         ]
       },
       "ensemble_any": {
-        "blocked": 194,
-        "n": 399,
-        "rate": 0.486,
+        "blocked": 13,
+        "n": 56,
+        "rate": 0.232,
         "ci95": [
-          0.438,
-          0.535
+          0.141,
+          0.358
         ]
       }
     }
@@ -188,21 +188,21 @@
       ]
     },
     "scratch_classifier": {
-      "blocked": 25,
+      "blocked": 6,
       "n": 100,
-      "rate": 0.25,
+      "rate": 0.06,
       "ci95": [
-        0.175,
-        0.343
+        0.028,
+        0.125
       ]
     },
     "ensemble_any": {
-      "blocked": 26,
+      "blocked": 7,
       "n": 100,
-      "rate": 0.26,
+      "rate": 0.07,
       "ci95": [
-        0.184,
-        0.354
+        0.034,
+        0.137
       ]
     }
   }

@@ -60,3 +60,7 @@ Downloaded by `scripts/external_benchmark_v2.py` into the gitignored `data/exter
 | deepset/prompt-injections (Hugging Face; 662 rows: 546 train + 116 test) | Injection detection and benign false-positive rate | cc-by-4.0 (card also lists apache-2.0) |
 | JailbreakBench/JBB-Behaviors, `benign-behaviors.csv` (100 rows) | Hard false-positive set | see dataset card |
 | verazuo/jailbreak_llms (2023-05-07 prompts) | Only the 244 prompts NOT found verbatim in `data/train.csv`; the rest overlap training | MIT (per the repo) |
+
+## Added for classifier retraining (`scripts/retrain_classifier_v2.py`)
+
+Trained on (train splits or samples only; matching held-out texts removed): Lakera/gandalf_ignore_instructions (MIT), jackhhao/jailbreak-classification (apache-2.0), xTRam1/safe-guard-prompt-injection (see dataset card; synthetic), yahma/alpaca-cleaned (benign instructions), databricks/databricks-dolly-15k (cc-by-sa-3.0). Their test splits and deepset's test split are held out. Verify each licence before redistributing anything derived from them; only the trained weights and evaluation numbers are committed, not the data.

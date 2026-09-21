@@ -894,3 +894,11 @@ such rather than conflated.
   examples) + our own 20-case corpus mixed into training as additional positive/negative
   signal, with our corpus *also* serving as the primary held-out eval set for the
   comparison table (per the earlier hybrid decision).
+
+## 2026-09-21: retrained the scratch classifier on diverse data; added a short-input guard
+
+**Context.** A contamination audit showed the "independent" external benchmark overlapped the training set by 63%, and the honest external numbers showed 25-55% false positives. Threshold recalibration could not fix this because the raw classifier score had ROC-AUC ~0.6 on independent data (docs/recalibration-flow.md).
+
+**Decision.** Retrain on deepset train, gandalf, jackhhao, safe-guard, alpaca, dolly and short chat messages (config D, seed 0), holding out every evaluation set (exact-match removal). Keep the v1 weights in models/scratch_classifier_v1. Add a guard so the classifier skips inputs shorter than 3 word tokens; mean-pooling makes 1-2 word inputs unreliable (v1 also scored "ok" 1.0), and only ~2 of ~1,280 held-out attacks are that short. The rule-based layer still inspects every input.
+
+**Evidence and limits.** Leave-one-source-out AUC rose 0.56 to 0.71 (deepset), 0.55 to 0.90 (safe-guard); JailbreakBench benign false positives fell 26% to 7%. In-domain benign false positives did not improve (n=17), and jailbreak-style detection fell 94% to 91%. Numbers are 3-seed means with small held-out sets. Full write-up: docs/retraining-flow.md.
