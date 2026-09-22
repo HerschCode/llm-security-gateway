@@ -123,7 +123,7 @@ always true, and the difference matters enormously).
 | rule_based | 27% (21/78) | 6% (1/17) | 0.262 |
 | embedding_similarity (TF-IDF, in production) | 0% (0/78) | 0% (0/17) | 23.643 |
 | embedding_similarity_st (sentence-transformer, opt-in) | 23% (13/56)* | 0% (0/12)* | 47.443 |
-| scratch_classifier (in production; retrained 2026-09-21, see below) | 50% (39/78) | 24% (4/17) | 0.112 |
+| scratch_classifier (in production; retrained 2026-09-22, see below) | 38% (30/78) | 12% (2/17) | 0.106 |
 | distilbert_finetuned (comparison only) | 52% (29/56)* | 25% (3/12)* | 364.5† |
 
 \* measured on 72-case corpus; not re-run on expanded corpus — see [`docs/comparison_table.md`](docs/comparison_table.md).
@@ -146,11 +146,11 @@ different difficulty levels:
 
 | Category (n attacks) | rule_based | embedding_similarity | scratch_classifier (retrained) |
 |---|---|---|---|
-| direct_injection (13) | 46% (6/13) | 0% (0/13) | **85% (11/13)** |
+| direct_injection (13) | 46% (6/13) | 0% (0/13) | **62% (8/13)** |
 | encoding_obfuscation (20) | 15% (3/20) | 0% (0/20) | 45% (9/20) |
-| indirect_injection (15) | 13% (2/15) | 0% (0/15) | 60% (9/15) |
-| multi_turn_jailbreak (15) | 7% (1/15) | 0% (0/15) | 33% (5/15) |
-| tool_scope_escalation (15) | 60% (9/15) | 0% (0/15) | 33% (5/15) |
+| indirect_injection (15) | 13% (2/15) | 0% (0/15) | 47% (7/15) |
+| multi_turn_jailbreak (15) | 7% (1/15) | 0% (0/15) | 27% (4/15) |
+| tool_scope_escalation (15) | 60% (9/15) | 0% (0/15) | 13% (2/15) |
 
 The classifier handles direct injection best at 62%, while rule_based leads on
 **tool_scope_escalation at 60%** — thanks to targeted patterns for social-engineering
@@ -183,15 +183,15 @@ The full per-category table is in [`docs/comparison_table.md`](docs/comparison_t
 
 | Held-out set | v1 ensemble | Retrained ensemble | Note |
 |---|---|---|---|
-| JailbreakBench benign, false positives (n=100) | 26% | **7%** | never trained on |
-| Short messages, false positives (n=40) | 22.5% | **5%** | |
-| deepset test benign, false positives (n=56) | 55% | **23%** | same-source split: deepset train is now in training |
-| jailbreak_llms not in training, detection (n=244) | 94.3% | 90.6% | small detection cost |
-| deepset test, detection (n=60) | 78% | 60% | same-source split |
-| Own corpus, detection (n=78) | 61.5% | 61.5% | unchanged |
-| **Own corpus, benign false positives (n=17)** | 23.5% | **29.4%** | **slightly worse (1 of 17), interval 13-53%** |
+| JailbreakBench benign, false positives (n=100) | 26% | **10%** | never trained on |
+| Short messages, false positives (n=40) | 22.5% | **2.5%** | |
+| deepset test benign, false positives (n=56) | 55% | **25%** | same-source split: deepset train is now in training |
+| jailbreak_llms not in training, detection (n=244) | 94.3% | 91.8% | small detection cost |
+| deepset test, detection (n=60) | 78% | 61.7% | same-source split |
+| Own corpus, detection (n=78) | 61.5% | **53.8%** | detection cost of in-domain benign training (config E) |
+| **Own corpus, benign false positives (n=17)** | 23.5% | **17.6%** | **improved: 5→3 of 17 after adding in-domain procurement data (config E), interval 6-41%** |
 
-The cleanest evidence is leave-one-source-out (train without a source, test on it): classifier ROC-AUC on deepset 0.56 to 0.71, on safe-guard 0.55 to 0.90, on jackhhao 0.91 to 0.94. Held-out splits of sources that are in training (safe-guard, jackhhao, gandalf: ~0.99 AUC) are same-distribution and overstate generalisation. In-domain benign false positives (our own corpus) were **not** improved, and false positives are still high on deepset (23%).
+The cleanest evidence is leave-one-source-out (train without a source, test on it): classifier ROC-AUC on deepset 0.56 to 0.71, on safe-guard 0.55 to 0.90, on jackhhao 0.91 to 0.94. Held-out splits of sources that are in training (safe-guard, jackhhao, gandalf: ~0.99 AUC) are same-distribution and overstate generalisation. Config E (adding ~170 in-domain procurement/ops benign examples) improved in-domain FP from 5→3 of 17 (29.4%→17.6%) at a detection cost: own-corpus ensemble detection dropped from 61.5% to 53.8%. Deepset FP rose slightly to 25%.
 
 **Can recalibration fix it?** Tried, held-out: thresholds chosen on deepset's train split cut false positives to near zero only by collapsing detection (5% at 0% FP on deepset test; own-corpus detection 62% to 27%), because the raw classifier score has ROC-AUC just 0.61 there. Full step-by-step story, chart and table: [`docs/recalibration-flow.md`](docs/recalibration-flow.md).
 
@@ -324,7 +324,7 @@ Full writeup with the before/after numbers and how it was found:
 correctly, provides **zero** real generalization from a public jailbreak dataset to
 this project's own attack style. Rule-based and embedding-similarity are both
 essentially non-functional against this corpus in isolation. The from-scratch
-classifier (50% detection, 24% false-positive rate on the current 100-case corpus, after the 2026-09-21 retrain — see the residual
+classifier (38% detection, 12% false-positive rate on the current 100-case corpus, after the 2026-09-22 retrain — see the residual
 domain-mismatch false-positive rate on unseen queries, which is a different and worse
 number, in `docs/domain_shift_fix.md`) is the only layer doing real,
 non-leaked work — and it's mediocre, not excellent. **This is a materially different,
@@ -344,13 +344,13 @@ would have been.
 
 ### Remaining honest weaknesses on the current 100-case corpus
 
-Current per-layer false positives: `rule_based` — GW-052; `scratch_classifier` — GW-020,
-GW-089, GW-093. Missed attacks: `scratch_classifier` misses 40/78 attack cases; the
-ensemble (block-on-any) reduces this to 30/78 — mostly encoding obfuscation and
+Current per-layer false positives: `rule_based` — GW-052; `scratch_classifier` — GW-019,
+GW-078. Missed attacks: `scratch_classifier` misses 48/78 attack cases; the
+ensemble (block-on-any) reduces this to 36/78 — mostly encoding obfuscation and
 multi-turn jailbreak categories (see `docs/comparison_table.md` for the full miss list).
 
 The redteam reports (`docs/redteam_report_gateway_stub_ops_agent.md`) were regenerated
-on 2026-09-20 against the 100-case corpus. This list will
+on 2026-09-22 against the 100-case corpus. This list will
 shift on any future retrain since the classifier's decision boundary isn't identical
 to any previous snapshot's — none of it is hidden, it's surfaced directly by
 `scripts/report_cli.py` and the redteam reports. The domain-mismatch
@@ -506,7 +506,7 @@ knowing:
   than silently left unfixed — not made the default because it's still the
   weakest real detector at the highest cost, and it would re-introduce torch
   into the serving path. See `docs/sentence_transformer_similarity_result.md`.
-- **False positives are still the largest open weakness.** Before the 2026-09-21 retrain they were 25-55% on external benign data; after it, 7% on JailbreakBench benign and 23% on deepset test benign, but **24-29% on our own in-domain benign queries (n=17)**. See the external benchmark section and [`docs/retraining-flow.md`](docs/retraining-flow.md).
+- **False positives are still the largest open weakness.** Before the 2026-09-21 retrain they were 25-55% on external benign data; after it (config E, 2026-09-22), 10% on JailbreakBench benign and 25% on deepset test benign, and **18% on our own in-domain benign queries (n=17, down from 29% in config D)**. See the external benchmark section and [`docs/retraining-flow.md`](docs/retraining-flow.md).
 - **~10% residual false-positive rate** on unseen in-domain benign queries after the
   domain-shift fix (down from a genuine, reproducible 60% before it — see
   `docs/domain_shift_fix.md`). Not necessarily 10% on the next retrain: see the next
@@ -517,8 +517,8 @@ knowing:
   retrain silently produced a different model despite the pipeline looking
   deterministic. Fixed (`scripts/train_scratch_classifier.py` now seeds torch and uses
   a seeded `DataLoader` generator; verified byte-identical model files across repeated
-  runs). But this means every specific percentage in this README (50% detection, 10%
-  residual FP, etc.) is tied to seed 42 on this exact codebase version — a different
+  runs). But this means every specific percentage in this README (38% detection, 18%
+  residual FP, etc.) is tied to seed 42 on this exact codebase version and training config — a different
   seed would give different real numbers, not because anything is broken, but because
   that's what "one trained model's performance" actually means. Don't treat these
   numbers as more fundamental than they are.

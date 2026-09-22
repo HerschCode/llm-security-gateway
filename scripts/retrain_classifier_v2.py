@@ -14,6 +14,11 @@ Training configurations (same architecture, hyperparameters, seeds; cumulative):
                  (train, stratified sample)
   C         B  + generic benign instructions: yahma/alpaca-cleaned and databricks-dolly-15k
                  (samples)
+  D         C  + short_benign (currently shipped model)
+  E         D  + in_domain_benign: ~200 hand-written procurement/ops queries covering
+                 metrics, policy excerpts, context-correction ("ignore my last message"),
+                 multi-turn conversations. Targets the in-domain FP regression (4->5 of 17
+                 benign controls) caused by external data having no procurement-domain text.
   C-<src>   leave-one-source-out: C without deepset / safeguard / jackhhao / gandalf. The
             excluded source's own test split is then a genuinely new distribution, which is
             the honest generalisation test (test splits of sources that ARE in training are
@@ -22,7 +27,8 @@ Training configurations (same architecture, hyperparameters, seeds; cumulative):
 Held-out sets (never trained on; any training text that exactly matches a held-out text is
 removed, so exact-duplicate leakage is impossible -- near-duplicates are not detected):
   deepset test | JailbreakBench benign | jailbreak_llms not-in-v1-train | safe-guard test |
-  jackhhao test | gandalf test | our own corpus (78 attacks / 17 benign)
+  jackhhao test | gandalf test | our own corpus (78 attacks / 17 benign) |
+  in_domain_benign_heldout (30 ops queries, held out to measure in-domain FP)
 
 Reports, per config and held-out set: detection / false-positive rate at the shipped 0.5
 threshold, and ROC-AUC (threshold-free) where both classes exist. Mean over --seeds.
@@ -77,6 +83,8 @@ def load_sources():
     alp = [(a["instruction"] + (" " + a["input"] if a["input"] else ""), 0) for a in rng.sample(alpaca, 1500)]
     dol = [(d["instruction"], 0) for d in rng.sample(dolly, 1000)]
 
+    in_domain_train = json.load(open(EXT / "in_domain_benign.json", encoding="utf-8"))
+    in_domain_heldout = json.load(open(EXT / "in_domain_benign_heldout.json", encoding="utf-8"))
     train = {
         "v1": v1,
         "deepset_train": [(t, int(label)) for t, label in zip(ds_tr.text, ds_tr.label)],
@@ -85,6 +93,7 @@ def load_sources():
         "safeguard": [(t, int(label)) for t, label in zip(sg_s.text, sg_s.label)],
         "generic_benign": alp + dol,
         "short_benign": [(t, 0) for t in SHORT_BENIGN_TRAIN],
+        "in_domain_benign": [(t, 0) for t in in_domain_train],
     }
     corpus = yaml.safe_load(open(REPO_ROOT / "corpus/injection_cases.yaml", encoding="utf-8"))
     jbb = [r["Goal"] for r in csv.DictReader(open(EXT / "JBB-Behaviors/data/benign-behaviors.csv", encoding="utf-8"))]
@@ -98,6 +107,7 @@ def load_sources():
         "jackhhao_test": [(t, 1 if y == "jailbreak" else 0) for t, y in zip(jh_te.prompt, jh_te.type)],
         "gandalf_test": [(t, 1) for t in gd_te.text],
         "short_benign_heldout": [(t, 0) for t in SHORT_BENIGN_HELDOUT],
+        "in_domain_heldout": [(t, 0) for t in in_domain_heldout],
         "own_corpus": [(c["payload"], 1 if c["expected_behavior"] == "block" else 0) for c in corpus if c["expected_behavior"] in ("block", "allow")],
     }
     return train, held
@@ -140,6 +150,7 @@ CONFIGS = {
     "C": _ALL,
     # leave-one-source-out: C without one source; that source's TEST split is then a true new-distribution test
     "D": _ALL + ["short_benign"],
+    "E": _ALL + ["short_benign", "in_domain_benign"],
     "C-deepset": [k for k in _ALL if k != "deepset_train"],
     "C-safeguard": [k for k in _ALL if k != "safeguard"],
     "C-jackhhao": [k for k in _ALL if k != "jackhhao"],
@@ -216,13 +227,16 @@ def predict(model, vocab, texts):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, default=3)
+    ap.add_argument("--configs", nargs="*", default=None, help="run only these configs (default: all)")
     ap.add_argument("--save-best", type=str, default=None, help="config letter to save (seed 0) to models/scratch_classifier_v2")
+    ap.add_argument("--install", action="store_true", help="with --save-best: also back up current scratch_classifier to scratch_classifier_v2 and install the new model as scratch_classifier")
     args = ap.parse_args()
     sys.stdout.reconfigure(encoding="utf-8")
     train, held = load_sources()
     print({k: len(v) for k, v in held.items()})
+    configs_to_run = args.configs if args.configs else list(CONFIGS.keys())
     results = {}
-    for config in CONFIGS:
+    for config in configs_to_run:
         rows, d_ov, d_cf = make_train_rows(train, held, config)
         pos = sum(label for _, label in rows)
         print(f"\n== config {config}: {len(rows)} train rows ({pos} attack / {len(rows) - pos} benign); dropped {d_ov} exact overlaps with held-out sets, {d_cf} label conflicts")
@@ -244,10 +258,20 @@ def main():
                 m[name] = r
             per_seed.append(m)
             if args.save_best == config and seed == 0:
+                import shutil
                 from gateway.detectors.scratch_classifier_model import save_artifacts
                 out = REPO_ROOT / "models" / "scratch_classifier_v2"
                 save_artifacts(model, vocab, out)
                 print(f"  saved seed-0 model to {out}")
+                if args.install:
+                    shipped = REPO_ROOT / "models" / "scratch_classifier"
+                    backup = REPO_ROOT / "models" / "scratch_classifier_v2_backup"
+                    if backup.exists():
+                        shutil.rmtree(backup)
+                    shutil.copytree(shipped, backup)
+                    for f in out.iterdir():
+                        shutil.copy2(f, shipped / f.name)
+                    print(f"  installed to {shipped} (backup at {backup})")
         agg = {}
         for name in held:
             agg[name] = {}
