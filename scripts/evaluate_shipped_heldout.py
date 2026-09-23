@@ -46,7 +46,7 @@ def main():
             d.model, d.vocab = load_numpy_artifacts(path)
         detectors[tag] = d
     out = {}
-    show = ("deepset_test", "jbb_benign", "jbllms_clean", "safeguard_test", "jackhhao_test", "gandalf_test", "short_benign_heldout", "own_corpus")
+    show = ("deepset_test", "jbb_benign", "jbllms_clean", "safeguard_test", "jackhhao_test", "gandalf_test", "short_benign_heldout", "in_domain_heldout", "own_corpus")
     for name in show:
         items = held[name]
         texts = [t for t, _ in items]; y = np.array([label for _, label in items])

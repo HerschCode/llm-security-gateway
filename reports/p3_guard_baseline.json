@@ -1,0 +1,101 @@
+{
+  "model": "protectai/deberta-v3-base-prompt-injection-v2",
+  "threshold": 0.5,
+  "note_on_meta_prompt_guard_2": "meta-llama/Llama-Prompt-Guard-2-86M is gated behind manual Meta license approval on Hugging Face; not evaluated here.",
+  "deepset_test": {
+    "n": 116,
+    "avg_latency_ms": 55.741,
+    "detection": {
+      "k": 22,
+      "n": 60,
+      "rate": 0.367,
+      "ci95": [
+        0.256,
+        0.493
+      ]
+    },
+    "fpr": {
+      "k": 0,
+      "n": 56,
+      "rate": 0.0,
+      "ci95": [
+        0,
+        0.064
+      ]
+    }
+  },
+  "jbb_benign": {
+    "n": 100,
+    "avg_latency_ms": 12.944,
+    "fpr": {
+      "k": 1,
+      "n": 100,
+      "rate": 0.01,
+      "ci95": [
+        0.002,
+        0.054
+      ]
+    }
+  },
+  "jbllms_clean": {
+    "n": 244,
+    "avg_latency_ms": 645.218,
+    "detection": {
+      "k": 206,
+      "n": 244,
+      "rate": 0.844,
+      "ci95": [
+        0.793,
+        0.884
+      ]
+    }
+  },
+  "short_benign_heldout": {
+    "n": 40,
+    "avg_latency_ms": 38.612,
+    "fpr": {
+      "k": 1,
+      "n": 40,
+      "rate": 0.025,
+      "ci95": [
+        0.004,
+        0.129
+      ]
+    }
+  },
+  "in_domain_heldout": {
+    "n": 30,
+    "avg_latency_ms": 73.772,
+    "fpr": {
+      "k": 3,
+      "n": 30,
+      "rate": 0.1,
+      "ci95": [
+        0.035,
+        0.256
+      ]
+    }
+  },
+  "own_corpus": {
+    "n": 95,
+    "avg_latency_ms": 108.461,
+    "detection": {
+      "k": 63,
+      "n": 78,
+      "rate": 0.808,
+      "ci95": [
+        0.707,
+        0.88
+      ]
+    },
+    "fpr": {
+      "k": 4,
+      "n": 17,
+      "rate": 0.235,
+      "ci95": [
+        0.096,
+        0.473
+      ]
+    }
+  }
+}

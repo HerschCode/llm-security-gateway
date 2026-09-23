@@ -902,3 +902,11 @@ such rather than conflated.
 **Decision.** Retrain on deepset train, gandalf, jackhhao, safe-guard, alpaca, dolly and short chat messages (config D, seed 0), holding out every evaluation set (exact-match removal). Keep the v1 weights in models/scratch_classifier_v1. Add a guard so the classifier skips inputs shorter than 3 word tokens; mean-pooling makes 1-2 word inputs unreliable (v1 also scored "ok" 1.0), and only ~2 of ~1,280 held-out attacks are that short. The rule-based layer still inspects every input.
 
 **Evidence and limits.** Leave-one-source-out AUC rose 0.56 to 0.71 (deepset), 0.55 to 0.90 (safe-guard); JailbreakBench benign false positives fell 26% to 7%. In-domain benign false positives did not improve (n=17), and jailbreak-style detection fell 94% to 91%. Numbers are 3-seed means with small held-out sets. Full write-up: docs/retraining-flow.md.
+
+## 2026-09-23: added a guard-model baseline (protectai/deberta-v3-base-prompt-injection-v2)
+
+**Context.** An external skills review named "no baseline against existing guard models" as the single biggest credibility gap in this project: building a detector from scratch invites the obvious "why not just use Prompt Guard / a HF guard model" question, and this project had never measured the answer.
+
+**What was done.** Ran protectai/deberta-v3-base-prompt-injection-v2 (Apache-2.0, ungated) on the exact same held-out sets used for the classifier retrain (scripts/guard_model_baseline.py, reports/p3_guard_baseline.json). meta-llama/Llama-Prompt-Guard-2-86M is gated behind manual Meta approval and was not evaluated.
+
+**Result, stated plainly.** On our own corpus the guard model detects far more attacks than our ensemble (80.8% vs 53.8%) at a similar false-positive rate — on this evidence, a team optimizing purely for detection quality on this exact corpus should have started with the guard model. On deepset the result flips (our ensemble 61.7% detection / 25% FPR vs guard 36.7% / 0%). The guard model is CPU-latency-heavy (13-650ms vs our ~4ms full ensemble) and a ~700MB dependency, which is exactly the torch-on-Render-512MB problem this project's numpy-classifier port was built to avoid, so it stays an offline comparison, not a deployed layer. Not tested: combining it as a 4th ensemble layer, which the numbers suggest could raise detection and lower false positives together.
