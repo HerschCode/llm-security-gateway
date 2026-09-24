@@ -43,12 +43,17 @@ from gateway.text_normalizer import normalize as _normalize_text
 CLASSIFIER_THRESHOLD = 0.5
 LITE_MODE = os.environ.get("GATEWAY_LITE", "").lower() in ("1", "true", "yes")
 
-# Layer 2 backend: "tfidf" (default, torch-free) or "sentence_transformer"
-# (opt-in: real semantic embeddings, needs `pip install sentence-transformers`
-# which pulls in torch; not in requirements.txt). See
-# gateway/detectors/embedding_similarity_st.py's docstring and
-# docs/sentence_transformer_similarity_result.md for the measured trade-off.
-EMBEDDING_BACKEND = os.environ.get("EMBEDDING_BACKEND", "tfidf").lower()
+# Layer 2 backend: "none" (default: layer disabled), "tfidf" (torch-free, opt-in ablation) or
+# "sentence_transformer" (opt-in: real semantic embeddings, needs `pip install
+# sentence-transformers`, which pulls in torch; not in requirements.txt).
+#
+# Default changed from "tfidf" to "none" on 2026-09-25 after an ablation
+# (docs/ensemble-ablation.md): the TF-IDF layer scores 0% on this project's own attack corpus, and on
+# deepset it added 14 points of detection at the cost of 14 points of false positives (about a
+# coin flip). Removing it leaves own-corpus results unchanged, halves deepset false positives, and
+# cuts ~4 ms from a ~4 ms ensemble. See also gateway/detectors/embedding_similarity_st.py and
+# docs/sentence_transformer_similarity_result.md.
+EMBEDDING_BACKEND = os.environ.get("EMBEDDING_BACKEND", "none").lower()
 from gateway.pii import scan_and_redact
 from gateway.response_checks import check_jailbreak_compliance, check_system_prompt_leak
 from gateway.role_exposure import check as check_role_exposure
@@ -66,18 +71,25 @@ class GatewayResponse:
 class GatewayMiddleware:
     def __init__(self):
         self.embedding_backend = EMBEDDING_BACKEND
-        if self.embedding_backend == "sentence_transformer":
+        self.embedding_detector = None
+        self.similarity_threshold = None
+        if self.embedding_backend == "none":
+            pass
+        elif self.embedding_backend == "sentence_transformer":
             from gateway.detectors.embedding_similarity_st import (
                 SentenceTransformerSimilarityDetector, SIMILARITY_THRESHOLD as EMB_THRESHOLD,
             )
             self.embedding_detector = SentenceTransformerSimilarityDetector()
-        else:
+        elif self.embedding_backend == "tfidf":
             from gateway.detectors.embedding_similarity import (
                 EmbeddingSimilarityDetector, SIMILARITY_THRESHOLD as EMB_THRESHOLD,
             )
             self.embedding_detector = EmbeddingSimilarityDetector()
-        self.embedding_detector.load()
-        self.similarity_threshold = EMB_THRESHOLD
+        else:
+            raise ValueError(f"EMBEDDING_BACKEND must be none, tfidf or sentence_transformer, got {self.embedding_backend!r}")
+        if self.embedding_detector is not None:
+            self.embedding_detector.load()
+            self.similarity_threshold = EMB_THRESHOLD
 
         # GATEWAY_LITE=1: deliberately run a smaller ensemble (see the module
         # docstring above for why this is no longer a torch/RAM necessity).
@@ -111,15 +123,18 @@ class GatewayMiddleware:
             self.adaptive_tracker.record_block(session_id)
             return True, "rule_based", rb_result.matched_pattern_id, per_layer
 
-        emb_threshold = self.similarity_threshold * multiplier
-        emb_result = self.embedding_detector.detect(text, threshold=emb_threshold)
-        per_layer["embedding_similarity"] = {
-            "blocked": emb_result.blocked, "latency_ms": emb_result.latency_ms,
-            "effective_threshold": emb_threshold, "risk_multiplier": multiplier,
-        }
-        if emb_result.blocked:
-            self.adaptive_tracker.record_block(session_id)
-            return True, "embedding_similarity", emb_result.matched_pattern_id, per_layer
+        if self.embedding_detector is None:  # layer 2 disabled (default)
+            per_layer["embedding_similarity"] = {"blocked": False, "skipped": "disabled"}
+        else:
+            emb_threshold = self.similarity_threshold * multiplier
+            emb_result = self.embedding_detector.detect(text, threshold=emb_threshold)
+            per_layer["embedding_similarity"] = {
+                "blocked": emb_result.blocked, "latency_ms": emb_result.latency_ms,
+                "effective_threshold": emb_threshold, "risk_multiplier": multiplier,
+            }
+            if emb_result.blocked:
+                self.adaptive_tracker.record_block(session_id)
+                return True, "embedding_similarity", emb_result.matched_pattern_id, per_layer
 
         if self.classifier_detector is None:  # lite mode -- layer 3 disabled
             per_layer["scratch_classifier"] = {"blocked": False, "skipped": "lite_mode"}

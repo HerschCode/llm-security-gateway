@@ -1,0 +1,696 @@
+{
+  "reference_torch_fp32": {
+    "p50_latency_ms": 82.2,
+    "size_mb": 703.5,
+    "results": {
+      "own_corpus": {
+        "detection": {
+          "k": 63,
+          "n": 78,
+          "rate": 0.808,
+          "ci95": [
+            0.707,
+            0.88
+          ]
+        },
+        "fpr": {
+          "k": 4,
+          "n": 17,
+          "rate": 0.235,
+          "ci95": [
+            0.096,
+            0.473
+          ]
+        },
+        "roc_auc": 0.822
+      },
+      "deepset_test": {
+        "detection": {
+          "k": 22,
+          "n": 60,
+          "rate": 0.367,
+          "ci95": [
+            0.256,
+            0.493
+          ]
+        },
+        "fpr": {
+          "k": 0,
+          "n": 56,
+          "rate": 0.0,
+          "ci95": [
+            0,
+            0.064
+          ]
+        },
+        "roc_auc": 0.901
+      },
+      "jbb_benign": {
+        "fpr": {
+          "k": 1,
+          "n": 100,
+          "rate": 0.01,
+          "ci95": [
+            0.002,
+            0.054
+          ]
+        }
+      },
+      "short_benign_heldout": {
+        "fpr": {
+          "k": 1,
+          "n": 40,
+          "rate": 0.025,
+          "ci95": [
+            0.004,
+            0.129
+          ]
+        }
+      },
+      "in_domain_heldout": {
+        "fpr": {
+          "k": 3,
+          "n": 30,
+          "rate": 0.1,
+          "ci95": [
+            0.035,
+            0.256
+          ]
+        }
+      },
+      "jbllms_clean": {
+        "detection": {
+          "k": 206,
+          "n": 244,
+          "rate": 0.844,
+          "ci95": [
+            0.793,
+            0.884
+          ]
+        }
+      }
+    }
+  },
+  "variants": {
+    "fp32-ort": {
+      "status": "ok",
+      "size_mb": 704.4,
+      "rss_delta_mb": 771.1,
+      "p50_latency_ms": 33.2,
+      "results": {
+        "own_corpus": {
+          "detection": {
+            "k": 63,
+            "n": 78,
+            "rate": 0.808,
+            "ci95": [
+              0.707,
+              0.88
+            ]
+          },
+          "fpr": {
+            "k": 4,
+            "n": 17,
+            "rate": 0.235,
+            "ci95": [
+              0.096,
+              0.473
+            ]
+          },
+          "roc_auc": 0.822
+        },
+        "deepset_test": {
+          "detection": {
+            "k": 22,
+            "n": 60,
+            "rate": 0.367,
+            "ci95": [
+              0.256,
+              0.493
+            ]
+          },
+          "fpr": {
+            "k": 0,
+            "n": 56,
+            "rate": 0.0,
+            "ci95": [
+              0,
+              0.064
+            ]
+          },
+          "roc_auc": 0.901
+        },
+        "jbb_benign": {
+          "fpr": {
+            "k": 1,
+            "n": 100,
+            "rate": 0.01,
+            "ci95": [
+              0.002,
+              0.054
+            ]
+          }
+        },
+        "short_benign_heldout": {
+          "fpr": {
+            "k": 1,
+            "n": 40,
+            "rate": 0.025,
+            "ci95": [
+              0.004,
+              0.129
+            ]
+          }
+        },
+        "in_domain_heldout": {
+          "fpr": {
+            "k": 3,
+            "n": 30,
+            "rate": 0.1,
+            "ci95": [
+              0.035,
+              0.256
+            ]
+          }
+        },
+        "jbllms_clean": {
+          "detection": {
+            "k": 206,
+            "n": 244,
+            "rate": 0.844,
+            "ci95": [
+              0.793,
+              0.884
+            ]
+          }
+        }
+      },
+      "vs_fp32_torch": {
+        "own_corpus": {
+          "decision_agreement": 1.0,
+          "max_abs_prob_diff": 0.0
+        },
+        "deepset_test": {
+          "decision_agreement": 1.0,
+          "max_abs_prob_diff": 0.0
+        },
+        "jbb_benign": {
+          "decision_agreement": 1.0,
+          "max_abs_prob_diff": 0.0
+        },
+        "short_benign_heldout": {
+          "decision_agreement": 1.0,
+          "max_abs_prob_diff": 0.0
+        },
+        "in_domain_heldout": {
+          "decision_agreement": 1.0,
+          "max_abs_prob_diff": 0.0
+        },
+        "jbllms_clean": {
+          "decision_agreement": 1.0,
+          "max_abs_prob_diff": 0.0009
+        }
+      }
+    },
+    "int8-matmul": {
+      "status": "ok",
+      "size_mb": 514.1,
+      "rss_delta_mb": 533.3,
+      "p50_latency_ms": 19.6,
+      "results": {
+        "own_corpus": {
+          "detection": {
+            "k": 9,
+            "n": 78,
+            "rate": 0.115,
+            "ci95": [
+              0.062,
+              0.205
+            ]
+          },
+          "fpr": {
+            "k": 0,
+            "n": 17,
+            "rate": 0.0,
+            "ci95": [
+              0,
+              0.184
+            ]
+          },
+          "roc_auc": 0.8
+        },
+        "deepset_test": {
+          "detection": {
+            "k": 4,
+            "n": 60,
+            "rate": 0.067,
+            "ci95": [
+              0.026,
+              0.159
+            ]
+          },
+          "fpr": {
+            "k": 0,
+            "n": 56,
+            "rate": 0.0,
+            "ci95": [
+              0,
+              0.064
+            ]
+          },
+          "roc_auc": 0.724
+        },
+        "jbb_benign": {
+          "fpr": {
+            "k": 0,
+            "n": 100,
+            "rate": 0.0,
+            "ci95": [
+              0,
+              0.037
+            ]
+          }
+        },
+        "short_benign_heldout": {
+          "fpr": {
+            "k": 0,
+            "n": 40,
+            "rate": 0.0,
+            "ci95": [
+              0,
+              0.088
+            ]
+          }
+        },
+        "in_domain_heldout": {
+          "fpr": {
+            "k": 0,
+            "n": 30,
+            "rate": 0.0,
+            "ci95": [
+              0,
+              0.114
+            ]
+          }
+        },
+        "jbllms_clean": {
+          "detection": {
+            "k": 188,
+            "n": 244,
+            "rate": 0.77,
+            "ci95": [
+              0.714,
+              0.819
+            ]
+          }
+        }
+      },
+      "vs_fp32_torch": {
+        "own_corpus": {
+          "decision_agreement": 0.3474,
+          "max_abs_prob_diff": 0.9745
+        },
+        "deepset_test": {
+          "decision_agreement": 0.7759,
+          "max_abs_prob_diff": 0.9936
+        },
+        "jbb_benign": {
+          "decision_agreement": 0.99,
+          "max_abs_prob_diff": 0.9696
+        },
+        "short_benign_heldout": {
+          "decision_agreement": 0.975,
+          "max_abs_prob_diff": 0.9845
+        },
+        "in_domain_heldout": {
+          "decision_agreement": 0.9,
+          "max_abs_prob_diff": 0.9778
+        },
+        "jbllms_clean": {
+          "decision_agreement": 0.7951,
+          "max_abs_prob_diff": 0.9422
+        }
+      }
+    },
+    "int8-matmul+gather": {
+      "status": "ok",
+      "size_mb": 232.7,
+      "rss_delta_mb": 252.4,
+      "p50_latency_ms": 109.8,
+      "results": {
+        "own_corpus": {
+          "detection": {
+            "k": 8,
+            "n": 78,
+            "rate": 0.103,
+            "ci95": [
+              0.053,
+              0.19
+            ]
+          },
+          "fpr": {
+            "k": 0,
+            "n": 17,
+            "rate": 0.0,
+            "ci95": [
+              0,
+              0.184
+            ]
+          },
+          "roc_auc": 0.79
+        },
+        "deepset_test": {
+          "detection": {
+            "k": 4,
+            "n": 60,
+            "rate": 0.067,
+            "ci95": [
+              0.026,
+              0.159
+            ]
+          },
+          "fpr": {
+            "k": 0,
+            "n": 56,
+            "rate": 0.0,
+            "ci95": [
+              0,
+              0.064
+            ]
+          },
+          "roc_auc": 0.713
+        },
+        "jbb_benign": {
+          "fpr": {
+            "k": 0,
+            "n": 100,
+            "rate": 0.0,
+            "ci95": [
+              0,
+              0.037
+            ]
+          }
+        },
+        "short_benign_heldout": {
+          "fpr": {
+            "k": 0,
+            "n": 40,
+            "rate": 0.0,
+            "ci95": [
+              0,
+              0.088
+            ]
+          }
+        },
+        "in_domain_heldout": {
+          "fpr": {
+            "k": 0,
+            "n": 30,
+            "rate": 0.0,
+            "ci95": [
+              0,
+              0.114
+            ]
+          }
+        },
+        "jbllms_clean": {
+          "detection": {
+            "k": 191,
+            "n": 244,
+            "rate": 0.783,
+            "ci95": [
+              0.727,
+              0.83
+            ]
+          }
+        }
+      },
+      "vs_fp32_torch": {
+        "own_corpus": {
+          "decision_agreement": 0.3368,
+          "max_abs_prob_diff": 0.9712
+        },
+        "deepset_test": {
+          "decision_agreement": 0.7759,
+          "max_abs_prob_diff": 0.9938
+        },
+        "jbb_benign": {
+          "decision_agreement": 0.99,
+          "max_abs_prob_diff": 0.9681
+        },
+        "short_benign_heldout": {
+          "decision_agreement": 0.975,
+          "max_abs_prob_diff": 0.9854
+        },
+        "in_domain_heldout": {
+          "decision_agreement": 0.9,
+          "max_abs_prob_diff": 0.9739
+        },
+        "jbllms_clean": {
+          "decision_agreement": 0.7992,
+          "max_abs_prob_diff": 0.9462
+        }
+      }
+    },
+    "int8-perchannel": {
+      "status": "ok",
+      "size_mb": 514.5,
+      "rss_delta_mb": 534.3,
+      "p50_latency_ms": 19.4,
+      "results": {
+        "own_corpus": {
+          "detection": {
+            "k": 50,
+            "n": 78,
+            "rate": 0.641,
+            "ci95": [
+              0.53,
+              0.739
+            ]
+          },
+          "fpr": {
+            "k": 3,
+            "n": 17,
+            "rate": 0.176,
+            "ci95": [
+              0.062,
+              0.41
+            ]
+          },
+          "roc_auc": 0.757
+        },
+        "deepset_test": {
+          "detection": {
+            "k": 9,
+            "n": 60,
+            "rate": 0.15,
+            "ci95": [
+              0.081,
+              0.261
+            ]
+          },
+          "fpr": {
+            "k": 0,
+            "n": 56,
+            "rate": 0.0,
+            "ci95": [
+              0,
+              0.064
+            ]
+          },
+          "roc_auc": 0.774
+        },
+        "jbb_benign": {
+          "fpr": {
+            "k": 0,
+            "n": 100,
+            "rate": 0.0,
+            "ci95": [
+              0,
+              0.037
+            ]
+          }
+        },
+        "short_benign_heldout": {
+          "fpr": {
+            "k": 0,
+            "n": 40,
+            "rate": 0.0,
+            "ci95": [
+              0,
+              0.088
+            ]
+          }
+        },
+        "in_domain_heldout": {
+          "fpr": {
+            "k": 2,
+            "n": 30,
+            "rate": 0.067,
+            "ci95": [
+              0.018,
+              0.213
+            ]
+          }
+        },
+        "jbllms_clean": {
+          "detection": {
+            "k": 186,
+            "n": 244,
+            "rate": 0.762,
+            "ci95": [
+              0.705,
+              0.811
+            ]
+          }
+        }
+      },
+      "vs_fp32_torch": {
+        "own_corpus": {
+          "decision_agreement": 0.7895,
+          "max_abs_prob_diff": 0.9968
+        },
+        "deepset_test": {
+          "decision_agreement": 0.8707,
+          "max_abs_prob_diff": 0.9993
+        },
+        "jbb_benign": {
+          "decision_agreement": 0.99,
+          "max_abs_prob_diff": 0.9666
+        },
+        "short_benign_heldout": {
+          "decision_agreement": 0.975,
+          "max_abs_prob_diff": 0.9322
+        },
+        "in_domain_heldout": {
+          "decision_agreement": 0.9667,
+          "max_abs_prob_diff": 0.9974
+        },
+        "jbllms_clean": {
+          "decision_agreement": 0.8934,
+          "max_abs_prob_diff": 0.9899
+        }
+      }
+    },
+    "int8-ffn-only-perchannel": {
+      "status": "ok",
+      "size_mb": 541.3,
+      "rss_delta_mb": 611.6,
+      "p50_latency_ms": 25.3,
+      "results": {
+        "own_corpus": {
+          "detection": {
+            "k": 48,
+            "n": 78,
+            "rate": 0.615,
+            "ci95": [
+              0.504,
+              0.716
+            ]
+          },
+          "fpr": {
+            "k": 4,
+            "n": 17,
+            "rate": 0.235,
+            "ci95": [
+              0.096,
+              0.473
+            ]
+          },
+          "roc_auc": 0.778
+        },
+        "deepset_test": {
+          "detection": {
+            "k": 9,
+            "n": 60,
+            "rate": 0.15,
+            "ci95": [
+              0.081,
+              0.261
+            ]
+          },
+          "fpr": {
+            "k": 0,
+            "n": 56,
+            "rate": 0.0,
+            "ci95": [
+              0,
+              0.064
+            ]
+          },
+          "roc_auc": 0.792
+        },
+        "jbb_benign": {
+          "fpr": {
+            "k": 0,
+            "n": 100,
+            "rate": 0.0,
+            "ci95": [
+              0,
+              0.037
+            ]
+          }
+        },
+        "short_benign_heldout": {
+          "fpr": {
+            "k": 1,
+            "n": 40,
+            "rate": 0.025,
+            "ci95": [
+              0.004,
+              0.129
+            ]
+          }
+        },
+        "in_domain_heldout": {
+          "fpr": {
+            "k": 2,
+            "n": 30,
+            "rate": 0.067,
+            "ci95": [
+              0.018,
+              0.213
+            ]
+          }
+        },
+        "jbllms_clean": {
+          "detection": {
+            "k": 190,
+            "n": 244,
+            "rate": 0.779,
+            "ci95": [
+              0.723,
+              0.826
+            ]
+          }
+        }
+      },
+      "vs_fp32_torch": {
+        "own_corpus": {
+          "decision_agreement": 0.8,
+          "max_abs_prob_diff": 0.9976
+        },
+        "deepset_test": {
+          "decision_agreement": 0.8707,
+          "max_abs_prob_diff": 1.0
+        },
+        "jbb_benign": {
+          "decision_agreement": 0.99,
+          "max_abs_prob_diff": 0.9823
+        },
+        "short_benign_heldout": {
+          "decision_agreement": 1.0,
+          "max_abs_prob_diff": 0.0285
+        },
+        "in_domain_heldout": {
+          "decision_agreement": 0.9667,
+          "max_abs_prob_diff": 0.9979
+        },
+        "jbllms_clean": {
+          "decision_agreement": 0.8934,
+          "max_abs_prob_diff": 0.9903
+        }
+      }
+    }
+  }
+}

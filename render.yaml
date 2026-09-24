@@ -27,7 +27,8 @@ services:
         value: "/demo/chat"
       - key: OPS_ASSISTANT_TIMEOUT
         value: "120"
-      # TF-IDF backend: torch-free, fits 512MB RAM. This is also the code
-      # default; kept explicit here so the intent is clear.
+      # Layer 2 (embedding similarity) disabled: the TF-IDF layer scored 0% on the project's own
+      # corpus and was ~a coin flip on external data (docs/ensemble-ablation.md). This is also the
+      # code default; kept explicit here so the intent is clear.
       - key: EMBEDDING_BACKEND
-        value: "tfidf"
+        value: "none"

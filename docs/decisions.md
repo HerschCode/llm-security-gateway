@@ -920,3 +920,11 @@ such rather than conflated.
 **Findings.** ProtectAI DeBERTa beats our ensemble on own-corpus detection (80.8% vs 53.8%) and is far more precise on deepset and JailbreakBench benign; our ensemble wins on deepset detection and jailbreak_llms (likely inflated by near-duplicates). The OR combination reaches 85.9% own-corpus detection but keeps our false positives. The guard model costs +858 MB RSS and 17.5x the p50 latency.
 
 **Decision.** Keep serving the from-scratch ensemble solely because of the 512 MB free-tier constraint; state plainly that on detection quality the existing guard model is better on this corpus. Meta Prompt Guard 2 and Llama Guard were not evaluated (gated, no HF token). A precision-oriented combination (guard as the only learned layer plus rules) is deferred to Phase 2.
+
+## 2026-09-25: Phase 2, TF-IDF layer removed from the default ensemble; guard model not made servable
+
+**Context.** The TF-IDF similarity layer detects 0/78 of the project's own attacks. It was the most expensive layer (~4 ms of a 4.4 ms ensemble).
+
+**Evidence.** Ablation (scripts/baselines/ensemble_ablation.py, docs/ensemble-ablation.md): removing it leaves own-corpus results identical (42/78, 3/17), cuts deepset false positives 14/56 to 6/56 while losing 8 detections, and takes p50 from 4.4 ms to 0.11 ms. Swapping in the fp32 sentence-transformer raised JailbreakBench benign false positives from 9% to 24%. Guard model to ONNX: fp32 exact (771 MB RSS), int8 breaks it (own-corpus detection 81% to 10-12%; per-channel and FFN-only recover to 62-64%; 534-612 MB RSS).
+
+**Decision.** `EMBEDDING_BACKEND` defaults to `none` (layer 2 disabled); `tfidf` and `sentence_transformer` stay opt-in; unknown values raise instead of silently falling back. The guard model stays a reference baseline; nothing that fits 512 MB kept its accuracy. Red-team reports regenerated (through gateway: stub 71/100, project2 66/100). Not tried: quantization-aware fine-tuning, static quantization with calibration data, embedding-vocabulary pruning, Prompt Guard 2 22M (gated).

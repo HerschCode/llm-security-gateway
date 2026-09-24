@@ -32,7 +32,7 @@ finetune = ["transformers>=4.40", "datasets>=2.19", "accelerate>=1.1.0"]
 semantic = ["sentence-transformers>=3.0"]
 # scripts/baselines/: guard-model comparison (protectai deberta, Meta Prompt Guard 2 /
 # Llama Guard if you have HF access to those gated repos). Not used by gateway/ or CI.
-baselines = ["transformers>=4.40", "huggingface_hub>=0.24", "psutil>=5.9"]
+baselines = ["transformers>=4.40", "huggingface_hub>=0.24", "psutil>=5.9", "onnx>=1.16", "onnxruntime>=1.18", "tokenizers>=0.19"]
 
 [tool.setuptools.packages.find]
 include = ["gateway*"]

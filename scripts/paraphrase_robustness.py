@@ -30,7 +30,11 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 
-from gateway.middleware import EMBEDDING_BACKEND
+from gateway.middleware import EMBEDDING_BACKEND as _SERVED_BACKEND
+
+# The served default is now "none" (layer 2 disabled); this script still measures the TF-IDF layer as a
+# documented ablation, so map "none" to "tfidf" here.
+EMBEDDING_BACKEND = _SERVED_BACKEND if _SERVED_BACKEND != "none" else "tfidf"
 from gateway.detectors.embedding_similarity import EmbeddingSimilarityDetector
 from gateway.detectors.embedding_similarity_st import SentenceTransformerSimilarityDetector
 import gateway.detectors.rule_based as _rule_based_module
