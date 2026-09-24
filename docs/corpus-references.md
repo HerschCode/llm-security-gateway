@@ -65,6 +65,6 @@ Downloaded by `scripts/external_benchmark_v2.py` into the gitignored `data/exter
 
 Trained on (train splits or samples only; matching held-out texts removed): Lakera/gandalf_ignore_instructions (MIT), jackhhao/jailbreak-classification (apache-2.0), xTRam1/safe-guard-prompt-injection (see dataset card; synthetic), yahma/alpaca-cleaned (benign instructions), databricks/databricks-dolly-15k (cc-by-sa-3.0). Their test splits and deepset's test split are held out. Verify each licence before redistributing anything derived from them; only the trained weights and evaluation numbers are committed, not the data.
 
-## Guard-model baseline (`scripts/guard_model_baseline.py`)
+## Guard-model baseline (`scripts/baselines/run_guard_baselines.py`)
 
-protectai/deberta-v3-base-prompt-injection-v2 (Hugging Face, Apache-2.0, ungated) -- see `docs/decisions.md`'s 2026-09-23 entry for the comparison result. meta-llama/Llama-Prompt-Guard-2-86M is gated behind manual Meta license approval and was not downloaded or evaluated.
+protectai/deberta-v3-base-prompt-injection-v2 (Hugging Face, Apache-2.0, ungated) -- see `docs/guard-baselines.md` for the comparison result. meta-llama/Llama-Prompt-Guard-2-86M is gated behind manual Meta license approval and was not downloaded or evaluated.
