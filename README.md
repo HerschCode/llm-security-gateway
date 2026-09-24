@@ -219,53 +219,29 @@ Full writeup: [`docs/sentence_transformer_similarity_result.md`](docs/sentence_t
 
 ### Guard-model baseline: why build a detector from scratch instead of using an existing one?
 
-The honest answer to "why not just use Prompt Guard / Llama Guard / a HF guard model" is to
-actually measure against one, not to argue it away. `scripts/guard_model_baseline.py` runs
-[`protectai/deberta-v3-base-prompt-injection-v2`](https://huggingface.co/protectai/deberta-v3-base-prompt-injection-v2)
-(Apache-2.0, purpose-trained, 184M params) on the exact same held-out sets used for the
-classifier retrain, so the numbers are directly comparable to the shipped ensemble's own
-(`reports/p3_shipped_heldout.json` vs `reports/p3_guard_baseline.json`).
-[`meta-llama/Llama-Prompt-Guard-2-86M`](https://huggingface.co/meta-llama/Llama-Prompt-Guard-2-86M)
-was also considered but is gated behind manual Meta license approval on Hugging Face — not
-evaluated here, stated rather than silently skipped.
+Measured, not argued: `python -X utf8 -m scripts.baselines.run_guard_baselines` (optional extra
+`pip install -e .[baselines]`) scores `protectai/deberta-v3-base-prompt-injection-v2` and the
+"ours OR guard" combination on the same held-out sets as everything else. Full table, ROC-AUC, CIs,
+and the reasoning: [`docs/guard-baselines.md`](docs/guard-baselines.md); raw output:
+[`reports/p3_guard_baselines.json`](reports/p3_guard_baselines.json).
 
-| Held-out set | Guard model detection | Our ensemble detection | Guard model FPR | Our ensemble FPR |
-|---|---|---|---|---|
-| **Own corpus (78 attacks / 17 benign)** | **80.8% (63/78)** | 53.8% (42/78) | 23.5% (4/17) | **17.6% (3/17)** |
-| deepset test (60 attacks / 56 benign) | 36.7% (22/60) | **61.7% (37/60)** | **0.0% (0/56)** | 25.0% (14/56) |
-| jailbreak_llms clean (244 attacks)* | 84.4% (206/244) | **91.8% (224/244)** | n/a | n/a |
-| JailbreakBench benign (100) | n/a | n/a | **1.0% (1/100)** | 10.0% (10/100) |
-| Short messages (40 benign) | n/a | n/a | 2.5% (1/40) | 2.5% (1/40) |
-| In-domain ops benign (30) | n/a | n/a | 10.0% (3/30) | 10.0% (3/30) |
+| Held-out set | Ours | ProtectAI DeBERTa | Ours OR ProtectAI |
+|---|---|---|---|
+| **Own corpus** detection / FPR | 53.8% / 17.6% | **80.8%** / 23.5% | **85.9%** / 23.5% |
+| deepset test detection / FPR | 61.7% / 25.0% | 36.7% / **0.0%** | 68.3% / 25.0% |
+| JailbreakBench benign FPR | 10.0% | **1.0%** | 11.0% |
+| p50 latency (CPU) | **4.1 ms** | 72.1 ms | ~76 ms |
+| Weights / extra RSS | **2 MB** / small | 704 MB / **+858 MB** | both |
 
-\* our TF-IDF layer's known-bad index is fit on jailbreak_llms-derived training positives, so
-our number here likely benefits from near-duplicates — flagged elsewhere in this README, applies
-here too.
-
-**Neither one cleanly wins.** On our own corpus — the set this project was actually built to
-catch — the guard model detects far more attacks (80.8% vs 53.8%) at a comparable
-false-positive rate. That is a real answer to the "why not just use an existing model"
-question: on this evidence, a team optimizing purely for detection on this exact distribution
-should have started with the guard model, not a from-scratch classifier. On deepset (a harder,
-short natural-language injection set) the result flips: our ensemble catches almost twice as
-many attacks, but at 25% false positives versus the guard model's 0% — the guard model is far
-more conservative there. On every pure-benign held-out set the guard model is equal to or
-better than our ensemble, sometimes by 10x (JailbreakBench benign: 1% vs 10%).
-
-**Why this project still didn't just adopt it.** Latency and deployability, not detection
-quality: our full 3-layer ensemble runs in ~4ms total on this CPU (rule-based ~0.06ms +
-TF-IDF ~4ms + our classifier ~0.1ms); the guard model alone takes 13–650ms per request
-(DeBERTa-base forward pass, no GPU, no batching in production) — 10-150x slower depending on
-input length. It is also a ~700MB dependency, which is the exact torch-on-Render-free-tier
-problem this project's own numpy-classifier port (`gateway/detectors/classifier_numpy.py`) was
-built to avoid; adding it back in would undo that. This result is kept as an offline
-comparison, not deployed, for the same reason `EMBEDDING_BACKEND=sentence_transformer` and
-`distilbert_finetuned` are opt-in/comparison-only elsewhere in this README.
-
-**What this actually argues for, and hasn't been built:** an ensemble that includes the guard
-model as a 4th layer, evaluated the same way, to see whether it raises detection AND lowers
-false positives together rather than trading one for the other — that combination has not been
-tested. Raw output: [`reports/p3_guard_baseline.json`](reports/p3_guard_baseline.json).
+**Honest reading.** On the corpus this gateway was built for, the guard model is the better detector
+(80.8% vs 53.8% at a similar false-positive count), and on deepset it is far more precise. Combining
+them with an OR maximises recall but inherits both models' false positives, so it does not fix
+precision. **What ships is still the from-scratch ensemble, for one reason: the guard model needs about
+860 MB of resident memory (17.5x the latency), which cannot fit the free 512 MB instance this project
+targets.** The from-scratch classifier is a defensible small/fast/torch-free engineering exercise, not
+a detector to prefer over an existing guard model when memory and latency allow. Meta's Prompt Guard 2
+(86M/22M) and Llama Guard were **not evaluated**: both are gated behind manual license approval and no
+Hugging Face token was available.
 
 ### L2 threshold sweep (scripts/threshold_sweep_l2.py)
 
@@ -397,7 +373,7 @@ would have been.
 Current per-layer false positives: `rule_based` — GW-052; `scratch_classifier` — GW-019,
 GW-078. Missed attacks: `scratch_classifier` misses 48/78 attack cases; the
 ensemble (block-on-any) reduces this to 36/78 — mostly encoding obfuscation and
-multi-turn jailbreak categories (see `docs/comparison_table.md` for the full miss list). A published guard model (see [Guard-model baseline](#guard-model-baseline-why-build-a-detector-from-scratch-instead-of-using-an-existing-one) above) catches substantially more of these same misses (80.8% vs 53.8% detection on this corpus) at a similar false-positive rate — the clearest evidence that this from-scratch classifier is a defensible learning exercise, not a detector a real team should ship over an existing one, on this corpus specifically.
+multi-turn jailbreak categories (see `docs/comparison_table.md` for the full miss list). A published guard model (see [Guard-model baseline](#guard-model-baseline-why-build-a-detector-from-scratch-instead-of-using-an-existing-one) above) catches substantially more of these same misses (80.8% vs 53.8% on this corpus) at a similar false-positive rate.
 
 The redteam reports (`docs/redteam_report_gateway_stub_ops_agent.md`) were regenerated
 on 2026-09-22 against the 100-case corpus. This list will

@@ -910,3 +910,13 @@ such rather than conflated.
 **What was done.** Ran protectai/deberta-v3-base-prompt-injection-v2 (Apache-2.0, ungated) on the exact same held-out sets used for the classifier retrain (scripts/guard_model_baseline.py, reports/p3_guard_baseline.json). meta-llama/Llama-Prompt-Guard-2-86M is gated behind manual Meta approval and was not evaluated.
 
 **Result, stated plainly.** On our own corpus the guard model detects far more attacks than our ensemble (80.8% vs 53.8%) at a similar false-positive rate — on this evidence, a team optimizing purely for detection quality on this exact corpus should have started with the guard model. On deepset the result flips (our ensemble 61.7% detection / 25% FPR vs guard 36.7% / 0%). The guard model is CPU-latency-heavy (13-650ms vs our ~4ms full ensemble) and a ~700MB dependency, which is exactly the torch-on-Render-512MB problem this project's numpy-classifier port was built to avoid, so it stays an offline comparison, not a deployed layer. Not tested: combining it as a 4th ensemble layer, which the numbers suggest could raise detection and lower false positives together.
+
+## 2026-09-24: guard-baseline harness completed (Phase 1); serving unchanged
+
+**Context.** The 2026-09-23 baseline was a one-off script with detection/FPR only. Phase 1 of the upgrade plan asked for a reproducible harness with ROC-AUC, latency, memory, license, and the combined configuration.
+
+**What was done.** `scripts/baselines/run_guard_baselines.py` (optional extra `[baselines]`, never imported by `gateway/` or CI) replaces the earlier script. It adds ROC-AUC, p50 single-example latency, incremental RSS, weights size, license, and the "ours OR guard" configuration, and records models it cannot load as `not_evaluated` with the reason.
+
+**Findings.** ProtectAI DeBERTa beats our ensemble on own-corpus detection (80.8% vs 53.8%) and is far more precise on deepset and JailbreakBench benign; our ensemble wins on deepset detection and jailbreak_llms (likely inflated by near-duplicates). The OR combination reaches 85.9% own-corpus detection but keeps our false positives. The guard model costs +858 MB RSS and 17.5x the p50 latency.
+
+**Decision.** Keep serving the from-scratch ensemble solely because of the 512 MB free-tier constraint; state plainly that on detection quality the existing guard model is better on this corpus. Meta Prompt Guard 2 and Llama Guard were not evaluated (gated, no HF token). A precision-oriented combination (guard as the only learned layer plus rules) is deferred to Phase 2.
