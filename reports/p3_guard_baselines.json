@@ -29,7 +29,7 @@
   "ours_ensemble": {
     "license": "MIT (this repo)",
     "weights_on_disk_mb": 2.0,
-    "p50_latency_ms": 4.116,
+    "p50_latency_ms": 0.563,
     "results": {
       "own_corpus": {
         "detection": {
@@ -54,33 +54,33 @@
       },
       "deepset_test": {
         "detection": {
-          "k": 37,
+          "k": 29,
           "n": 60,
-          "rate": 0.617,
+          "rate": 0.483,
           "ci95": [
-            0.49,
-            0.729
+            0.362,
+            0.607
           ]
         },
         "fpr": {
-          "k": 14,
+          "k": 6,
           "n": 56,
-          "rate": 0.25,
+          "rate": 0.107,
           "ci95": [
-            0.155,
-            0.377
+            0.05,
+            0.215
           ]
         },
         "classifier_layer_roc_auc": 0.873
       },
       "jbb_benign": {
         "fpr": {
-          "k": 10,
+          "k": 9,
           "n": 100,
-          "rate": 0.1,
+          "rate": 0.09,
           "ci95": [
-            0.055,
-            0.174
+            0.048,
+            0.162
           ]
         },
         "classifier_layer_roc_auc": null
@@ -111,12 +111,12 @@
       },
       "jbllms_clean": {
         "detection": {
-          "k": 224,
+          "k": 214,
           "n": 244,
-          "rate": 0.918,
+          "rate": 0.877,
           "ci95": [
-            0.877,
-            0.946
+            0.83,
+            0.913
           ]
         },
         "classifier_layer_roc_auc": null
@@ -128,9 +128,23 @@
       "license": "Apache-2.0",
       "params": "184M",
       "status": "evaluated",
-      "rss_delta_mb": 858.5,
+      "label_check": {
+        "injection_idx": 1,
+        "label_names": {
+          "0": "SAFE",
+          "1": "INJECTION"
+        },
+        "correct_by_index": {
+          "0": 0,
+          "1": 10
+        },
+        "n": 10,
+        "verified": true,
+        "min_correct": 9
+      },
+      "rss_delta_mb": 527.8,
       "weights_on_disk_mb": 703.5,
-      "p50_latency_ms": 72.097,
+      "p50_latency_ms": 826.621,
       "results": {
         "own_corpus": {
           "detection": {
@@ -242,32 +256,32 @@
         },
         "deepset_test": {
           "detection": {
-            "k": 41,
+            "k": 34,
             "n": 60,
-            "rate": 0.683,
+            "rate": 0.567,
             "ci95": [
-              0.558,
-              0.787
+              0.441,
+              0.684
             ]
           },
           "fpr": {
-            "k": 14,
+            "k": 6,
             "n": 56,
-            "rate": 0.25,
+            "rate": 0.107,
             "ci95": [
-              0.155,
-              0.377
+              0.05,
+              0.215
             ]
           }
         },
         "jbb_benign": {
           "fpr": {
-            "k": 11,
+            "k": 10,
             "n": 100,
-            "rate": 0.11,
+            "rate": 0.1,
             "ci95": [
-              0.063,
-              0.186
+              0.055,
+              0.174
             ]
           }
         },
@@ -295,12 +309,12 @@
         },
         "jbllms_clean": {
           "detection": {
-            "k": 231,
+            "k": 227,
             "n": 244,
-            "rate": 0.947,
+            "rate": 0.93,
             "ci95": [
-              0.911,
-              0.969
+              0.891,
+              0.956
             ]
           }
         }
@@ -310,13 +324,15 @@
       "license": "Llama 4 Community License (gated)",
       "params": "86M",
       "status": "not_evaluated",
-      "reason": "OSError: You are trying to access a gated repo."
+      "reason": "OSError: You are trying to access a gated repo.",
+      "label_check": null
     },
     "meta-llama/Llama-Prompt-Guard-2-22M": {
       "license": "Llama 4 Community License (gated)",
       "params": "22M",
       "status": "not_evaluated",
-      "reason": "OSError: You are trying to access a gated repo."
+      "reason": "OSError: You are trying to access a gated repo.",
+      "label_check": null
     }
   }
 }

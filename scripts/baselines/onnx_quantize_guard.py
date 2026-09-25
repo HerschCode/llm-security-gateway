@@ -1,7 +1,8 @@
 """
 Phase 2, step 2: can the guard model be made small and fast enough to serve, via ONNX Runtime + int8?
 
-Exports protectai/deberta-v3-base-prompt-injection-v2 to ONNX, then measures three variants
+Exports a guard model to ONNX (default protectai/deberta-v3-base-prompt-injection-v2; `--model pg2-22m` or `pg2-86m` for Meta's Llama Prompt
+Guard 2, which needs the weights downloaded with an approved HF_TOKEN: that path has NOT been run), then measures the variants
 against the fp32 PyTorch model on the standard held-out sets:
   fp32-ort            ONNX fp32 (isolates the runtime change from quantization)
   int8-matmul         dynamic int8 on MatMul weights only (encoder), embeddings stay fp32
@@ -16,8 +17,9 @@ model is reported as broken; nothing is hidden.
 The serving-relevant runtime here is onnxruntime + the `tokenizers` package (no torch, no
 transformers), matching this project's torch-free serving constraint.
 
-Run: python -X utf8 -m scripts.baselines.onnx_quantize_guard
-Writes reports/p3_onnx_quantization.json; ONNX files go to data/external/onnx_guard/ (gitignored).
+Run: python -X utf8 -m scripts.baselines.onnx_quantize_guard [--model protectai|pg2-22m|pg2-86m] [--variants NAME ...]
+Writes reports/p3_onnx_quantization.json (ProtectAI) or reports/p3_onnx_quantization_<model>.json; ONNX files go to
+data/external/onnx_guard/ (ProtectAI) or data/external/onnx_guard_<model>/ (gitignored).
 """
 import argparse
 import json
@@ -36,9 +38,22 @@ sys.path.insert(0, str(REPO_ROOT))
 from scripts.baselines.run_guard_baselines import MODELS, SETS, load_guard, set_metrics  # noqa: E402
 from scripts.retrain_classifier_v2 import load_sources  # noqa: E402
 
-MODEL_DIR = MODELS[0]["local_dir"]
+MODEL_KEYS = {"protectai": 0, "pg2-86m": 1, "pg2-22m": 2}          # indices into run_guard_baselines.MODELS
+MODEL_SPEC = MODELS[0]
+MODEL_DIR = MODEL_SPEC["local_dir"]
 OUT_DIR = REPO_ROOT / "data/external/onnx_guard"
+REPORT_PATH = REPO_ROOT / "reports/p3_onnx_quantization.json"
 MAX_LEN = 512
+
+
+def configure(key: str):
+    """Select the model. ProtectAI keeps its original output locations so existing reports are not disturbed."""
+    global MODEL_SPEC, MODEL_DIR, OUT_DIR, REPORT_PATH
+    MODEL_SPEC = MODELS[MODEL_KEYS[key]]
+    MODEL_DIR = MODEL_SPEC["local_dir"]
+    if key != "protectai":
+        OUT_DIR = REPO_ROOT / f"data/external/onnx_guard_{key}"
+        REPORT_PATH = REPO_ROOT / f"reports/p3_onnx_quantization_{key}.json"
 LATENCY_SAMPLE = 120
 
 
@@ -109,8 +124,13 @@ def rss_child(path: Path) -> float:
 
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--model", choices=sorted(MODEL_KEYS), default="protectai")
+    ap.add_argument("--variants", nargs="*", help="only (re)measure these variants; others are kept from the existing report")
+    args = ap.parse_args()
+    configure(args.model)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    tok, model, idx, _ = load_guard(MODELS[0])
+    tok, model, idx, _ = load_guard(MODEL_SPEC)
     _, held = load_sources()
     sets = {k: held[k] for k in SETS}
 
@@ -118,9 +138,6 @@ def main():
     if not fp32_path.exists():
         print("exporting fp32 ONNX ...")
         export_fp32(model, tok, fp32_path)
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--variants", nargs="*", help="only (re)measure these variants; others are kept from the existing report")
-    args = ap.parse_args()
     variants = {"fp32-ort": fp32_path}
     specs = (
         ("int8-matmul", dict(op_types=["MatMul"])),
@@ -160,7 +177,7 @@ def main():
     for t in sample:
         t0 = time.perf_counter(); torch_scores([t], 1); lat_ref.append((time.perf_counter() - t0) * 1000)
 
-    report_path = REPO_ROOT / "reports/p3_onnx_quantization.json"
+    report_path = REPORT_PATH
     previous = json.loads(report_path.read_text(encoding="utf-8")) if report_path.exists() and args.variants else {"variants": {}}
     results = {"reference_torch_fp32": {"p50_latency_ms": round(float(np.median(lat_ref)), 1), "size_mb": round((MODEL_DIR / "model.safetensors").stat().st_size / 2**20, 1),
                                         "results": {k: set_metrics(ref[k] >= 0.5, np.array([label for _, label in sets[k]]), ref[k]) for k in sets}},
@@ -198,7 +215,7 @@ def main():
     for name, e in results["variants"].items():
         if e.get("status") == "ok":
             print(f"{name:<22}" + "".join(f"{cell(e['results'][s]):<15}" for s in SETS))
-    print("\nWrote reports/p3_onnx_quantization.json")
+    print(f"\nWrote {report_path.relative_to(REPO_ROOT)}")
 
 
 if __name__ == "__main__":

@@ -67,4 +67,4 @@ Trained on (train splits or samples only; matching held-out texts removed): Lake
 
 ## Guard-model baseline (`scripts/baselines/run_guard_baselines.py`)
 
-protectai/deberta-v3-base-prompt-injection-v2 (Hugging Face, Apache-2.0, ungated) -- see `docs/guard-baselines.md` for the comparison result. meta-llama/Llama-Prompt-Guard-2-86M is gated behind manual Meta license approval and was not downloaded or evaluated.
+protectai/deberta-v3-base-prompt-injection-v2 (Hugging Face, Apache-2.0, ungated) -- see `docs/guard-baselines.md` for the comparison result. meta-llama/Llama-Prompt-Guard-2-86M and -22M are gated behind manual Meta license approval; the weights were not downloaded, but their accuracy was evaluated through Groq-hosted inference (see `docs/guard-baselines.md`).

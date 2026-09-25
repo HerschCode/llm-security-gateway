@@ -64,7 +64,8 @@ Negative results, stated plainly:
 3. **ONNX fp32 is exact and 2.5x faster than PyTorch, but still 771 MB**: over the 512 MB limit by itself.
 4. Untried, and the realistic next steps: quantization-aware fine-tuning, static quantization with
    calibration data, pruning the embedding vocabulary to the tokens actually used, or a smaller guard
-   model (Prompt Guard 2 22M, if access is granted).
+   model (Prompt Guard 2 22M, if access is granted). Update: its accuracy has since been evaluated through hosted inference and it does
+   not beat the numpy classifier at a matched false-positive rate (docs/guard-baselines.md), so this route is closed on accuracy grounds; its int8 memory was never measured.
 
 ## Decision
 

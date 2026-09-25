@@ -224,27 +224,29 @@ Full writeup: [`docs/sentence_transformer_similarity_result.md`](docs/sentence_t
 
 Measured, not argued: `python -X utf8 -m scripts.baselines.run_guard_baselines` (optional extra
 `pip install -e .[baselines]`) scores `protectai/deberta-v3-base-prompt-injection-v2` and the
-"ours OR guard" combination on the same held-out sets as everything else. Full table, ROC-AUC, CIs,
-and the reasoning: [`docs/guard-baselines.md`](docs/guard-baselines.md); raw output:
-[`reports/p3_guard_baselines.json`](reports/p3_guard_baselines.json).
+"ours OR guard" combination on the same held-out sets as everything else; `run_guard_hosted` adds Meta's Llama Prompt Guard 2 through Groq's free
+hosted inference. Full tables, ROC-AUC, CIs, and the reasoning: [`docs/guard-baselines.md`](docs/guard-baselines.md); raw output:
+[`reports/p3_guard_baselines.json`](reports/p3_guard_baselines.json), [`reports/p3_guard_hosted.json`](reports/p3_guard_hosted.json).
 
-| Held-out set | Ours | ProtectAI DeBERTa | Ours OR ProtectAI |
-|---|---|---|---|
-| **Own corpus** detection / FPR | 53.8% / 17.6% | **80.8%** / 23.5% | **85.9%** / 23.5% |
-| deepset test detection / FPR | 61.7% / 25.0% | 36.7% / **0.0%** | 68.3% / 25.0% |
-| JailbreakBench benign FPR | 10.0% | **1.0%** | 11.0% |
-| p50 latency (CPU) | **4.1 ms** | 72.1 ms | ~76 ms |
-| Weights / extra RSS | **2 MB** / small | 704 MB / **+858 MB** | both |
+| Held-out set | Shipped default | ProtectAI DeBERTa | Prompt Guard 2 22M | Prompt Guard 2 86M | Shipped OR ProtectAI |
+|---|---|---|---|---|---|
+| **Own corpus** detection / FPR | 53.8% / 17.6% | 80.8% / 23.5% | 32.1% / 11.8% | 30.8% / 5.9% | 85.9% / 23.5% |
+| deepset test detection / FPR | 48.3% / 10.7% | 36.7% / 0.0% | 13.3% / 0.0% | 16.7% / 0.0% | 56.7% / 10.7% |
+| jailbreak_llms detection | 87.7% | 84.4% | 93.4% | 94.7% | 93.0% |
+| JailbreakBench benign FPR | 9.0% | 1.0% | 8.0% | 17.0% | 10.0% |
+| Weights / memory | **2 MB** / small | 704 MB / +400 to +860 MB RSS | not measured | not measured | both |
+| p50 latency (CPU) | **0.563 ms** | 72 to 830 ms (noisy) | n/a | n/a | n/a |
 
-**Honest reading.** On the corpus this gateway was built for, the guard model is the better detector
-(80.8% vs 53.8% at a similar false-positive count), and on deepset it is far more precise. Combining
-them with an OR maximises recall but inherits both models' false positives, so it does not fix
-precision. **What ships is still the from-scratch ensemble, for one reason: the guard model needs about
-860 MB of resident memory (17.5x the latency), which cannot fit the free 512 MB instance this project
-targets.** The from-scratch classifier is a defensible small/fast/torch-free engineering exercise, not
-a detector to prefer over an existing guard model when memory and latency allow. Meta's Prompt Guard 2
-(86M/22M) and Llama Guard were **not evaluated**: both are gated behind manual license approval and no
-Hugging Face token was available.
+Prompt Guard 2 columns are accuracy only, through hosted inference (first 1,500 characters, threshold 0.5), so memory and local latency are not measured; the "shipped default"
+is rules + the numpy classifier (the TF-IDF layer left the default in Phase 2).
+
+**Honest reading.** On the corpus this gateway was built for, ProtectAI is the better detector (80.8% / 23.5% vs 53.8% / 17.6% at a similar
+false-positive count), and on deepset it is far more precise. **Prompt Guard 2 is not**: at a matched false-positive budget, swapping the numpy classifier for it is a wash on the own
+corpus, 17 of 60 worse on deepset and better only on long jailbreaks, so it was not adopted. Combining ProtectAI with the shipped default by OR maximises recall but inherits both
+models' false positives. **What ships is still the from-scratch ensemble, for one reason: ProtectAI needs several hundred MB of resident memory and far more latency, which does not fit
+the free 512 MB instance this project targets** (inferred from RSS; no 512 MB container test has been run). The from-scratch classifier is a defensible small/fast/torch-free engineering
+exercise, not a detector to prefer over an existing guard model when memory and latency allow. Not yet done, and needing an approved Hugging Face token for the gated weights: a local
+parity check of the hosted Prompt Guard scores, an ONNX int8 build, and memory/latency measurements of Prompt Guard 2.
 
 ### Action firewall: from inspecting text to authorizing actions (Phase 3)
 
