@@ -9,7 +9,7 @@
 # gateway/detectors/classifier.py in scripts/evaluate.py / tests, not for
 # what actually gets deployed.
 fastapi==0.141.1
-uvicorn==0.52.4
+uvicorn==0.53.0
 pydantic==2.13.5
 httpx==0.28.1
 scikit-learn>=1.7,<1.9
