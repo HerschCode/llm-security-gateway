@@ -48,5 +48,6 @@ logs/*.db-journal
 # garak scan environment and raw scan artefacts (regenerated; results are summarised in reports/)
 redteam/.venv-garak/
 .venv-pii/
+.venv-sec/
 *.log
 redteam/runs/

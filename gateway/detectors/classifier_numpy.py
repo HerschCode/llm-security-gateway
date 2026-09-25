@@ -92,9 +92,12 @@ class NumpyScratchClassifier:
 def load_numpy_artifacts(path: Path = MODEL_DIR) -> tuple[NumpyScratchClassifier, dict]:
     import json
 
+    from gateway import model_integrity
+    model_integrity.verify(path / "vocab.json")
+    model_integrity.verify(path / "weights.npz")
     with open(path / "vocab.json", encoding="utf-8") as f:
         vocab = json.load(f)
-    npz = np.load(path / "weights.npz")
+    npz = np.load(path / "weights.npz", allow_pickle=False)
     model = NumpyScratchClassifier({k: npz[k] for k in npz.files})
     return model, vocab
 

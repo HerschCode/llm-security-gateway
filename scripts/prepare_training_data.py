@@ -42,6 +42,20 @@ N_JAILBREAK_SAMPLE = 1000     # cap; jailbreak_llms only has 1405 total anyway
 N_BENIGN_SAMPLE = 1000        # balance classes; regular set has 13735 available
 
 
+def safe_extract(tar: tarfile.TarFile, dest: Path):
+    """Extract only regular files and directories that stay inside `dest`. A hostile tarball can otherwise write anywhere with `../` or absolute
+    member names, or plant links that later members are written through (CVE-2007-4559; Bandit B202)."""
+    root = dest.resolve()
+    members = tar.getmembers()
+    for member in members:
+        target = (root / member.name).resolve()
+        if target != root and root not in target.parents:
+            raise SystemExit(f"refusing to extract {member.name!r}: it would leave {root}")
+        if not (member.isreg() or member.isdir()):
+            raise SystemExit(f"refusing to extract {member.name!r}: links and special files are not allowed")
+    tar.extractall(root, members=members)  # nosec B202 - every member was validated above
+
+
 def download_jailbreak_llms() -> Path:
     """Downloads and extracts verazuo/jailbreak_llms into a repo-relative
     cache directory if not already present. Fixes a real portability bug:
@@ -58,8 +72,10 @@ def download_jailbreak_llms() -> Path:
     JBLLMS_CACHE_DIR.mkdir(parents=True, exist_ok=True)
     tarball_path = JBLLMS_CACHE_DIR / "jailbreak_llms.tar.gz"
 
+    if not JBLLMS_TARBALL_URL.startswith("https://"):
+        raise SystemExit(f"refusing to download over a non-https URL: {JBLLMS_TARBALL_URL}")
     try:
-        urllib.request.urlretrieve(JBLLMS_TARBALL_URL, tarball_path)
+        urllib.request.urlretrieve(JBLLMS_TARBALL_URL, tarball_path)  # nosec B310 - https only, checked above
     except Exception as e:
         raise SystemExit(
             f"Failed to download jailbreak_llms dataset from {JBLLMS_TARBALL_URL}: {e}\n"
@@ -69,7 +85,7 @@ def download_jailbreak_llms() -> Path:
         )
 
     with tarfile.open(tarball_path) as tar:
-        tar.extractall(JBLLMS_CACHE_DIR)
+        safe_extract(tar, JBLLMS_CACHE_DIR)
     tarball_path.unlink()
 
     if not prompts_dir.exists():

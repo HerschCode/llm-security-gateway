@@ -114,13 +114,13 @@ def nav_html(active: str = "") -> str:
       }} else {{
         html.setAttribute('data-theme', 'light');
         localStorage.setItem('theme', 'light');
-        document.getElementById('theme-toggle').textContent = '☀️';
+        document.getElementById('theme-toggle').textContent = '☀\ufe0f';
       }}
     }}
     (function() {{
       if (localStorage.getItem('theme') === 'light') {{
         const btn = document.getElementById('theme-toggle');
-        if (btn) btn.textContent = '☀️';
+        if (btn) btn.textContent = '☀\ufe0f';
       }}
     }})();
     fetch('/health').then(r => r.json()).then(d => {{

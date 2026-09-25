@@ -1,0 +1,9 @@
+# SHA-256 of the model artifacts the gateway loads (sha256sum format: run `sha256sum -c --ignore-missing models/MANIFEST.sha256` from the repo root).
+# Regenerate with: python -m scripts.update_model_manifest   (see gateway/model_integrity.py)
+b3f7e648df9fb8350133a970d899c48a689ce2d7d6aba6fc32d82d0afa03d055  models/embedding_similarity/known_bad.pkl
+5c2e7222fd2a0148dde3ae9248aa02f295004867de6ad19b78cb762f94bfb841  models/embedding_similarity/vectorizer.pkl
+201b5b898d2a24f243612e460ae6928fc43078572109ccefabc64f5e0af02312  models/embedding_similarity_st/known_bad_ids.pkl
+9aa50ddff9d48b83e7c4c692e152026a165fe478d2ee43dbc989aa905022ddf7  models/embedding_similarity_st/known_bad_vectors.npy
+d2a03ad1e3d89afc85159338b585f4002abcf2a15bf205769219a3261fe85a52  models/scratch_classifier/model.pt
+4caf29cb620bd3843bf441fce6115fdbe42df57891c4a7d0178d40f95deb5641  models/scratch_classifier/vocab.json
+b55091f2586f65deecbfb2011087574b29895d702266864e91741eff15f31dab  models/scratch_classifier/weights.npz

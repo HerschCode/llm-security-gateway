@@ -25,7 +25,7 @@ to the LOO-CV embedding result and to GATEWAY_LITE's original purpose. Anyone
 running the full local pipeline (docker compose, this repo's own dev
 environment) can turn it on.
 """
-import pickle
+import pickle  # nosec B403 - loads are integrity-checked (gateway/model_integrity.py)
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -84,9 +84,12 @@ class SentenceTransformerSimilarityDetector:
 
     def load(self, path: Path = MODEL_DIR):
         self._load_model()
-        self.known_bad_vectors = np.load(path / "known_bad_vectors.npy")
+        from gateway import model_integrity
+        model_integrity.verify(path / "known_bad_vectors.npy")
+        model_integrity.verify(path / "known_bad_ids.pkl")     # pickle: check before deserializing
+        self.known_bad_vectors = np.load(path / "known_bad_vectors.npy", allow_pickle=False)
         with open(path / "known_bad_ids.pkl", "rb") as f:
-            self.known_bad_ids = pickle.load(f)
+            self.known_bad_ids = pickle.load(f)  # nosec B301 - integrity-checked above
 
     def detect(self, text: str, threshold: float | None = None) -> DetectionResult:
         start = time.perf_counter()

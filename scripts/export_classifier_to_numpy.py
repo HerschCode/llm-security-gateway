@@ -26,7 +26,7 @@ MODEL_DIR = REPO_ROOT / "models" / "scratch_classifier"
 
 
 def export(model_dir: Path = MODEL_DIR):
-    state_dict = torch.load(model_dir / "model.pt", map_location="cpu")
+    state_dict = torch.load(model_dir / "model.pt", map_location="cpu", weights_only=True)
     weights = {k: v.numpy() for k, v in state_dict.items()}
     expected = {"embedding.weight", "fc1.weight", "fc1.bias", "fc2.weight", "fc2.bias"}
     missing = expected - set(weights)

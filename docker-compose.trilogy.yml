@@ -38,7 +38,7 @@ services:
     environment:
       POSTGRES_DB: operations_performance
       POSTGRES_USER: operations_admin
-      POSTGRES_PASSWORD: local-dev-only
+      POSTGRES_PASSWORD: local-dev-only   # pragma: allowlist secret (throwaway password for a compose network that publishes no database port)
     volumes:
       - trilogy-postgres-data:/var/lib/postgresql/data
     healthcheck:
@@ -58,7 +58,7 @@ services:
       DB_PORT: "5432"
       DB_NAME: operations_performance
       DB_USER: operations_admin
-      DB_PASSWORD: local-dev-only
+      DB_PASSWORD: local-dev-only   # pragma: allowlist secret
       DB_SSLMODE: disable  # this compose network's own Postgres, not a hosted one -- no TLS needed
       RAW_EVENT_LOG_PATH: data/raw/bpi2019_events.csv
       API_ALLOWED_ORIGINS: "*"

@@ -12,3 +12,18 @@ logs/*.jsonl
 !README.md
 screenshots/
 .github/
+
+# Phase 6: nothing generated, scanned or secret belongs in an image
+.venv*/
+redteam/
+reports/
+logs/
+*.log
+.secrets.baseline
+sec_install.log
+pii_eval.log
+.env
+.env.*
+*.pem
+*.key
+sbom/

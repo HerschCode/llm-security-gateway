@@ -1,0 +1,18 @@
+# Weekly update PRs. Two limits worth knowing (docs/security-scans.md): Dependabot updates requirements*.txt but does not regenerate the
+# hash-pinned *.lock files (run scripts/update_locks.sh on its branch), and it may not see Dockerfile.render (a non-standard name), whose
+# base-image digest is kept identical to Dockerfile's by tests/test_supply_chain.py.
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: weekly
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly

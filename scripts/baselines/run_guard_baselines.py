@@ -49,11 +49,14 @@ LATENCY_SAMPLE = 120
 
 MODELS = [
     {"name": "protectai/deberta-v3-base-prompt-injection-v2", "hf_id": "protectai/deberta-v3-base-prompt-injection-v2",
-     "local_dir": REPO_ROOT / "data/external/deberta-v3-base-prompt-injection-v2", "license": "Apache-2.0", "params": "184M"},
+     "local_dir": REPO_ROOT / "data/external/deberta-v3-base-prompt-injection-v2", "license": "Apache-2.0", "params": "184M",
+     "revision": "90c9989b1a342275dd0d1a95aad283c04e075671"},
     {"name": "meta-llama/Llama-Prompt-Guard-2-86M", "hf_id": "meta-llama/Llama-Prompt-Guard-2-86M",
-     "local_dir": REPO_ROOT / "data/external/Llama-Prompt-Guard-2-86M", "license": "Llama 4 Community License (gated)", "params": "86M"},
+     "local_dir": REPO_ROOT / "data/external/Llama-Prompt-Guard-2-86M", "license": "Llama 4 Community License (gated)", "params": "86M",
+     "revision": "a8ded8e697ce7c355e395a0df51f94adb4a2fd27"},
     {"name": "meta-llama/Llama-Prompt-Guard-2-22M", "hf_id": "meta-llama/Llama-Prompt-Guard-2-22M",
-     "local_dir": REPO_ROOT / "data/external/Llama-Prompt-Guard-2-22M", "license": "Llama 4 Community License (gated)", "params": "22M"},
+     "local_dir": REPO_ROOT / "data/external/Llama-Prompt-Guard-2-22M", "license": "Llama 4 Community License (gated)", "params": "22M",
+     "revision": "11614a155199674a0a95e6602d6ab0417b790ed0"},
 ]
 
 
@@ -128,8 +131,9 @@ def load_guard(spec):
     proc = psutil.Process()
     src = spec["local_dir"] if spec["local_dir"].exists() else spec["hf_id"]
     rss0 = proc.memory_info().rss
-    tok = AutoTokenizer.from_pretrained(src, token=os.environ.get("HF_TOKEN"))
-    model = AutoModelForSequenceClassification.from_pretrained(src, token=os.environ.get("HF_TOKEN"))
+    rev = spec.get("revision")                     # pinned commit: a hub download is never "whatever is latest"
+    tok = AutoTokenizer.from_pretrained(src, token=os.environ.get("HF_TOKEN"), revision=rev)
+    model = AutoModelForSequenceClassification.from_pretrained(src, token=os.environ.get("HF_TOKEN"), revision=rev)
     model.eval()
     id2label = {int(k): v for k, v in model.config.id2label.items()}
     check = verify_label_mapping(tok, model, id2label)

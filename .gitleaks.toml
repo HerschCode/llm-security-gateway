@@ -1,0 +1,15 @@
+# gitleaks configuration (run by .github/workflows/security.yml on the full history).
+title = "llm-security-gateway"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "throwaway local-only values and synthetic data"
+paths = [
+  '''^corpus/pii_labeled(_fresh)?\.jsonl$''',      # synthetic PII (fake emails, cards, Aadhaar numbers) for the PII evaluation
+  '''^reports/p5_pii_evaluation\.json$''',
+]
+regexes = [
+  '''local-dev-only''',                             # the throwaway Postgres password in docker-compose.trilogy.yml (no port is published)
+]

@@ -29,8 +29,8 @@ def main():
         raise SystemExit(f"{MODEL_PATH} doesn't exist -- run "
                           "scripts/train_distilbert_finetune.py first.")
 
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
-    model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)  # nosec B615 - a local fine-tuned checkpoint, not a hub download
+    model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH)  # nosec B615 - a local fine-tuned checkpoint, not a hub download
     model.eval()
 
     with open(REPO_ROOT / "corpus" / "injection_cases.yaml", encoding="utf-8") as f:

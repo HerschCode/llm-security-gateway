@@ -43,6 +43,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 MODEL_CHECKPOINT = "distilbert-base-uncased"
+MODEL_REVISION = "12040accade4e8a0f71eabdb258fecc2e7e948be"      # pinned hub commit of distilbert-base-uncased (2024-05-06)
 MAX_LENGTH = 128
 BATCH_SIZE = 32  # bumped from the original 16 -- benchmarked faster on this
                  # CPU (20 threads) without changing what's being measured
@@ -83,7 +84,7 @@ def main():
 
     train_rows, eval_rows = load_data()
 
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_CHECKPOINT)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_CHECKPOINT, revision=MODEL_REVISION)
 
     class InjectionDataset(Dataset):
         def __init__(self, rows):
@@ -108,7 +109,7 @@ def main():
     eval_dataset = InjectionDataset([(t, l) for t, l, _ in eval_rows])
 
     model = AutoModelForSequenceClassification.from_pretrained(
-        MODEL_CHECKPOINT, num_labels=2,
+        MODEL_CHECKPOINT, num_labels=2, revision=MODEL_REVISION,
     )
 
     training_args = TrainingArguments(

@@ -2,3 +2,7 @@
 *.png binary
 *.pt binary
 *.pkl binary
+
+# Model artifacts are hashed byte for byte (models/MANIFEST.sha256, gateway/model_integrity.py): git must never rewrite them.
+models/** -text
+models/MANIFEST.sha256 text eol=lf

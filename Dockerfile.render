@@ -6,12 +6,23 @@
 # docs/decisions.md for the "why" -- torch was the one dependency too heavy
 # for this tier; removing it from serving (not from training) is what made
 # full mode fit here.
-FROM python:3.12-slim
+#
+# Supply-chain hygiene (Phase 6, docs/security-scans.md):
+#   * the base image is pinned by digest (Dependabot's docker ecosystem proposes updates),
+#   * dependencies come from requirements-render.lock and are installed with --require-hashes, so a
+#     package whose bytes differ from the recorded SHA-256 cannot be installed,
+#   * the service runs as an unprivileged user, and
+#   * model artifacts are integrity-checked against models/MANIFEST.sha256 before they are loaded.
+FROM python:3.12-slim@sha256:2f17fc044b579bab302c2e8054d3a686e2cb9a83de48e70534b94cd8ebbe06a9
+
+ENV PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PYTHONDONTWRITEBYTECODE=1
 
 WORKDIR /app
 
-COPY requirements-render.txt .
-RUN pip install --no-cache-dir -r requirements-render.txt
+COPY requirements-render.lock .
+RUN pip install --require-hashes --no-deps -r requirements-render.lock
 
 # Only what the running service needs -- not scripts/, tests/, docs/, or the
 # torch-format model.pt (weights.npz is the numpy-served copy).
@@ -19,14 +30,23 @@ COPY gateway/ ./gateway/
 COPY project2_agent/ ./project2_agent/
 COPY corpus/ ./corpus/
 COPY config/ ./config/
+COPY models/MANIFEST.sha256 ./models/MANIFEST.sha256
 COPY models/embedding_similarity/ ./models/embedding_similarity/
 COPY models/scratch_classifier/vocab.json ./models/scratch_classifier/vocab.json
 COPY models/scratch_classifier/weights.npz ./models/scratch_classifier/weights.npz
+
+# Unprivileged runtime user. The only place the service writes is logs/ (audit log, approvals database).
+RUN useradd --system --no-create-home --uid 10001 --shell /usr/sbin/nologin gateway \
+    && mkdir -p /app/logs \
+    && chown -R gateway:gateway /app/logs
+USER gateway
 
 ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
 # Full mode by default -- see the header comment above.
 ENV GATEWAY_LITE=0
+# A pickle or weight file that does not match the manifest is refused, not loaded (gateway/model_integrity.py).
+ENV MODEL_INTEGRITY=enforce
 
 EXPOSE 8000
 

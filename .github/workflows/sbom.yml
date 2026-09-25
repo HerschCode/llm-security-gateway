@@ -1,0 +1,55 @@
+name: SBOM
+
+# A CycloneDX software bill of materials per release: the Python dependencies exactly as locked (with hashes), and the container image
+# as built. Also runnable by hand (workflow_dispatch) to inspect the current state.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sbom:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write             # only to attach the SBOMs to the release
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+      - name: Install the SBOM generator (hash-locked)
+        run: pip install --require-hashes --no-deps -r requirements-ci.lock
+
+      - name: Python dependencies (CycloneDX 1.6, from the lock files)
+        run: |
+          cyclonedx-py requirements requirements-render.lock --of JSON --sv 1.6 -o sbom-python-render.cdx.json
+          cyclonedx-py requirements requirements.lock --of JSON --sv 1.6 -o sbom-python-full.cdx.json
+
+      - name: Build the Render image
+        run: docker build -f Dockerfile.render -t llm-security-gateway:sbom .
+      - name: Container image SBOM (Trivy, CycloneDX)
+        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8  # v0.36.0
+        with:
+          image-ref: llm-security-gateway:sbom
+          format: cyclonedx
+          output: sbom-image.cdx.json
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: sbom
+          path: |
+            sbom-python-render.cdx.json
+            sbom-python-full.cdx.json
+            sbom-image.cdx.json
+
+      - name: Attach to the release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65  # v2.6.2
+        with:
+          files: |
+            sbom-python-render.cdx.json
+            sbom-python-full.cdx.json
+            sbom-image.cdx.json

@@ -281,6 +281,16 @@ Measured on a labeled set with hard negatives, a fresh set written after the fix
 types here (its phone recogniser flags every 10-digit order number, the RT-09 failure), costs about 85 MB more RAM, and its NER for names flags 394 of 3,000 ordinary prompts. It stays an optional extra (`pip install -e .[pii]`).
 The synthetic data shares an author with the recognizers, bare numbers with no context word are missed by design, and identity in pseudonymization is caller-asserted; all stated in the doc.
 
+### Appsec hygiene and a threat model for the gateway itself (Phase 6)
+
+[`SECURITY.md`](SECURITY.md) has a STRIDE threat model of the gateway (spoofing through denial of service, with the mitigation, its test and its status for each row, and the gaps stated:
+identity is caller-asserted, the dashboard is unauthenticated), and [`docs/security-scans.md`](docs/security-scans.md) records what each scanner found. Bandit, pip-audit and detect-secrets
+ran locally; pip-audit found nothing in 24 and 38 packages; Bandit's 3 HIGH and 13 MEDIUM findings are fixed (an unvalidated `tarfile.extractall`, invisible bidirectional characters in the
+normalizer's own source, unpinned model downloads, `pickle.load` now behind a SHA-256 manifest). Threat modelling and measurement found two more: **no request size limit** and a
+**quadratic email regex** (270 ms for 20,000 characters of `a`), both fixed with tests. Dependencies are hash-locked and installed with `--require-hashes`, CI actions are pinned to commit SHAs,
+the images run unprivileged from a digest-pinned base, and a CycloneDX SBOM is produced per release. **Not verified here:** Semgrep, Trivy and gitleaks could not be run locally (they run in CI;
+the first two are non-blocking until their output has been triaged), and the Docker images have not been built.
+
 ### Retiring the dead layer, and trying to make the guard model servable (Phase 2)
 
 The TF-IDF layer scores 0/78 on our own corpus, so it was ablated

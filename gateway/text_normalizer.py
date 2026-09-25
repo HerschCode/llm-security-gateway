@@ -50,30 +50,30 @@ import unicodedata
 # ---------------------------------------------------------------------------
 _ZERO_WIDTH = re.compile(
     "["
-    "​"   # ZERO WIDTH SPACE
-    "‌"   # ZERO WIDTH NON-JOINER
-    "‍"   # ZERO WIDTH JOINER
-    "‎"   # LEFT-TO-RIGHT MARK
-    "‏"   # RIGHT-TO-LEFT MARK
-    "⁠"   # WORD JOINER
-    "⁡"   # FUNCTION APPLICATION
-    "⁢"   # INVISIBLE TIMES
-    "⁣"   # INVISIBLE SEPARATOR
-    "⁤"   # INVISIBLE PLUS
-    "﻿"   # ZERO WIDTH NO-BREAK SPACE / BOM
-    "­"   # SOFT HYPHEN
+    "\u200b"   # ZERO WIDTH SPACE
+    "\u200c"   # ZERO WIDTH NON-JOINER
+    "\u200d"   # ZERO WIDTH JOINER
+    "\u200e"   # LEFT-TO-RIGHT MARK
+    "\u200f"   # RIGHT-TO-LEFT MARK
+    "\u2060"   # WORD JOINER
+    "\u2061"   # FUNCTION APPLICATION
+    "\u2062"   # INVISIBLE TIMES
+    "\u2063"   # INVISIBLE SEPARATOR
+    "\u2064"   # INVISIBLE PLUS
+    "\ufeff"   # ZERO WIDTH NO-BREAK SPACE / BOM
+    "\u00ad"   # SOFT HYPHEN
     "]"
 )
 
 # ---------------------------------------------------------------------------
 # Step 2b / 2c: Unicode Tag characters and combining-mark stacking
 # ---------------------------------------------------------------------------
-_TAG_RUN = re.compile("[󠀀-󠁿]+")
-_ZALGO = re.compile("[̀-ͯ]{2,}")     # a run of 2+ stacked marks; single accents are legitimate
+_TAG_RUN = re.compile("[\U000e0000-\U000e007f]+")
+_ZALGO = re.compile("[\u0300-\u036f]{2,}")     # a run of 2+ stacked marks; single accents are legitimate
 
 
 # A legitimate use of Tag characters: emoji subdivision flags (e.g. England) are U+1F3F4, tag letters, then the cancel tag U+E007F.
-_FLAG_SEQUENCE = re.compile("🏴[󠁡-󠁺]+󠁿")
+_FLAG_SEQUENCE = re.compile("🏴[\U000e0061-\U000e007a]+\U000e007f")
 
 
 def find_hidden_tag_text(text: str) -> str:
@@ -142,8 +142,8 @@ def _decode_base64_segments(text: str) -> str:
             # Only keep if it looks like natural language (printable, has spaces)
             if decoded_str.isprintable() and " " in decoded_str:
                 extras.append(decoded_str.strip())
-        except Exception:
-            pass
+        except ValueError:                 # not base64 / not UTF-8 (binascii.Error and UnicodeDecodeError are ValueErrors): not a payload
+            continue
     if extras:
         return text + " " + " ".join(extras)
     return text
@@ -163,14 +163,14 @@ def _decode_hex_segments(text: str) -> str:
     def replace_pct(m: re.Match) -> str:
         try:
             return bytes.fromhex(m.group(0).replace("%", "")).decode("utf-8", errors="replace")
-        except Exception:
+        except ValueError:
             return m.group(0)
 
     def replace_0x(m: re.Match) -> str:
         try:
             raw = bytes.fromhex(m.group(1))
             return raw.decode("utf-8", errors="replace")
-        except Exception:
+        except ValueError:
             return m.group(0)
 
     def replace_run(m: re.Match) -> str:

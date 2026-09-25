@@ -17,7 +17,7 @@ ever runs somewhere with model-hub access.
 No training loop: the vectorizer is *fit* once on the known-bad corpus (like
 "indexing" reference embeddings), not trained on labeled data the way layer 3 is.
 """
-import pickle
+import pickle  # nosec B403 - loads are integrity-checked (gateway/model_integrity.py)
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -70,10 +70,14 @@ class EmbeddingSimilarityDetector:
             pickle.dump((self._known_bad_norm, self.known_bad_ids), f)
 
     def load(self, path: Path = MODEL_DIR):
+        from gateway import model_integrity
+        # pickle runs code chosen by the file's author: check the SHA-256 against models/MANIFEST.sha256 first (gateway/model_integrity.py)
+        model_integrity.verify(path / "vectorizer.pkl")
+        model_integrity.verify(path / "known_bad.pkl")
         with open(path / "vectorizer.pkl", "rb") as f:
-            self.vectorizer = pickle.load(f)
+            self.vectorizer = pickle.load(f)  # nosec B301 - integrity-checked above
         with open(path / "known_bad.pkl", "rb") as f:
-            stored, self.known_bad_ids = pickle.load(f)
+            stored, self.known_bad_ids = pickle.load(f)  # nosec B301 - integrity-checked above
         # Re-normalise on load in case an older pickle stores the raw vectors.
         self._known_bad_norm = normalize(stored, norm="l2")
 

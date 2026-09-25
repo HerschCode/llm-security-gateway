@@ -75,7 +75,7 @@ def space_insert(text: str) -> str:
     """Insert zero-width space (U+200B) between every character in attack keywords.
     Applies only to words > 4 chars to keep readability; short words like 'and'
     would look identical and confuse the output."""
-    ZWSP = "​"
+    ZWSP = "\u200b"
     words = text.split()
     result = []
     for word in words:

@@ -9,7 +9,7 @@ not a redeploy.
 """
 from fastapi import Depends, FastAPI
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 
 import os
 
@@ -24,11 +24,13 @@ from project2_agent.agent import FAKE_SYSTEM_PROMPT as PROJECT2_FAKE_SYSTEM_PROM
 from gateway.actions.api import router as actions_router
 from gateway.dashboard import router as dashboard_router
 from gateway.ip_limits import ip_rate_limit
+from gateway.limits import BodyLimitMiddleware, max_prompt_chars
 from gateway.demo import router as demo_router
 from gateway.webui import router as webui_router
 from gateway.middleware import GatewayMiddleware
 
 app = FastAPI(title="LLM Security Gateway", version="0.1.0")
+app.add_middleware(BodyLimitMiddleware)          # 413 for oversized bodies on every route (gateway/limits.py)
 app.include_router(webui_router)
 app.include_router(dashboard_router)
 app.include_router(demo_router)
@@ -50,11 +52,20 @@ if os.environ.get("OPS_ASSISTANT_URL"):
 
 
 class ChatRequest(BaseModel):
+    # Bounded: an unbounded prompt was a one-request memory and CPU exhaustion of a 512 MB instance (gateway/limits.py, SEC-01).
     prompt: str
-    session_id: str
-    role: str = "employee"
-    backend: str = "stub_ops_agent"
-    user_id: str = "unknown"
+    session_id: str = Field(min_length=1, max_length=128)
+    role: str = Field(default="employee", max_length=32)
+    backend: str = Field(default="stub_ops_agent", max_length=64)
+    user_id: str = Field(default="unknown", max_length=128)
+
+    @field_validator("prompt")
+    @classmethod
+    def _prompt_not_too_long(cls, v: str) -> str:
+        limit = max_prompt_chars()                       # read per request: tunable without a code change
+        if len(v) > limit:
+            raise ValueError(f"prompt is longer than {limit} characters")
+        return v
 
 
 class ChatResponse(BaseModel):

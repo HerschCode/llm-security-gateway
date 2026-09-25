@@ -29,7 +29,7 @@ Usage (host config):  python -m gateway.actions.mcp_proxy --role manager --user-
 """
 import argparse
 import json
-import subprocess
+import subprocess  # nosec B404 - spawns the operator-configured upstream MCP server (an argv list, no shell)
 import sys
 import threading
 import time
@@ -199,7 +199,8 @@ class MCPFirewallProxy:
 def run_stdio(upstream_cmd: list[str], proxy: MCPFirewallProxy, poll_interval: float = 0.5, stdin=None, stdout=None):
     """Spawn the upstream server and pump newline-delimited JSON-RPC both ways through `proxy`."""
     stdin, stdout = stdin or sys.stdin, stdout or sys.stdout
-    up = subprocess.Popen(upstream_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=sys.stderr,
+    # upstream_cmd is the operator's own argv (never request data) and no shell is involved
+    up = subprocess.Popen(upstream_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=sys.stderr,  # nosec B603
                           text=True, encoding="utf-8", bufsize=1)
     write_lock = threading.Lock()
     stop = threading.Event()

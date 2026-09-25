@@ -80,8 +80,8 @@ def main():
                     "false_positive": _parse_rate(parts[2]),
                     "latency_ms": _parse_latency(parts[3]),
                 })
-            except Exception:
-                pass
+            except (ValueError, IndexError, KeyError, TypeError):      # a malformed table row is skipped, not fatal
+                continue
 
     corpus_size = layers[0]["detection"]["denominator"] if layers else None
     benign_controls = layers[0]["false_positive"]["denominator"] if layers else None

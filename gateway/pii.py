@@ -29,7 +29,9 @@ from dataclasses import dataclass, field
 from gateway import pii_in
 
 US_PATTERNS = {
-    "email": re.compile(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"),
+    # The lookbehind keeps a match from STARTING inside a run of local-part characters. Without it the engine rescans the whole run from every
+    # position when there is no "@" after it: 270 ms for 20,000 characters of plain "a" (quadratic; SEC-02, docs/security-scans.md).
+    "email": re.compile(r"(?<![a-zA-Z0-9._%+-])[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"),
     # Separators (or a leading +) are REQUIRED: ten bare digits are far more often an order or case number than a phone number.
     "phone": re.compile(r"(?<![\w-])(?:(?:\+\d{1,3}[-.\s]?)?(?:\(\d{3}\)\s?|\d{3}[-.\s])\d{3}[-.\s]\d{4}|\+\d{10,14})(?![\w-])"),
     "ssn": re.compile(r"\b\d{3}-\d{2}-\d{4}\b"),
