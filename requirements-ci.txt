@@ -1,7 +1,7 @@
 # Tooling CI installs (tests, lint, security scans, SBOM). Compiled to requirements-ci.lock with hashes: `scripts/update_locks.sh`.
 # Kept separate from requirements-render.txt so the deployed image contains none of it.
 pytest>=8.0
-ruff>=0.6
+ruff>=0.16.8
 bandit>=1.7.9
 pip-audit>=2.7
 semgrep>=1.80
