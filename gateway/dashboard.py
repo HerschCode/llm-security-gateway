@@ -31,21 +31,35 @@ class _LogTail:
     file to build a bounded deque -- for a long-running gateway, that's an
     O(total_lines_ever_written) disk read on every single call to
     /gateway/stats, and the dashboard polls that endpoint every 2 seconds.
-    The log only grows (no rotation exists yet -- a separate, undone item),
-    so this would have gotten slower and slower in exactly the deployment
-    scenario the dashboard is meant to help with.
+    The log only grows, so this would have gotten slower and slower in
+    exactly the deployment scenario the dashboard is meant to help with.
 
     Handles two edge cases a naive "remember the byte offset" approach would
-    miss: log rotation/truncation (detected via inode change or file
-    shrinking, both reset the tracker) and a partial last line (a write
-    still in progress) -- an incomplete final line is left unconsumed and
-    retried on the next call rather than risking a JSON parse of a
-    half-written line."""
+    miss: log rotation/truncation and a partial last line (a write still in
+    progress) -- an incomplete final line is left unconsumed and retried on
+    the next call rather than risking a JSON parse of a half-written line.
+    Rotation is detected three ways, because no single signal covers every
+    style: a changed inode (rename-and-recreate), a file that shrank
+    (delete-and-recreate, truncate), and a changed HEAD_BYTES prefix
+    (copytruncate: same inode, and refilled past the old offset before the
+    next poll, so neither of the first two fires). The head of an append-only
+    file never changes, so growth alone never counts as rotation. Any of the
+    three resets the tracker; `_resets` counts them."""
+
+    HEAD_BYTES = 256
 
     def __init__(self):
         self._records: deque = deque(maxlen=MAX_RECENT_LINES_SCANNED)
         self._file_pos = 0
         self._inode = None
+        self._head = b""
+        self._resets = 0
+
+    def _reset(self):
+        self._records.clear()
+        self._file_pos = 0
+        self._head = b""
+        self._resets += 1
 
     def read_all(self) -> list[dict]:
         if not LOG_PATH.exists():
@@ -53,13 +67,17 @@ class _LogTail:
 
         stat = LOG_PATH.stat()
         if self._inode is not None and stat.st_ino != self._inode:
-            self._records.clear()
-            self._file_pos = 0
+            self._reset()
         self._inode = stat.st_ino
 
         if stat.st_size < self._file_pos:
-            self._file_pos = 0
-            self._records.clear()
+            self._reset()
+
+        with open(LOG_PATH, "rb") as hf:
+            head = hf.read(self.HEAD_BYTES)
+        if self._head and not head.startswith(self._head):     # the start of the file changed: truncated in place and refilled
+            self._reset()
+        self._head = head
 
         with open(LOG_PATH, encoding="utf-8") as f:
             f.seek(self._file_pos)

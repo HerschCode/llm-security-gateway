@@ -988,3 +988,15 @@ such rather than conflated.
 **Cost.** Text ensemble p50 latency about doubles (0.39 to roughly 0.9 ms; noisy machine) because the rules scan four extra readings.
 
 **Pins.** `tests/test_action_mutations.py`: `KNOWN_MISSES` shrank from 21 to 8 (document splits an identifier, paraphrase, six trusted-tool leaks). The three RT-06 pins became regular tests (`tests/test_text_candidates.py`); AG-B1 and AG-B2 left the corpus's known-evasion set; `tests/test_taint_canonicalisation.py` covers the new behaviour and its limits.
+
+## 2026-09-25: Fix 4, the Windows log-rotation test: the logger, not the test, was wrong
+
+**Context.** `tests/test_dashboard.py::test_log_tail_handles_rotation` failed with `PermissionError` on Windows (file still open during removal). Skipping it was ruled out.
+
+**Cause.** Two separate problems. (1) `GatewayLogger` opened `logs/gateway.jsonl` once and held the handle for its whole life. On Windows a file opened that way cannot be renamed or removed by anyone else (WinError 32), so log rotation was impossible while the gateway ran, and on any platform the logger kept writing to a rotated-away file. (2) The dashboard tests wrote to the real log path and shared one global tail, so they depended on test order and on whatever else held the file (any live `GatewayMiddleware`, or a dev server).
+
+**Fix.** The logger now opens, appends one coalesced batch and closes, retrying briefly if a rotator holds the file for an instant and counting dropped records (`dropped`) instead of dying if it never succeeds. `_LogTail` also detects rotation by a changed prefix of the file (copytruncate: same inode, refilled past the old offset), which neither the inode nor the size check catches, and its docstring no longer claims rotation does not exist. The dashboard tests use a temp file and fresh tail state per test, and gained the realistic cases: rename-rotation, truncate-in-place, and a live logger rotated under a reading tail.
+
+**Evidence.** `tests/test_log_rotation.py` (8 tests) failed on the old logger (`os.replace` and `os.remove` raise `PermissionError` while a logger is alive) and passes on the new one; verified with a real `GatewayMiddleware` rotating the real log file. Full suite 511 passed, 10 expected-fail.
+
+**Cost and limits.** One open/close per batch instead of one open per process; batches coalesce, so under load this is a few opens per second, not per request. A rotator that keeps the file locked for longer than about half a second loses that batch (counted, not silent to the process, but not surfaced in the API yet).
