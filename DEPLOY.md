@@ -133,6 +133,30 @@ docker compose -f docker-compose.trilogy.yml up --build
 
 ---
 
+## 4. Google Cloud Run, behind Terraform-managed IAM ([northstar-infra](https://github.com/HerschCode/northstar-infra))
+
+The whole trilogy on Cloud Run where **only the gateway is public**: operations-assistant and
+operations-performance accept calls only from the service account of the service in front of them,
+and Cloud Run IAM answers 403 to everyone else.
+
+- The image is `Dockerfile.render` (the torch-free serving set).
+- `AUTH_MODE=google_id_token` makes the operations-assistant adapter send a Google ID token minted for
+  `OPS_ASSISTANT_URL` (`Authorization: Bearer ...`) instead of `X-API-Key`, and turns off the
+  `/chat` to `/demo/chat` fallback on 401, which would hide a credentials problem behind the anonymous
+  route. Tokens are cached and refreshed shortly before they expire. It needs a Google service-account
+  identity, so it works on Cloud Run only: leave `AUTH_MODE` unset elsewhere. Code:
+  `gateway/adapters/upstream_auth.py`; tests: `tests/test_upstream_auth.py`.
+- `.github/workflows/deploy.yml` builds the image, scans it with Trivy, pushes it to Artifact Registry
+  and rolls the service over to it. Manual dispatch only, from `main`, and a no-op until the
+  repository variables that Terraform prints exist. It has not been run against a real project yet.
+- Not done yet: the decision log goes to `logs/gateway.jsonl`, which Cloud Run discards, while the
+  block-rate alert in northstar-infra counts `jsonPayload.decision="block"` on stdout. A JSON line on
+  stdout is needed for that alert to fire.
+- `TRUSTED_PROXY_HOPS` is unset (as on Render), so the per-IP limit treats Google's front end as one
+  client until the real `X-Forwarded-For` chain has been verified.
+
+---
+
 ## Environment variables (reference)
 
 | Var | Where | Required? | What |
@@ -144,6 +168,7 @@ docker compose -f docker-compose.trilogy.yml up --build
 | `OPS_ASSISTANT_CHAT_PATH` | gateway | no (default `/chat`) | set to `/demo/chat` to use P2's keyless public endpoint instead of the API-key one. A 401 on `/chat` auto-falls-back to `/demo/chat` regardless |
 | `OPS_ASSISTANT_API_KEY` | gateway | only if using `/chat` | `X-API-Key` value; must equal operations-assistant's `API_KEY` |
 | `OPS_ASSISTANT_TIMEOUT` | gateway | no (default `60`) | seconds to wait on a P2 response |
+| `AUTH_MODE` | gateway | no (default `api_key`) | how the adapter authenticates to operations-assistant: `api_key` (the `X-API-Key` above) or `google_id_token` (a Google ID token minted for `OPS_ASSISTANT_URL`; Cloud Run only; no `/demo/chat` fallback). Anything else is an error. See section 4 |
 | `OPS_ASSISTANT_PATH` | compose | no | filesystem path to the operations-assistant repo |
 | `OPS_PERFORMANCE_PATH` | compose | no | filesystem path to the operations-performance repo |
 | `GROQ_API_KEY` / `GEMINI_API_KEY` / `ANTHROPIC_API_KEY` | operations-assistant `.env` | one of them, for the trilogy | LLM provider key (all have free tiers) |
