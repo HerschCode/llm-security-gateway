@@ -1,0 +1,736 @@
+{"id": "email-001", "group": "email", "split": "dev", "text": "Please send the report to olivia.anderson+ops@company.co.in.", "spans": [{"type": "email", "start": 26, "end": 59}]}
+{"id": "email-002", "group": "email", "split": "test", "text": "Contact: priya95@corp.example.net", "spans": [{"type": "email", "start": 9, "end": 33}]}
+{"id": "email-003", "group": "email", "split": "dev", "text": "Forward this to karthik.reddy@northstar-mfg.com by Friday.", "spans": [{"type": "email", "start": 16, "end": 47}]}
+{"id": "email-004", "group": "email", "split": "test", "text": "Reach the supplier at jlewis@corp.example.net for the invoice.", "spans": [{"type": "email", "start": 22, "end": 45}]}
+{"id": "email-005", "group": "email", "split": "dev", "text": "Reply to pooja87@corp.example.net with the signed copy.", "spans": [{"type": "email", "start": 9, "end": 33}]}
+{"id": "email-006", "group": "email", "split": "test", "text": "cc ananya.mehta@corp.example.net on the escalation.", "spans": [{"type": "email", "start": 3, "end": 32}]}
+{"id": "email-007", "group": "email", "split": "dev", "text": "Please send the report to arjun.harris+ops@gmail.com.", "spans": [{"type": "email", "start": 26, "end": 52}]}
+{"id": "email-008", "group": "email", "split": "test", "text": "Contact: matthewmartin@gmail.com", "spans": [{"type": "email", "start": 9, "end": 32}]}
+{"id": "email-009", "group": "email", "split": "dev", "text": "Forward this to varun.reddy@company.co.in by Friday.", "spans": [{"type": "email", "start": 16, "end": 41}]}
+{"id": "email-010", "group": "email", "split": "test", "text": "Reach the supplier at jennifer_malhotra@mail.example.org for the invoice.", "spans": [{"type": "email", "start": 22, "end": 56}]}
+{"id": "email-011", "group": "email", "split": "dev", "text": "Reply to daniel_moore@gmail.com with the signed copy.", "spans": [{"type": "email", "start": 9, "end": 31}]}
+{"id": "email-012", "group": "email", "split": "test", "text": "cc grace56@gmail.com on the escalation.", "spans": [{"type": "email", "start": 3, "end": 20}]}
+{"id": "email-013", "group": "email", "split": "dev", "text": "Please send the report to divya.wright+ops@example.com.", "spans": [{"type": "email", "start": 26, "end": 54}]}
+{"id": "email-014", "group": "email", "split": "test", "text": "Contact: ramesh.williams+ops@company.co.in", "spans": [{"type": "email", "start": 9, "end": 42}]}
+{"id": "email-015", "group": "email", "split": "dev", "text": "Forward this to rekha.desai@company.co.in by Friday.", "spans": [{"type": "email", "start": 16, "end": 41}]}
+{"id": "email-016", "group": "email", "split": "test", "text": "Reach the supplier at manojking@outlook.com for the invoice.", "spans": [{"type": "email", "start": 22, "end": 43}]}
+{"id": "email-017", "group": "email", "split": "dev", "text": "Reply to lakshmi.lewis@northstar-mfg.com with the signed copy.", "spans": [{"type": "email", "start": 9, "end": 40}]}
+{"id": "email-018", "group": "email", "split": "test", "text": "cc john_sharma@corp.example.net on the escalation.", "spans": [{"type": "email", "start": 3, "end": 31}]}
+{"id": "email-019", "group": "email", "split": "dev", "text": "Please send the report to amit_chopra@vendor.in.", "spans": [{"type": "email", "start": 26, "end": 47}]}
+{"id": "email-020", "group": "email", "split": "test", "text": "Contact: rohan23@corp.example.net", "spans": [{"type": "email", "start": 9, "end": 33}]}
+{"id": "email-021", "group": "email", "split": "dev", "text": "Forward this to daniel.shetty@mail.example.org by Friday.", "spans": [{"type": "email", "start": 16, "end": 46}]}
+{"id": "email-022", "group": "email", "split": "test", "text": "Reach the supplier at grace91@gmail.com for the invoice.", "spans": [{"type": "email", "start": 22, "end": 39}]}
+{"id": "email-023", "group": "email", "split": "dev", "text": "Reply to patriciashetty@gmail.com with the signed copy.", "spans": [{"type": "email", "start": 9, "end": 33}]}
+{"id": "email-024", "group": "email", "split": "test", "text": "cc deepabose@corp.example.net on the escalation.", "spans": [{"type": "email", "start": 3, "end": 29}]}
+{"id": "email-025", "group": "email", "split": "dev", "text": "Please send the report to kavya.anderson+ops@company.co.in.", "spans": [{"type": "email", "start": 26, "end": 58}]}
+{"id": "email-026", "group": "email", "split": "test", "text": "Contact: aarav.chatterjee@vendor.in", "spans": [{"type": "email", "start": 9, "end": 35}]}
+{"id": "email-027", "group": "email", "split": "dev", "text": "Forward this to ishita.king@gmail.com by Friday.", "spans": [{"type": "email", "start": 16, "end": 37}]}
+{"id": "email-028", "group": "email", "split": "test", "text": "Reach the supplier at epillai@company.co.in for the invoice.", "spans": [{"type": "email", "start": 22, "end": 43}]}
+{"id": "email-029", "group": "email", "split": "dev", "text": "Reply to neha26@corp.example.net with the signed copy.", "spans": [{"type": "email", "start": 9, "end": 32}]}
+{"id": "email-030", "group": "email", "split": "test", "text": "cc suresh.thompson+ops@example.com on the escalation.", "spans": [{"type": "email", "start": 3, "end": 34}]}
+{"id": "email-031", "group": "email", "split": "dev", "text": "Please send the report to joseph.white@outlook.com.", "spans": [{"type": "email", "start": 26, "end": 50}]}
+{"id": "email-032", "group": "email", "split": "test", "text": "Contact: smiller@example.com", "spans": [{"type": "email", "start": 9, "end": 28}]}
+{"id": "email-033", "group": "email", "split": "dev", "text": "Forward this to shreya_joshi@vendor.in by Friday.", "spans": [{"type": "email", "start": 16, "end": 38}]}
+{"id": "email-034", "group": "email", "split": "test", "text": "Reach the supplier at grace_clark@outlook.com for the invoice.", "spans": [{"type": "email", "start": 22, "end": 45}]}
+{"id": "email-035", "group": "email", "split": "dev", "text": "Reply to sdavis@gmail.com with the signed copy.", "spans": [{"type": "email", "start": 9, "end": 25}]}
+{"id": "email-036", "group": "email", "split": "test", "text": "cc anjali76@company.co.in on the escalation.", "spans": [{"type": "email", "start": 3, "end": 25}]}
+{"id": "email-037", "group": "email", "split": "dev", "text": "Please send the report to ascott@company.co.in.", "spans": [{"type": "email", "start": 26, "end": 46}]}
+{"id": "email-038", "group": "email", "split": "test", "text": "Contact: rekha_mehta@example.com", "spans": [{"type": "email", "start": 9, "end": 32}]}
+{"id": "email-039", "group": "email", "split": "dev", "text": "Forward this to thomas.lewis@northstar-mfg.com by Friday.", "spans": [{"type": "email", "start": 16, "end": 46}]}
+{"id": "email-040", "group": "email", "split": "test", "text": "Reach the supplier at patricia.joshi+ops@vendor.in for the invoice.", "spans": [{"type": "email", "start": 22, "end": 50}]}
+{"id": "phone_us-001", "group": "phone_us", "split": "dev", "text": "Call me on 592.934.7670 after lunch.", "spans": [{"type": "phone", "start": 11, "end": 23}]}
+{"id": "phone_us-002", "group": "phone_us", "split": "test", "text": "Phone: +1-668-248-9880", "spans": [{"type": "phone", "start": 7, "end": 22}]}
+{"id": "phone_us-003", "group": "phone_us", "split": "dev", "text": "The supplier's mobile is +1 415 341 2865.", "spans": [{"type": "phone", "start": 25, "end": 40}]}
+{"id": "phone_us-004", "group": "phone_us", "split": "test", "text": "You can reach the desk at 821-604-2157.", "spans": [{"type": "phone", "start": 26, "end": 38}]}
+{"id": "phone_us-005", "group": "phone_us", "split": "dev", "text": "Ping +16198718977 if the delivery slips.", "spans": [{"type": "phone", "start": 5, "end": 17}]}
+{"id": "phone_us-006", "group": "phone_us", "split": "test", "text": "Contact number +17912799136 (office).", "spans": [{"type": "phone", "start": 15, "end": 27}]}
+{"id": "phone_us-007", "group": "phone_us", "split": "dev", "text": "Call me on 281-931-6349 after lunch.", "spans": [{"type": "phone", "start": 11, "end": 23}]}
+{"id": "phone_us-008", "group": "phone_us", "split": "test", "text": "Phone: (918) 608-8684", "spans": [{"type": "phone", "start": 7, "end": 21}]}
+{"id": "phone_us-009", "group": "phone_us", "split": "dev", "text": "The supplier's mobile is +1 521 610 9506.", "spans": [{"type": "phone", "start": 25, "end": 40}]}
+{"id": "phone_us-010", "group": "phone_us", "split": "test", "text": "You can reach the desk at 237-705-5831.", "spans": [{"type": "phone", "start": 26, "end": 38}]}
+{"id": "phone_us-011", "group": "phone_us", "split": "dev", "text": "Ping +12374706248 if the delivery slips.", "spans": [{"type": "phone", "start": 5, "end": 17}]}
+{"id": "phone_us-012", "group": "phone_us", "split": "test", "text": "Contact number 240-524-3603 (office).", "spans": [{"type": "phone", "start": 15, "end": 27}]}
+{"id": "phone_us-013", "group": "phone_us", "split": "dev", "text": "Call me on +1-704-539-8856 after lunch.", "spans": [{"type": "phone", "start": 11, "end": 26}]}
+{"id": "phone_us-014", "group": "phone_us", "split": "test", "text": "Phone: (929) 305-6329", "spans": [{"type": "phone", "start": 7, "end": 21}]}
+{"id": "phone_us-015", "group": "phone_us", "split": "dev", "text": "The supplier's mobile is +1-814-623-4460.", "spans": [{"type": "phone", "start": 25, "end": 40}]}
+{"id": "phone_us-016", "group": "phone_us", "split": "test", "text": "You can reach the desk at 715-849-4270.", "spans": [{"type": "phone", "start": 26, "end": 38}]}
+{"id": "phone_us-017", "group": "phone_us", "split": "dev", "text": "Ping 940-485-1992 if the delivery slips.", "spans": [{"type": "phone", "start": 5, "end": 17}]}
+{"id": "phone_us-018", "group": "phone_us", "split": "test", "text": "Contact number (663) 816-8673 (office).", "spans": [{"type": "phone", "start": 15, "end": 29}]}
+{"id": "phone_us-019", "group": "phone_us", "split": "dev", "text": "Call me on +15205546236 after lunch.", "spans": [{"type": "phone", "start": 11, "end": 23}]}
+{"id": "phone_us-020", "group": "phone_us", "split": "test", "text": "Phone: 240.792.3663", "spans": [{"type": "phone", "start": 7, "end": 19}]}
+{"id": "phone_us-021", "group": "phone_us", "split": "dev", "text": "The supplier's mobile is +1-635-491-1750.", "spans": [{"type": "phone", "start": 25, "end": 40}]}
+{"id": "phone_us-022", "group": "phone_us", "split": "test", "text": "You can reach the desk at 447-288-5637.", "spans": [{"type": "phone", "start": 26, "end": 38}]}
+{"id": "phone_us-023", "group": "phone_us", "split": "dev", "text": "Ping +1 231 201 2628 if the delivery slips.", "spans": [{"type": "phone", "start": 5, "end": 20}]}
+{"id": "phone_us-024", "group": "phone_us", "split": "test", "text": "Contact number (908) 460-6487 (office).", "spans": [{"type": "phone", "start": 15, "end": 29}]}
+{"id": "phone_us-025", "group": "phone_us", "split": "dev", "text": "Call me on +1 396 293 9068 after lunch.", "spans": [{"type": "phone", "start": 11, "end": 26}]}
+{"id": "phone_us-026", "group": "phone_us", "split": "test", "text": "Phone: 799-588-4567", "spans": [{"type": "phone", "start": 7, "end": 19}]}
+{"id": "phone_us-027", "group": "phone_us", "split": "dev", "text": "The supplier's mobile is 293-313-5976.", "spans": [{"type": "phone", "start": 25, "end": 37}]}
+{"id": "phone_us-028", "group": "phone_us", "split": "test", "text": "You can reach the desk at 703.296.1999.", "spans": [{"type": "phone", "start": 26, "end": 38}]}
+{"id": "phone_us-029", "group": "phone_us", "split": "dev", "text": "Ping (796) 961-6599 if the delivery slips.", "spans": [{"type": "phone", "start": 5, "end": 19}]}
+{"id": "phone_us-030", "group": "phone_us", "split": "test", "text": "Contact number (333) 318-6703 (office).", "spans": [{"type": "phone", "start": 15, "end": 29}]}
+{"id": "phone_us-031", "group": "phone_us", "split": "dev", "text": "Call me on (960) 630-2003 after lunch.", "spans": [{"type": "phone", "start": 11, "end": 25}]}
+{"id": "phone_us-032", "group": "phone_us", "split": "test", "text": "Phone: +1-731-877-3988", "spans": [{"type": "phone", "start": 7, "end": 22}]}
+{"id": "phone_us-033", "group": "phone_us", "split": "dev", "text": "The supplier's mobile is +1 556 244 3931.", "spans": [{"type": "phone", "start": 25, "end": 40}]}
+{"id": "phone_us-034", "group": "phone_us", "split": "test", "text": "You can reach the desk at +1 311 648 9491.", "spans": [{"type": "phone", "start": 26, "end": 41}]}
+{"id": "phone_us-035", "group": "phone_us", "split": "dev", "text": "Ping (220) 244-5194 if the delivery slips.", "spans": [{"type": "phone", "start": 5, "end": 19}]}
+{"id": "phone_us-036", "group": "phone_us", "split": "test", "text": "Contact number (312) 860-1818 (office).", "spans": [{"type": "phone", "start": 15, "end": 29}]}
+{"id": "phone_us-037", "group": "phone_us", "split": "dev", "text": "Call me on +1-877-269-7886 after lunch.", "spans": [{"type": "phone", "start": 11, "end": 26}]}
+{"id": "phone_us-038", "group": "phone_us", "split": "test", "text": "Phone: +1-345-635-8367", "spans": [{"type": "phone", "start": 7, "end": 22}]}
+{"id": "phone_us-039", "group": "phone_us", "split": "dev", "text": "The supplier's mobile is 852.750.6921.", "spans": [{"type": "phone", "start": 25, "end": 37}]}
+{"id": "phone_us-040", "group": "phone_us", "split": "test", "text": "You can reach the desk at (492) 432-5213.", "spans": [{"type": "phone", "start": 26, "end": 40}]}
+{"id": "phone_in_prefixed-001", "group": "phone_in_prefixed", "split": "dev", "text": "Call me on +91 7129719713 after lunch.", "spans": [{"type": "phone", "start": 11, "end": 25}]}
+{"id": "phone_in_prefixed-002", "group": "phone_in_prefixed", "split": "test", "text": "Phone: 91 8791104243", "spans": [{"type": "phone", "start": 7, "end": 20}]}
+{"id": "phone_in_prefixed-003", "group": "phone_in_prefixed", "split": "dev", "text": "The supplier's mobile is +91-7490500662.", "spans": [{"type": "phone", "start": 25, "end": 39}]}
+{"id": "phone_in_prefixed-004", "group": "phone_in_prefixed", "split": "test", "text": "You can reach the desk at +918049125896.", "spans": [{"type": "phone", "start": 26, "end": 39}]}
+{"id": "phone_in_prefixed-005", "group": "phone_in_prefixed", "split": "dev", "text": "Ping +91 7072148334 if the delivery slips.", "spans": [{"type": "phone", "start": 5, "end": 19}]}
+{"id": "phone_in_prefixed-006", "group": "phone_in_prefixed", "split": "test", "text": "Contact number +916085310472 (office).", "spans": [{"type": "phone", "start": 15, "end": 28}]}
+{"id": "phone_in_prefixed-007", "group": "phone_in_prefixed", "split": "dev", "text": "Call me on +91 7774858233 after lunch.", "spans": [{"type": "phone", "start": 11, "end": 25}]}
+{"id": "phone_in_prefixed-008", "group": "phone_in_prefixed", "split": "test", "text": "Phone: 07488940093", "spans": [{"type": "phone", "start": 7, "end": 18}]}
+{"id": "phone_in_prefixed-009", "group": "phone_in_prefixed", "split": "dev", "text": "The supplier's mobile is +91-7056002664.", "spans": [{"type": "phone", "start": 25, "end": 39}]}
+{"id": "phone_in_prefixed-010", "group": "phone_in_prefixed", "split": "test", "text": "You can reach the desk at +91 9122840500.", "spans": [{"type": "phone", "start": 26, "end": 40}]}
+{"id": "phone_in_prefixed-011", "group": "phone_in_prefixed", "split": "dev", "text": "Ping +91 7531551084 if the delivery slips.", "spans": [{"type": "phone", "start": 5, "end": 19}]}
+{"id": "phone_in_prefixed-012", "group": "phone_in_prefixed", "split": "test", "text": "Contact number 91 9137332533 (office).", "spans": [{"type": "phone", "start": 15, "end": 28}]}
+{"id": "phone_in_prefixed-013", "group": "phone_in_prefixed", "split": "dev", "text": "Call me on +91 70879 70403 after lunch.", "spans": [{"type": "phone", "start": 11, "end": 26}]}
+{"id": "phone_in_prefixed-014", "group": "phone_in_prefixed", "split": "test", "text": "Phone: (+91) 83554 66701", "spans": [{"type": "phone", "start": 7, "end": 24}]}
+{"id": "phone_in_prefixed-015", "group": "phone_in_prefixed", "split": "dev", "text": "The supplier's mobile is 91 6946383440.", "spans": [{"type": "phone", "start": 25, "end": 38}]}
+{"id": "phone_in_prefixed-016", "group": "phone_in_prefixed", "split": "test", "text": "You can reach the desk at 91 6203632452.", "spans": [{"type": "phone", "start": 26, "end": 39}]}
+{"id": "phone_in_prefixed-017", "group": "phone_in_prefixed", "split": "dev", "text": "Ping +91 6646670684 if the delivery slips.", "spans": [{"type": "phone", "start": 5, "end": 19}]}
+{"id": "phone_in_prefixed-018", "group": "phone_in_prefixed", "split": "test", "text": "Contact number 91 9252920048 (office).", "spans": [{"type": "phone", "start": 15, "end": 28}]}
+{"id": "phone_in_prefixed-019", "group": "phone_in_prefixed", "split": "dev", "text": "Call me on +91 73052 95640 after lunch.", "spans": [{"type": "phone", "start": 11, "end": 26}]}
+{"id": "phone_in_prefixed-020", "group": "phone_in_prefixed", "split": "test", "text": "Phone: (+91) 65687 97490", "spans": [{"type": "phone", "start": 7, "end": 24}]}
+{"id": "phone_in_prefixed-021", "group": "phone_in_prefixed", "split": "dev", "text": "The supplier's mobile is 91 8963828065.", "spans": [{"type": "phone", "start": 25, "end": 38}]}
+{"id": "phone_in_prefixed-022", "group": "phone_in_prefixed", "split": "test", "text": "You can reach the desk at (+91) 80588 76879.", "spans": [{"type": "phone", "start": 26, "end": 43}]}
+{"id": "phone_in_prefixed-023", "group": "phone_in_prefixed", "split": "dev", "text": "Ping (+91) 75796 27937 if the delivery slips.", "spans": [{"type": "phone", "start": 5, "end": 22}]}
+{"id": "phone_in_prefixed-024", "group": "phone_in_prefixed", "split": "test", "text": "Contact number 91 9632219120 (office).", "spans": [{"type": "phone", "start": 15, "end": 28}]}
+{"id": "phone_in_prefixed-025", "group": "phone_in_prefixed", "split": "dev", "text": "Call me on +919265772878 after lunch.", "spans": [{"type": "phone", "start": 11, "end": 24}]}
+{"id": "phone_in_prefixed-026", "group": "phone_in_prefixed", "split": "test", "text": "Phone: 91 6431793231", "spans": [{"type": "phone", "start": 7, "end": 20}]}
+{"id": "phone_in_prefixed-027", "group": "phone_in_prefixed", "split": "dev", "text": "The supplier's mobile is +916258407521.", "spans": [{"type": "phone", "start": 25, "end": 38}]}
+{"id": "phone_in_prefixed-028", "group": "phone_in_prefixed", "split": "test", "text": "You can reach the desk at 08721171571.", "spans": [{"type": "phone", "start": 26, "end": 37}]}
+{"id": "phone_in_prefixed-029", "group": "phone_in_prefixed", "split": "dev", "text": "Ping 07818381271 if the delivery slips.", "spans": [{"type": "phone", "start": 5, "end": 16}]}
+{"id": "phone_in_prefixed-030", "group": "phone_in_prefixed", "split": "test", "text": "Contact number +919493033412 (office).", "spans": [{"type": "phone", "start": 15, "end": 28}]}
+{"id": "phone_in_prefixed-031", "group": "phone_in_prefixed", "split": "dev", "text": "Call me on +91 86957 44966 after lunch.", "spans": [{"type": "phone", "start": 11, "end": 26}]}
+{"id": "phone_in_prefixed-032", "group": "phone_in_prefixed", "split": "test", "text": "Phone: +91-8902533784", "spans": [{"type": "phone", "start": 7, "end": 21}]}
+{"id": "phone_in_prefixed-033", "group": "phone_in_prefixed", "split": "dev", "text": "The supplier's mobile is +91 7433696223.", "spans": [{"type": "phone", "start": 25, "end": 39}]}
+{"id": "phone_in_prefixed-034", "group": "phone_in_prefixed", "split": "test", "text": "You can reach the desk at +916634145981.", "spans": [{"type": "phone", "start": 26, "end": 39}]}
+{"id": "phone_in_prefixed-035", "group": "phone_in_prefixed", "split": "dev", "text": "Ping 09996370122 if the delivery slips.", "spans": [{"type": "phone", "start": 5, "end": 16}]}
+{"id": "phone_in_prefixed-036", "group": "phone_in_prefixed", "split": "test", "text": "Contact number 08964120722 (office).", "spans": [{"type": "phone", "start": 15, "end": 26}]}
+{"id": "phone_in_prefixed-037", "group": "phone_in_prefixed", "split": "dev", "text": "Call me on +91 95680 11132 after lunch.", "spans": [{"type": "phone", "start": 11, "end": 26}]}
+{"id": "phone_in_prefixed-038", "group": "phone_in_prefixed", "split": "test", "text": "Phone: (+91) 76746 10492", "spans": [{"type": "phone", "start": 7, "end": 24}]}
+{"id": "phone_in_prefixed-039", "group": "phone_in_prefixed", "split": "dev", "text": "The supplier's mobile is 91 6918585432.", "spans": [{"type": "phone", "start": 25, "end": 38}]}
+{"id": "phone_in_prefixed-040", "group": "phone_in_prefixed", "split": "test", "text": "You can reach the desk at 91 8586104769.", "spans": [{"type": "phone", "start": 26, "end": 39}]}
+{"id": "phone_in_grouped-001", "group": "phone_in_grouped", "split": "dev", "text": "Call me on 92684 81622 after lunch.", "spans": [{"type": "phone", "start": 11, "end": 22}]}
+{"id": "phone_in_grouped-002", "group": "phone_in_grouped", "split": "test", "text": "Phone: 82539 22967", "spans": [{"type": "phone", "start": 7, "end": 18}]}
+{"id": "phone_in_grouped-003", "group": "phone_in_grouped", "split": "dev", "text": "The supplier's mobile is 61107 75021.", "spans": [{"type": "phone", "start": 25, "end": 36}]}
+{"id": "phone_in_grouped-004", "group": "phone_in_grouped", "split": "test", "text": "You can reach the desk at 86075-24943.", "spans": [{"type": "phone", "start": 26, "end": 37}]}
+{"id": "phone_in_grouped-005", "group": "phone_in_grouped", "split": "dev", "text": "Ping 65126-89734 if the delivery slips.", "spans": [{"type": "phone", "start": 5, "end": 16}]}
+{"id": "phone_in_grouped-006", "group": "phone_in_grouped", "split": "test", "text": "Contact number 85707-78466 (office).", "spans": [{"type": "phone", "start": 15, "end": 26}]}
+{"id": "phone_in_grouped-007", "group": "phone_in_grouped", "split": "dev", "text": "Call me on 86907 88220 after lunch.", "spans": [{"type": "phone", "start": 11, "end": 22}]}
+{"id": "phone_in_grouped-008", "group": "phone_in_grouped", "split": "test", "text": "Phone: 73358-94256", "spans": [{"type": "phone", "start": 7, "end": 18}]}
+{"id": "phone_in_grouped-009", "group": "phone_in_grouped", "split": "dev", "text": "The supplier's mobile is 72441 63541.", "spans": [{"type": "phone", "start": 25, "end": 36}]}
+{"id": "phone_in_grouped-010", "group": "phone_in_grouped", "split": "test", "text": "You can reach the desk at 85710 53365.", "spans": [{"type": "phone", "start": 26, "end": 37}]}
+{"id": "phone_in_grouped-011", "group": "phone_in_grouped", "split": "dev", "text": "Ping 91838-82581 if the delivery slips.", "spans": [{"type": "phone", "start": 5, "end": 16}]}
+{"id": "phone_in_grouped-012", "group": "phone_in_grouped", "split": "test", "text": "Contact number 62033-42672 (office).", "spans": [{"type": "phone", "start": 15, "end": 26}]}
+{"id": "phone_in_grouped-013", "group": "phone_in_grouped", "split": "dev", "text": "Call me on 98747 19313 after lunch.", "spans": [{"type": "phone", "start": 11, "end": 22}]}
+{"id": "phone_in_grouped-014", "group": "phone_in_grouped", "split": "test", "text": "Phone: 83195 27869", "spans": [{"type": "phone", "start": 7, "end": 18}]}
+{"id": "phone_in_grouped-015", "group": "phone_in_grouped", "split": "dev", "text": "The supplier's mobile is 80584 84325.", "spans": [{"type": "phone", "start": 25, "end": 36}]}
+{"id": "phone_in_grouped-016", "group": "phone_in_grouped", "split": "test", "text": "You can reach the desk at 79149 61250.", "spans": [{"type": "phone", "start": 26, "end": 37}]}
+{"id": "phone_in_grouped-017", "group": "phone_in_grouped", "split": "dev", "text": "Ping 81743-44672 if the delivery slips.", "spans": [{"type": "phone", "start": 5, "end": 16}]}
+{"id": "phone_in_grouped-018", "group": "phone_in_grouped", "split": "test", "text": "Contact number 87782 43770 (office).", "spans": [{"type": "phone", "start": 15, "end": 26}]}
+{"id": "phone_in_grouped-019", "group": "phone_in_grouped", "split": "dev", "text": "Call me on 72106-76853 after lunch.", "spans": [{"type": "phone", "start": 11, "end": 22}]}
+{"id": "phone_in_grouped-020", "group": "phone_in_grouped", "split": "test", "text": "Phone: 95207-53120", "spans": [{"type": "phone", "start": 7, "end": 18}]}
+{"id": "phone_in_bare_ctx-001", "group": "phone_in_bare_ctx", "split": "dev", "text": "Mobile: 6735637126", "spans": [{"type": "phone", "start": 8, "end": 18}]}
+{"id": "phone_in_bare_ctx-002", "group": "phone_in_bare_ctx", "split": "test", "text": "Call me on 8159997992 tonight.", "spans": [{"type": "phone", "start": 11, "end": 21}]}
+{"id": "phone_in_bare_ctx-003", "group": "phone_in_bare_ctx", "split": "dev", "text": "WhatsApp 7360613651 for the photos.", "spans": [{"type": "phone", "start": 9, "end": 19}]}
+{"id": "phone_in_bare_ctx-004", "group": "phone_in_bare_ctx", "split": "test", "text": "My phone is 7556306893, ask for Ramesh.", "spans": [{"type": "phone", "start": 12, "end": 22}]}
+{"id": "phone_in_bare_ctx-005", "group": "phone_in_bare_ctx", "split": "dev", "text": "Contact 7068799865 to confirm the slot.", "spans": [{"type": "phone", "start": 8, "end": 18}]}
+{"id": "phone_in_bare_ctx-006", "group": "phone_in_bare_ctx", "split": "test", "text": "Cell 8574799901", "spans": [{"type": "phone", "start": 5, "end": 15}]}
+{"id": "phone_in_bare_ctx-007", "group": "phone_in_bare_ctx", "split": "dev", "text": "Mobile: 8277994127", "spans": [{"type": "phone", "start": 8, "end": 18}]}
+{"id": "phone_in_bare_ctx-008", "group": "phone_in_bare_ctx", "split": "test", "text": "Call me on 8775621847 tonight.", "spans": [{"type": "phone", "start": 11, "end": 21}]}
+{"id": "phone_in_bare_ctx-009", "group": "phone_in_bare_ctx", "split": "dev", "text": "WhatsApp 7720225255 for the photos.", "spans": [{"type": "phone", "start": 9, "end": 19}]}
+{"id": "phone_in_bare_ctx-010", "group": "phone_in_bare_ctx", "split": "test", "text": "My phone is 8298933691, ask for Ramesh.", "spans": [{"type": "phone", "start": 12, "end": 22}]}
+{"id": "phone_in_bare_ctx-011", "group": "phone_in_bare_ctx", "split": "dev", "text": "Contact 7730673100 to confirm the slot.", "spans": [{"type": "phone", "start": 8, "end": 18}]}
+{"id": "phone_in_bare_ctx-012", "group": "phone_in_bare_ctx", "split": "test", "text": "Cell 6596355464", "spans": [{"type": "phone", "start": 5, "end": 15}]}
+{"id": "phone_in_bare_ctx-013", "group": "phone_in_bare_ctx", "split": "dev", "text": "Mobile: 6663075822", "spans": [{"type": "phone", "start": 8, "end": 18}]}
+{"id": "phone_in_bare_ctx-014", "group": "phone_in_bare_ctx", "split": "test", "text": "Call me on 8977151877 tonight.", "spans": [{"type": "phone", "start": 11, "end": 21}]}
+{"id": "phone_in_bare_ctx-015", "group": "phone_in_bare_ctx", "split": "dev", "text": "WhatsApp 8923864404 for the photos.", "spans": [{"type": "phone", "start": 9, "end": 19}]}
+{"id": "phone_in_bare_ctx-016", "group": "phone_in_bare_ctx", "split": "test", "text": "My phone is 8205332623, ask for Ramesh.", "spans": [{"type": "phone", "start": 12, "end": 22}]}
+{"id": "phone_in_bare_ctx-017", "group": "phone_in_bare_ctx", "split": "dev", "text": "Contact 9011771826 to confirm the slot.", "spans": [{"type": "phone", "start": 8, "end": 18}]}
+{"id": "phone_in_bare_ctx-018", "group": "phone_in_bare_ctx", "split": "test", "text": "Cell 8196387659", "spans": [{"type": "phone", "start": 5, "end": 15}]}
+{"id": "phone_in_bare_ctx-019", "group": "phone_in_bare_ctx", "split": "dev", "text": "Mobile: 9804798212", "spans": [{"type": "phone", "start": 8, "end": 18}]}
+{"id": "phone_in_bare_ctx-020", "group": "phone_in_bare_ctx", "split": "test", "text": "Call me on 7082623130 tonight.", "spans": [{"type": "phone", "start": 11, "end": 21}]}
+{"id": "phone_in_bare_ctx-021", "group": "phone_in_bare_ctx", "split": "dev", "text": "WhatsApp 7750564780 for the photos.", "spans": [{"type": "phone", "start": 9, "end": 19}]}
+{"id": "phone_in_bare_ctx-022", "group": "phone_in_bare_ctx", "split": "test", "text": "My phone is 7477013754, ask for Ramesh.", "spans": [{"type": "phone", "start": 12, "end": 22}]}
+{"id": "phone_in_bare_ctx-023", "group": "phone_in_bare_ctx", "split": "dev", "text": "Contact 7815255513 to confirm the slot.", "spans": [{"type": "phone", "start": 8, "end": 18}]}
+{"id": "phone_in_bare_ctx-024", "group": "phone_in_bare_ctx", "split": "test", "text": "Cell 9309204935", "spans": [{"type": "phone", "start": 5, "end": 15}]}
+{"id": "phone_in_bare_ctx-025", "group": "phone_in_bare_ctx", "split": "dev", "text": "Mobile: 8003739982", "spans": [{"type": "phone", "start": 8, "end": 18}]}
+{"id": "phone_in_bare_ctx-026", "group": "phone_in_bare_ctx", "split": "test", "text": "Call me on 8658683047 tonight.", "spans": [{"type": "phone", "start": 11, "end": 21}]}
+{"id": "phone_in_bare_ctx-027", "group": "phone_in_bare_ctx", "split": "dev", "text": "WhatsApp 9326373585 for the photos.", "spans": [{"type": "phone", "start": 9, "end": 19}]}
+{"id": "phone_in_bare_ctx-028", "group": "phone_in_bare_ctx", "split": "test", "text": "My phone is 6829330025, ask for Ramesh.", "spans": [{"type": "phone", "start": 12, "end": 22}]}
+{"id": "phone_in_bare_ctx-029", "group": "phone_in_bare_ctx", "split": "dev", "text": "Contact 9758619874 to confirm the slot.", "spans": [{"type": "phone", "start": 8, "end": 18}]}
+{"id": "phone_in_bare_ctx-030", "group": "phone_in_bare_ctx", "split": "test", "text": "Cell 7092976876", "spans": [{"type": "phone", "start": 5, "end": 15}]}
+{"id": "phone_in_bare_noctx-001", "group": "phone_in_bare_noctx", "split": "dev", "text": "Ping me on 9486564266 later today.", "spans": [{"type": "phone", "start": 11, "end": 21}]}
+{"id": "phone_in_bare_noctx-002", "group": "phone_in_bare_noctx", "split": "test", "text": "The driver is on 6803242123 now.", "spans": [{"type": "phone", "start": 17, "end": 27}]}
+{"id": "phone_in_bare_noctx-003", "group": "phone_in_bare_noctx", "split": "dev", "text": "Text 6921775298 when you arrive.", "spans": [{"type": "phone", "start": 5, "end": 15}]}
+{"id": "phone_in_bare_noctx-004", "group": "phone_in_bare_noctx", "split": "test", "text": "Best way to get me is 9038595688.", "spans": [{"type": "phone", "start": 22, "end": 32}]}
+{"id": "phone_in_bare_noctx-005", "group": "phone_in_bare_noctx", "split": "dev", "text": "6678692532 is the number for the site office.", "spans": [{"type": "phone", "start": 0, "end": 10}]}
+{"id": "phone_in_bare_noctx-006", "group": "phone_in_bare_noctx", "split": "test", "text": "Ping me on 7695020060 later today.", "spans": [{"type": "phone", "start": 11, "end": 21}]}
+{"id": "phone_in_bare_noctx-007", "group": "phone_in_bare_noctx", "split": "dev", "text": "The driver is on 7096513713 now.", "spans": [{"type": "phone", "start": 17, "end": 27}]}
+{"id": "phone_in_bare_noctx-008", "group": "phone_in_bare_noctx", "split": "test", "text": "Text 8004442643 when you arrive.", "spans": [{"type": "phone", "start": 5, "end": 15}]}
+{"id": "phone_in_bare_noctx-009", "group": "phone_in_bare_noctx", "split": "dev", "text": "Best way to get me is 9004195193.", "spans": [{"type": "phone", "start": 22, "end": 32}]}
+{"id": "phone_in_bare_noctx-010", "group": "phone_in_bare_noctx", "split": "test", "text": "7417609886 is the number for the site office.", "spans": [{"type": "phone", "start": 0, "end": 10}]}
+{"id": "phone_in_bare_noctx-011", "group": "phone_in_bare_noctx", "split": "dev", "text": "Ping me on 9223295509 later today.", "spans": [{"type": "phone", "start": 11, "end": 21}]}
+{"id": "phone_in_bare_noctx-012", "group": "phone_in_bare_noctx", "split": "test", "text": "The driver is on 9775508338 now.", "spans": [{"type": "phone", "start": 17, "end": 27}]}
+{"id": "phone_in_bare_noctx-013", "group": "phone_in_bare_noctx", "split": "dev", "text": "Text 9803298875 when you arrive.", "spans": [{"type": "phone", "start": 5, "end": 15}]}
+{"id": "phone_in_bare_noctx-014", "group": "phone_in_bare_noctx", "split": "test", "text": "Best way to get me is 7634520478.", "spans": [{"type": "phone", "start": 22, "end": 32}]}
+{"id": "phone_in_bare_noctx-015", "group": "phone_in_bare_noctx", "split": "dev", "text": "7750075981 is the number for the site office.", "spans": [{"type": "phone", "start": 0, "end": 10}]}
+{"id": "phone_in_bare_noctx-016", "group": "phone_in_bare_noctx", "split": "test", "text": "Ping me on 6632402566 later today.", "spans": [{"type": "phone", "start": 11, "end": 21}]}
+{"id": "phone_in_bare_noctx-017", "group": "phone_in_bare_noctx", "split": "dev", "text": "The driver is on 7958445286 now.", "spans": [{"type": "phone", "start": 17, "end": 27}]}
+{"id": "phone_in_bare_noctx-018", "group": "phone_in_bare_noctx", "split": "test", "text": "Text 7022365591 when you arrive.", "spans": [{"type": "phone", "start": 5, "end": 15}]}
+{"id": "phone_in_bare_noctx-019", "group": "phone_in_bare_noctx", "split": "dev", "text": "Best way to get me is 6748026969.", "spans": [{"type": "phone", "start": 22, "end": 32}]}
+{"id": "phone_in_bare_noctx-020", "group": "phone_in_bare_noctx", "split": "test", "text": "6900505456 is the number for the site office.", "spans": [{"type": "phone", "start": 0, "end": 10}]}
+{"id": "phone_in_landline-001", "group": "phone_in_landline", "split": "dev", "text": "Office line 040-21666089 until 6 pm.", "spans": [{"type": "phone", "start": 12, "end": 24}]}
+{"id": "phone_in_landline-002", "group": "phone_in_landline", "split": "test", "text": "Office line 044-21089033 until 6 pm.", "spans": [{"type": "phone", "start": 12, "end": 24}]}
+{"id": "phone_in_landline-003", "group": "phone_in_landline", "split": "dev", "text": "Office line 020-25218249 until 6 pm.", "spans": [{"type": "phone", "start": 12, "end": 24}]}
+{"id": "phone_in_landline-004", "group": "phone_in_landline", "split": "test", "text": "Office line 020-22510014 until 6 pm.", "spans": [{"type": "phone", "start": 12, "end": 24}]}
+{"id": "phone_in_landline-005", "group": "phone_in_landline", "split": "dev", "text": "Office line 011-26544422 until 6 pm.", "spans": [{"type": "phone", "start": 12, "end": 24}]}
+{"id": "phone_in_landline-006", "group": "phone_in_landline", "split": "test", "text": "Office line 080-23693670 until 6 pm.", "spans": [{"type": "phone", "start": 12, "end": 24}]}
+{"id": "phone_in_landline-007", "group": "phone_in_landline", "split": "dev", "text": "Office line 033-27453482 until 6 pm.", "spans": [{"type": "phone", "start": 12, "end": 24}]}
+{"id": "phone_in_landline-008", "group": "phone_in_landline", "split": "test", "text": "Office line 040-20495174 until 6 pm.", "spans": [{"type": "phone", "start": 12, "end": 24}]}
+{"id": "phone_in_landline-009", "group": "phone_in_landline", "split": "dev", "text": "Office line 020-24571061 until 6 pm.", "spans": [{"type": "phone", "start": 12, "end": 24}]}
+{"id": "phone_in_landline-010", "group": "phone_in_landline", "split": "test", "text": "Office line 040-22726550 until 6 pm.", "spans": [{"type": "phone", "start": 12, "end": 24}]}
+{"id": "phone_in_landline-011", "group": "phone_in_landline", "split": "dev", "text": "Office line 033-26788857 until 6 pm.", "spans": [{"type": "phone", "start": 12, "end": 24}]}
+{"id": "phone_in_landline-012", "group": "phone_in_landline", "split": "test", "text": "Office line 080-28835450 until 6 pm.", "spans": [{"type": "phone", "start": 12, "end": 24}]}
+{"id": "phone_in_landline-013", "group": "phone_in_landline", "split": "dev", "text": "Office line 040-20778615 until 6 pm.", "spans": [{"type": "phone", "start": 12, "end": 24}]}
+{"id": "phone_in_landline-014", "group": "phone_in_landline", "split": "test", "text": "Office line 040-23417059 until 6 pm.", "spans": [{"type": "phone", "start": 12, "end": 24}]}
+{"id": "phone_in_landline-015", "group": "phone_in_landline", "split": "dev", "text": "Office line 044-29208481 until 6 pm.", "spans": [{"type": "phone", "start": 12, "end": 24}]}
+{"id": "credit_card-001", "group": "credit_card", "split": "dev", "text": "Charge the card 3617 962628 5001 for the renewal.", "spans": [{"type": "credit_card", "start": 16, "end": 32}]}
+{"id": "credit_card-002", "group": "credit_card", "split": "test", "text": "Card number: 3698 063537 0134", "spans": [{"type": "credit_card", "start": 13, "end": 29}]}
+{"id": "credit_card-003", "group": "credit_card", "split": "dev", "text": "Refund to 378992260652120 please.", "spans": [{"type": "credit_card", "start": 10, "end": 25}]}
+{"id": "credit_card-004", "group": "credit_card", "split": "test", "text": "The corporate card (3611 721721 9625) was declined.", "spans": [{"type": "credit_card", "start": 20, "end": 36}]}
+{"id": "credit_card-005", "group": "credit_card", "split": "dev", "text": "Charge the card 6040622286243126 for the renewal.", "spans": [{"type": "credit_card", "start": 16, "end": 32}]}
+{"id": "credit_card-006", "group": "credit_card", "split": "test", "text": "Card number: 3640 706739 8177", "spans": [{"type": "credit_card", "start": 13, "end": 29}]}
+{"id": "credit_card-007", "group": "credit_card", "split": "dev", "text": "Refund to 4825-6778-2758-0887 please.", "spans": [{"type": "credit_card", "start": 10, "end": 29}]}
+{"id": "credit_card-008", "group": "credit_card", "split": "test", "text": "The corporate card (4213 2373 0176 2152) was declined.", "spans": [{"type": "credit_card", "start": 20, "end": 39}]}
+{"id": "credit_card-009", "group": "credit_card", "split": "dev", "text": "Charge the card 8210-3076-2016-9944 for the renewal.", "spans": [{"type": "credit_card", "start": 16, "end": 35}]}
+{"id": "credit_card-010", "group": "credit_card", "split": "test", "text": "Card number: 3619 384646 3520", "spans": [{"type": "credit_card", "start": 13, "end": 29}]}
+{"id": "credit_card-011", "group": "credit_card", "split": "dev", "text": "Refund to 5184-5195-1154-2892 please.", "spans": [{"type": "credit_card", "start": 10, "end": 29}]}
+{"id": "credit_card-012", "group": "credit_card", "split": "test", "text": "The corporate card (344701439545870) was declined.", "spans": [{"type": "credit_card", "start": 20, "end": 35}]}
+{"id": "credit_card-013", "group": "credit_card", "split": "dev", "text": "Charge the card 3632 562832 8543 for the renewal.", "spans": [{"type": "credit_card", "start": 16, "end": 32}]}
+{"id": "credit_card-014", "group": "credit_card", "split": "test", "text": "Card number: 5299-1826-2670-1176", "spans": [{"type": "credit_card", "start": 13, "end": 32}]}
+{"id": "credit_card-015", "group": "credit_card", "split": "dev", "text": "Refund to 4152 8652 5311 0443 please.", "spans": [{"type": "credit_card", "start": 10, "end": 29}]}
+{"id": "credit_card-016", "group": "credit_card", "split": "test", "text": "The corporate card (5293-6702-2689-7994) was declined.", "spans": [{"type": "credit_card", "start": 20, "end": 39}]}
+{"id": "credit_card-017", "group": "credit_card", "split": "dev", "text": "Charge the card 3753 943915 21014 for the renewal.", "spans": [{"type": "credit_card", "start": 16, "end": 33}]}
+{"id": "credit_card-018", "group": "credit_card", "split": "test", "text": "Card number: 6589009704732426", "spans": [{"type": "credit_card", "start": 13, "end": 29}]}
+{"id": "credit_card-019", "group": "credit_card", "split": "dev", "text": "Refund to 3754 754470 50163 please.", "spans": [{"type": "credit_card", "start": 10, "end": 27}]}
+{"id": "credit_card-020", "group": "credit_card", "split": "test", "text": "The corporate card (6560535846108045) was declined.", "spans": [{"type": "credit_card", "start": 20, "end": 36}]}
+{"id": "credit_card-021", "group": "credit_card", "split": "dev", "text": "Charge the card 4182-4852-2097-0565 for the renewal.", "spans": [{"type": "credit_card", "start": 16, "end": 35}]}
+{"id": "credit_card-022", "group": "credit_card", "split": "test", "text": "Card number: 3680 901836 4549", "spans": [{"type": "credit_card", "start": 13, "end": 29}]}
+{"id": "credit_card-023", "group": "credit_card", "split": "dev", "text": "Refund to 3471 230580 66111 please.", "spans": [{"type": "credit_card", "start": 10, "end": 27}]}
+{"id": "credit_card-024", "group": "credit_card", "split": "test", "text": "The corporate card (5493 8283 5101 0316) was declined.", "spans": [{"type": "credit_card", "start": 20, "end": 39}]}
+{"id": "credit_card-025", "group": "credit_card", "split": "dev", "text": "Charge the card 4260680988248890 for the renewal.", "spans": [{"type": "credit_card", "start": 16, "end": 32}]}
+{"id": "credit_card-026", "group": "credit_card", "split": "test", "text": "Card number: 8236643594209641", "spans": [{"type": "credit_card", "start": 13, "end": 29}]}
+{"id": "credit_card-027", "group": "credit_card", "split": "dev", "text": "Refund to 3639 920087 3333 please.", "spans": [{"type": "credit_card", "start": 10, "end": 26}]}
+{"id": "credit_card-028", "group": "credit_card", "split": "test", "text": "The corporate card (3631 310913 6122) was declined.", "spans": [{"type": "credit_card", "start": 20, "end": 36}]}
+{"id": "credit_card-029", "group": "credit_card", "split": "dev", "text": "Charge the card 347914343268136 for the renewal.", "spans": [{"type": "credit_card", "start": 16, "end": 31}]}
+{"id": "credit_card-030", "group": "credit_card", "split": "test", "text": "Card number: 4762-8145-7153-7210", "spans": [{"type": "credit_card", "start": 13, "end": 32}]}
+{"id": "credit_card-031", "group": "credit_card", "split": "dev", "text": "Refund to 5200-2318-9945-3292 please.", "spans": [{"type": "credit_card", "start": 10, "end": 29}]}
+{"id": "credit_card-032", "group": "credit_card", "split": "test", "text": "The corporate card (4625-0581-6685-2249) was declined.", "spans": [{"type": "credit_card", "start": 20, "end": 39}]}
+{"id": "credit_card-033", "group": "credit_card", "split": "dev", "text": "Charge the card 3648 059052 4759 for the renewal.", "spans": [{"type": "credit_card", "start": 16, "end": 32}]}
+{"id": "credit_card-034", "group": "credit_card", "split": "test", "text": "Card number: 341556279446883", "spans": [{"type": "credit_card", "start": 13, "end": 28}]}
+{"id": "credit_card-035", "group": "credit_card", "split": "dev", "text": "Refund to 5595-1893-4851-2139 please.", "spans": [{"type": "credit_card", "start": 10, "end": 29}]}
+{"id": "credit_card-036", "group": "credit_card", "split": "test", "text": "The corporate card (3471 526095 97266) was declined.", "spans": [{"type": "credit_card", "start": 20, "end": 37}]}
+{"id": "credit_card-037", "group": "credit_card", "split": "dev", "text": "Charge the card 8173 7161 0040 9221 for the renewal.", "spans": [{"type": "credit_card", "start": 16, "end": 35}]}
+{"id": "credit_card-038", "group": "credit_card", "split": "test", "text": "Card number: 3772 279240 86774", "spans": [{"type": "credit_card", "start": 13, "end": 30}]}
+{"id": "credit_card-039", "group": "credit_card", "split": "dev", "text": "Refund to 5455-8428-2519-5260 please.", "spans": [{"type": "credit_card", "start": 10, "end": 29}]}
+{"id": "credit_card-040", "group": "credit_card", "split": "test", "text": "The corporate card (5544031271134840) was declined.", "spans": [{"type": "credit_card", "start": 20, "end": 36}]}
+{"id": "ssn-001", "group": "ssn", "split": "dev", "text": "SSN 280-77-3186 on file.", "spans": [{"type": "ssn", "start": 4, "end": 15}]}
+{"id": "ssn-002", "group": "ssn", "split": "test", "text": "Employee tax id 369-39-0211.", "spans": [{"type": "ssn", "start": 16, "end": 27}]}
+{"id": "ssn-003", "group": "ssn", "split": "dev", "text": "Verify identity with 615-65-3071.", "spans": [{"type": "ssn", "start": 21, "end": 32}]}
+{"id": "ssn-004", "group": "ssn", "split": "test", "text": "Her social security number is 071-20-4352.", "spans": [{"type": "ssn", "start": 30, "end": 41}]}
+{"id": "ssn-005", "group": "ssn", "split": "dev", "text": "SSN 718-19-3138 on file.", "spans": [{"type": "ssn", "start": 4, "end": 15}]}
+{"id": "ssn-006", "group": "ssn", "split": "test", "text": "Employee tax id 180-73-8658.", "spans": [{"type": "ssn", "start": 16, "end": 27}]}
+{"id": "ssn-007", "group": "ssn", "split": "dev", "text": "Verify identity with 342-03-6072.", "spans": [{"type": "ssn", "start": 21, "end": 32}]}
+{"id": "ssn-008", "group": "ssn", "split": "test", "text": "Her social security number is 531-67-7186.", "spans": [{"type": "ssn", "start": 30, "end": 41}]}
+{"id": "ssn-009", "group": "ssn", "split": "dev", "text": "SSN 365-55-8447 on file.", "spans": [{"type": "ssn", "start": 4, "end": 15}]}
+{"id": "ssn-010", "group": "ssn", "split": "test", "text": "Employee tax id 854-97-5558.", "spans": [{"type": "ssn", "start": 16, "end": 27}]}
+{"id": "ssn-011", "group": "ssn", "split": "dev", "text": "Verify identity with 110-74-3402.", "spans": [{"type": "ssn", "start": 21, "end": 32}]}
+{"id": "ssn-012", "group": "ssn", "split": "test", "text": "Her social security number is 499-79-0807.", "spans": [{"type": "ssn", "start": 30, "end": 41}]}
+{"id": "ssn-013", "group": "ssn", "split": "dev", "text": "SSN 627-88-9491 on file.", "spans": [{"type": "ssn", "start": 4, "end": 15}]}
+{"id": "ssn-014", "group": "ssn", "split": "test", "text": "Employee tax id 605-38-1773.", "spans": [{"type": "ssn", "start": 16, "end": 27}]}
+{"id": "ssn-015", "group": "ssn", "split": "dev", "text": "Verify identity with 189-51-4209.", "spans": [{"type": "ssn", "start": 21, "end": 32}]}
+{"id": "ssn-016", "group": "ssn", "split": "test", "text": "Her social security number is 098-77-0605.", "spans": [{"type": "ssn", "start": 30, "end": 41}]}
+{"id": "ssn-017", "group": "ssn", "split": "dev", "text": "SSN 239-89-3427 on file.", "spans": [{"type": "ssn", "start": 4, "end": 15}]}
+{"id": "ssn-018", "group": "ssn", "split": "test", "text": "Employee tax id 258-56-7003.", "spans": [{"type": "ssn", "start": 16, "end": 27}]}
+{"id": "ssn-019", "group": "ssn", "split": "dev", "text": "Verify identity with 391-97-9870.", "spans": [{"type": "ssn", "start": 21, "end": 32}]}
+{"id": "ssn-020", "group": "ssn", "split": "test", "text": "Her social security number is 172-79-5124.", "spans": [{"type": "ssn", "start": 30, "end": 41}]}
+{"id": "ssn-021", "group": "ssn", "split": "dev", "text": "SSN 545-48-8434 on file.", "spans": [{"type": "ssn", "start": 4, "end": 15}]}
+{"id": "ssn-022", "group": "ssn", "split": "test", "text": "Employee tax id 256-36-8728.", "spans": [{"type": "ssn", "start": 16, "end": 27}]}
+{"id": "ssn-023", "group": "ssn", "split": "dev", "text": "Verify identity with 743-66-7047.", "spans": [{"type": "ssn", "start": 21, "end": 32}]}
+{"id": "ssn-024", "group": "ssn", "split": "test", "text": "Her social security number is 793-09-8945.", "spans": [{"type": "ssn", "start": 30, "end": 41}]}
+{"id": "ssn-025", "group": "ssn", "split": "dev", "text": "SSN 436-94-2362 on file.", "spans": [{"type": "ssn", "start": 4, "end": 15}]}
+{"id": "ssn-026", "group": "ssn", "split": "test", "text": "Employee tax id 517-62-0174.", "spans": [{"type": "ssn", "start": 16, "end": 27}]}
+{"id": "ssn-027", "group": "ssn", "split": "dev", "text": "Verify identity with 782-69-5759.", "spans": [{"type": "ssn", "start": 21, "end": 32}]}
+{"id": "ssn-028", "group": "ssn", "split": "test", "text": "Her social security number is 749-17-0148.", "spans": [{"type": "ssn", "start": 30, "end": 41}]}
+{"id": "ssn-029", "group": "ssn", "split": "dev", "text": "SSN 615-82-3133 on file.", "spans": [{"type": "ssn", "start": 4, "end": 15}]}
+{"id": "ssn-030", "group": "ssn", "split": "test", "text": "Employee tax id 379-23-0426.", "spans": [{"type": "ssn", "start": 16, "end": 27}]}
+{"id": "aadhaar_grouped_ctx-001", "group": "aadhaar_grouped_ctx", "split": "dev", "text": "My Aadhaar number is 7934-0944-8040.", "spans": [{"type": "aadhaar", "start": 21, "end": 35}]}
+{"id": "aadhaar_grouped_ctx-002", "group": "aadhaar_grouped_ctx", "split": "test", "text": "UID: 6695 8007 9072", "spans": [{"type": "aadhaar", "start": 5, "end": 19}]}
+{"id": "aadhaar_grouped_ctx-003", "group": "aadhaar_grouped_ctx", "split": "dev", "text": "Aadhaar card no 5508 6314 4448 attached.", "spans": [{"type": "aadhaar", "start": 16, "end": 30}]}
+{"id": "aadhaar_grouped_ctx-004", "group": "aadhaar_grouped_ctx", "split": "test", "text": "Please link 7286-8973-1019 to my Aadhaar profile.", "spans": [{"type": "aadhaar", "start": 12, "end": 26}]}
+{"id": "aadhaar_grouped_ctx-005", "group": "aadhaar_grouped_ctx", "split": "dev", "text": "Enrolment number 7940 9133 5081 was issued in 2019.", "spans": [{"type": "aadhaar", "start": 17, "end": 31}]}
+{"id": "aadhaar_grouped_ctx-006", "group": "aadhaar_grouped_ctx", "split": "test", "text": "My Aadhaar number is 8498 4329 5373.", "spans": [{"type": "aadhaar", "start": 21, "end": 35}]}
+{"id": "aadhaar_grouped_ctx-007", "group": "aadhaar_grouped_ctx", "split": "dev", "text": "UID: 2372 5265 9262", "spans": [{"type": "aadhaar", "start": 5, "end": 19}]}
+{"id": "aadhaar_grouped_ctx-008", "group": "aadhaar_grouped_ctx", "split": "test", "text": "Aadhaar card no 4812-3653-0322 attached.", "spans": [{"type": "aadhaar", "start": 16, "end": 30}]}
+{"id": "aadhaar_grouped_ctx-009", "group": "aadhaar_grouped_ctx", "split": "dev", "text": "Please link 5710 3797 0203 to my Aadhaar profile.", "spans": [{"type": "aadhaar", "start": 12, "end": 26}]}
+{"id": "aadhaar_grouped_ctx-010", "group": "aadhaar_grouped_ctx", "split": "test", "text": "Enrolment number 4254 3698 6928 was issued in 2019.", "spans": [{"type": "aadhaar", "start": 17, "end": 31}]}
+{"id": "aadhaar_grouped_ctx-011", "group": "aadhaar_grouped_ctx", "split": "dev", "text": "My Aadhaar number is 3113-1692-4995.", "spans": [{"type": "aadhaar", "start": 21, "end": 35}]}
+{"id": "aadhaar_grouped_ctx-012", "group": "aadhaar_grouped_ctx", "split": "test", "text": "UID: 8518 3847 4624", "spans": [{"type": "aadhaar", "start": 5, "end": 19}]}
+{"id": "aadhaar_grouped_ctx-013", "group": "aadhaar_grouped_ctx", "split": "dev", "text": "Aadhaar card no 7756-6893-1225 attached.", "spans": [{"type": "aadhaar", "start": 16, "end": 30}]}
+{"id": "aadhaar_grouped_ctx-014", "group": "aadhaar_grouped_ctx", "split": "test", "text": "Please link 4026-7745-0044 to my Aadhaar profile.", "spans": [{"type": "aadhaar", "start": 12, "end": 26}]}
+{"id": "aadhaar_grouped_ctx-015", "group": "aadhaar_grouped_ctx", "split": "dev", "text": "Enrolment number 3322-5547-9471 was issued in 2019.", "spans": [{"type": "aadhaar", "start": 17, "end": 31}]}
+{"id": "aadhaar_grouped_ctx-016", "group": "aadhaar_grouped_ctx", "split": "test", "text": "My Aadhaar number is 6338 5308 9836.", "spans": [{"type": "aadhaar", "start": 21, "end": 35}]}
+{"id": "aadhaar_grouped_ctx-017", "group": "aadhaar_grouped_ctx", "split": "dev", "text": "UID: 9967-3865-7272", "spans": [{"type": "aadhaar", "start": 5, "end": 19}]}
+{"id": "aadhaar_grouped_ctx-018", "group": "aadhaar_grouped_ctx", "split": "test", "text": "Aadhaar card no 6833-6194-1846 attached.", "spans": [{"type": "aadhaar", "start": 16, "end": 30}]}
+{"id": "aadhaar_grouped_ctx-019", "group": "aadhaar_grouped_ctx", "split": "dev", "text": "Please link 3543-2986-3189 to my Aadhaar profile.", "spans": [{"type": "aadhaar", "start": 12, "end": 26}]}
+{"id": "aadhaar_grouped_ctx-020", "group": "aadhaar_grouped_ctx", "split": "test", "text": "Enrolment number 2312 6326 0226 was issued in 2019.", "spans": [{"type": "aadhaar", "start": 17, "end": 31}]}
+{"id": "aadhaar_grouped_ctx-021", "group": "aadhaar_grouped_ctx", "split": "dev", "text": "My Aadhaar number is 3241 5633 9677.", "spans": [{"type": "aadhaar", "start": 21, "end": 35}]}
+{"id": "aadhaar_grouped_ctx-022", "group": "aadhaar_grouped_ctx", "split": "test", "text": "UID: 5815 0949 3740", "spans": [{"type": "aadhaar", "start": 5, "end": 19}]}
+{"id": "aadhaar_grouped_ctx-023", "group": "aadhaar_grouped_ctx", "split": "dev", "text": "Aadhaar card no 2116-1062-7601 attached.", "spans": [{"type": "aadhaar", "start": 16, "end": 30}]}
+{"id": "aadhaar_grouped_ctx-024", "group": "aadhaar_grouped_ctx", "split": "test", "text": "Please link 9675 9339 9699 to my Aadhaar profile.", "spans": [{"type": "aadhaar", "start": 12, "end": 26}]}
+{"id": "aadhaar_grouped_ctx-025", "group": "aadhaar_grouped_ctx", "split": "dev", "text": "Enrolment number 4335-3709-5102 was issued in 2019.", "spans": [{"type": "aadhaar", "start": 17, "end": 31}]}
+{"id": "aadhaar_grouped_noctx-001", "group": "aadhaar_grouped_noctx", "split": "dev", "text": "The number on the card reads 4338 5835 2587.", "spans": [{"type": "aadhaar", "start": 29, "end": 43}]}
+{"id": "aadhaar_grouped_noctx-002", "group": "aadhaar_grouped_noctx", "split": "test", "text": "My ID is 3492-2189-7450 as per the document.", "spans": [{"type": "aadhaar", "start": 9, "end": 23}]}
+{"id": "aadhaar_grouped_noctx-003", "group": "aadhaar_grouped_noctx", "split": "dev", "text": "Verify the applicant with 4013-5966-6546.", "spans": [{"type": "aadhaar", "start": 26, "end": 40}]}
+{"id": "aadhaar_grouped_noctx-004", "group": "aadhaar_grouped_noctx", "split": "test", "text": "KYC identifier 6362-6610-4703 was submitted.", "spans": [{"type": "aadhaar", "start": 15, "end": 29}]}
+{"id": "aadhaar_grouped_noctx-005", "group": "aadhaar_grouped_noctx", "split": "dev", "text": "Identity proof: 5583-1427-8947", "spans": [{"type": "aadhaar", "start": 16, "end": 30}]}
+{"id": "aadhaar_grouped_noctx-006", "group": "aadhaar_grouped_noctx", "split": "test", "text": "The number on the card reads 4645 7013 6510.", "spans": [{"type": "aadhaar", "start": 29, "end": 43}]}
+{"id": "aadhaar_grouped_noctx-007", "group": "aadhaar_grouped_noctx", "split": "dev", "text": "My ID is 4364-6683-3145 as per the document.", "spans": [{"type": "aadhaar", "start": 9, "end": 23}]}
+{"id": "aadhaar_grouped_noctx-008", "group": "aadhaar_grouped_noctx", "split": "test", "text": "Verify the applicant with 4116 6059 0661.", "spans": [{"type": "aadhaar", "start": 26, "end": 40}]}
+{"id": "aadhaar_grouped_noctx-009", "group": "aadhaar_grouped_noctx", "split": "dev", "text": "KYC identifier 8488 0039 1498 was submitted.", "spans": [{"type": "aadhaar", "start": 15, "end": 29}]}
+{"id": "aadhaar_grouped_noctx-010", "group": "aadhaar_grouped_noctx", "split": "test", "text": "Identity proof: 9332-6631-2469", "spans": [{"type": "aadhaar", "start": 16, "end": 30}]}
+{"id": "aadhaar_grouped_noctx-011", "group": "aadhaar_grouped_noctx", "split": "dev", "text": "The number on the card reads 4483-2436-4396.", "spans": [{"type": "aadhaar", "start": 29, "end": 43}]}
+{"id": "aadhaar_grouped_noctx-012", "group": "aadhaar_grouped_noctx", "split": "test", "text": "My ID is 6587 2234 9532 as per the document.", "spans": [{"type": "aadhaar", "start": 9, "end": 23}]}
+{"id": "aadhaar_grouped_noctx-013", "group": "aadhaar_grouped_noctx", "split": "dev", "text": "Verify the applicant with 5887-2772-5325.", "spans": [{"type": "aadhaar", "start": 26, "end": 40}]}
+{"id": "aadhaar_grouped_noctx-014", "group": "aadhaar_grouped_noctx", "split": "test", "text": "KYC identifier 9267 6311 2630 was submitted.", "spans": [{"type": "aadhaar", "start": 15, "end": 29}]}
+{"id": "aadhaar_grouped_noctx-015", "group": "aadhaar_grouped_noctx", "split": "dev", "text": "Identity proof: 9390 4035 5223", "spans": [{"type": "aadhaar", "start": 16, "end": 30}]}
+{"id": "aadhaar_grouped_noctx-016", "group": "aadhaar_grouped_noctx", "split": "test", "text": "The number on the card reads 5030-6119-8250.", "spans": [{"type": "aadhaar", "start": 29, "end": 43}]}
+{"id": "aadhaar_grouped_noctx-017", "group": "aadhaar_grouped_noctx", "split": "dev", "text": "My ID is 7056 5673 9254 as per the document.", "spans": [{"type": "aadhaar", "start": 9, "end": 23}]}
+{"id": "aadhaar_grouped_noctx-018", "group": "aadhaar_grouped_noctx", "split": "test", "text": "Verify the applicant with 7656-4619-2696.", "spans": [{"type": "aadhaar", "start": 26, "end": 40}]}
+{"id": "aadhaar_grouped_noctx-019", "group": "aadhaar_grouped_noctx", "split": "dev", "text": "KYC identifier 2021 1596 2663 was submitted.", "spans": [{"type": "aadhaar", "start": 15, "end": 29}]}
+{"id": "aadhaar_grouped_noctx-020", "group": "aadhaar_grouped_noctx", "split": "test", "text": "Identity proof: 5752-8882-5975", "spans": [{"type": "aadhaar", "start": 16, "end": 30}]}
+{"id": "aadhaar_grouped_noctx-021", "group": "aadhaar_grouped_noctx", "split": "dev", "text": "The number on the card reads 2293 4427 5760.", "spans": [{"type": "aadhaar", "start": 29, "end": 43}]}
+{"id": "aadhaar_grouped_noctx-022", "group": "aadhaar_grouped_noctx", "split": "test", "text": "My ID is 5909-8632-4732 as per the document.", "spans": [{"type": "aadhaar", "start": 9, "end": 23}]}
+{"id": "aadhaar_grouped_noctx-023", "group": "aadhaar_grouped_noctx", "split": "dev", "text": "Verify the applicant with 4614-3263-4153.", "spans": [{"type": "aadhaar", "start": 26, "end": 40}]}
+{"id": "aadhaar_grouped_noctx-024", "group": "aadhaar_grouped_noctx", "split": "test", "text": "KYC identifier 9851 5523 1009 was submitted.", "spans": [{"type": "aadhaar", "start": 15, "end": 29}]}
+{"id": "aadhaar_grouped_noctx-025", "group": "aadhaar_grouped_noctx", "split": "dev", "text": "Identity proof: 4574 2587 9708", "spans": [{"type": "aadhaar", "start": 16, "end": 30}]}
+{"id": "aadhaar_bare_ctx-001", "group": "aadhaar_bare_ctx", "split": "dev", "text": "My Aadhaar number is 525625558015.", "spans": [{"type": "aadhaar", "start": 21, "end": 33}]}
+{"id": "aadhaar_bare_ctx-002", "group": "aadhaar_bare_ctx", "split": "test", "text": "UID: 856640815221", "spans": [{"type": "aadhaar", "start": 5, "end": 17}]}
+{"id": "aadhaar_bare_ctx-003", "group": "aadhaar_bare_ctx", "split": "dev", "text": "Aadhaar card no 618338139225 attached.", "spans": [{"type": "aadhaar", "start": 16, "end": 28}]}
+{"id": "aadhaar_bare_ctx-004", "group": "aadhaar_bare_ctx", "split": "test", "text": "Please link 942335496436 to my Aadhaar profile.", "spans": [{"type": "aadhaar", "start": 12, "end": 24}]}
+{"id": "aadhaar_bare_ctx-005", "group": "aadhaar_bare_ctx", "split": "dev", "text": "Enrolment number 702670135078 was issued in 2019.", "spans": [{"type": "aadhaar", "start": 17, "end": 29}]}
+{"id": "aadhaar_bare_ctx-006", "group": "aadhaar_bare_ctx", "split": "test", "text": "My Aadhaar number is 579505607580.", "spans": [{"type": "aadhaar", "start": 21, "end": 33}]}
+{"id": "aadhaar_bare_ctx-007", "group": "aadhaar_bare_ctx", "split": "dev", "text": "UID: 974685452387", "spans": [{"type": "aadhaar", "start": 5, "end": 17}]}
+{"id": "aadhaar_bare_ctx-008", "group": "aadhaar_bare_ctx", "split": "test", "text": "Aadhaar card no 865228737817 attached.", "spans": [{"type": "aadhaar", "start": 16, "end": 28}]}
+{"id": "aadhaar_bare_ctx-009", "group": "aadhaar_bare_ctx", "split": "dev", "text": "Please link 616321945390 to my Aadhaar profile.", "spans": [{"type": "aadhaar", "start": 12, "end": 24}]}
+{"id": "aadhaar_bare_ctx-010", "group": "aadhaar_bare_ctx", "split": "test", "text": "Enrolment number 660523620506 was issued in 2019.", "spans": [{"type": "aadhaar", "start": 17, "end": 29}]}
+{"id": "aadhaar_bare_ctx-011", "group": "aadhaar_bare_ctx", "split": "dev", "text": "My Aadhaar number is 668543141808.", "spans": [{"type": "aadhaar", "start": 21, "end": 33}]}
+{"id": "aadhaar_bare_ctx-012", "group": "aadhaar_bare_ctx", "split": "test", "text": "UID: 796888461075", "spans": [{"type": "aadhaar", "start": 5, "end": 17}]}
+{"id": "aadhaar_bare_ctx-013", "group": "aadhaar_bare_ctx", "split": "dev", "text": "Aadhaar card no 728939753185 attached.", "spans": [{"type": "aadhaar", "start": 16, "end": 28}]}
+{"id": "aadhaar_bare_ctx-014", "group": "aadhaar_bare_ctx", "split": "test", "text": "Please link 549861760785 to my Aadhaar profile.", "spans": [{"type": "aadhaar", "start": 12, "end": 24}]}
+{"id": "aadhaar_bare_ctx-015", "group": "aadhaar_bare_ctx", "split": "dev", "text": "Enrolment number 495728081835 was issued in 2019.", "spans": [{"type": "aadhaar", "start": 17, "end": 29}]}
+{"id": "aadhaar_bare_ctx-016", "group": "aadhaar_bare_ctx", "split": "test", "text": "My Aadhaar number is 527039125074.", "spans": [{"type": "aadhaar", "start": 21, "end": 33}]}
+{"id": "aadhaar_bare_ctx-017", "group": "aadhaar_bare_ctx", "split": "dev", "text": "UID: 994967000255", "spans": [{"type": "aadhaar", "start": 5, "end": 17}]}
+{"id": "aadhaar_bare_ctx-018", "group": "aadhaar_bare_ctx", "split": "test", "text": "Aadhaar card no 871597129664 attached.", "spans": [{"type": "aadhaar", "start": 16, "end": 28}]}
+{"id": "aadhaar_bare_ctx-019", "group": "aadhaar_bare_ctx", "split": "dev", "text": "Please link 260697978452 to my Aadhaar profile.", "spans": [{"type": "aadhaar", "start": 12, "end": 24}]}
+{"id": "aadhaar_bare_ctx-020", "group": "aadhaar_bare_ctx", "split": "test", "text": "Enrolment number 841551692505 was issued in 2019.", "spans": [{"type": "aadhaar", "start": 17, "end": 29}]}
+{"id": "aadhaar_bare_ctx-021", "group": "aadhaar_bare_ctx", "split": "dev", "text": "My Aadhaar number is 258651971451.", "spans": [{"type": "aadhaar", "start": 21, "end": 33}]}
+{"id": "aadhaar_bare_ctx-022", "group": "aadhaar_bare_ctx", "split": "test", "text": "UID: 898724673629", "spans": [{"type": "aadhaar", "start": 5, "end": 17}]}
+{"id": "aadhaar_bare_ctx-023", "group": "aadhaar_bare_ctx", "split": "dev", "text": "Aadhaar card no 570524419168 attached.", "spans": [{"type": "aadhaar", "start": 16, "end": 28}]}
+{"id": "aadhaar_bare_ctx-024", "group": "aadhaar_bare_ctx", "split": "test", "text": "Please link 613789347280 to my Aadhaar profile.", "spans": [{"type": "aadhaar", "start": 12, "end": 24}]}
+{"id": "aadhaar_bare_ctx-025", "group": "aadhaar_bare_ctx", "split": "dev", "text": "Enrolment number 706562626211 was issued in 2019.", "spans": [{"type": "aadhaar", "start": 17, "end": 29}]}
+{"id": "aadhaar_bare_noctx-001", "group": "aadhaar_bare_noctx", "split": "dev", "text": "The number on the card reads 746365580404.", "spans": [{"type": "aadhaar", "start": 29, "end": 41}]}
+{"id": "aadhaar_bare_noctx-002", "group": "aadhaar_bare_noctx", "split": "test", "text": "My ID is 915582658654 as per the document.", "spans": [{"type": "aadhaar", "start": 9, "end": 21}]}
+{"id": "aadhaar_bare_noctx-003", "group": "aadhaar_bare_noctx", "split": "dev", "text": "Verify the applicant with 442251595468.", "spans": [{"type": "aadhaar", "start": 26, "end": 38}]}
+{"id": "aadhaar_bare_noctx-004", "group": "aadhaar_bare_noctx", "split": "test", "text": "KYC identifier 523242220959 was submitted.", "spans": [{"type": "aadhaar", "start": 15, "end": 27}]}
+{"id": "aadhaar_bare_noctx-005", "group": "aadhaar_bare_noctx", "split": "dev", "text": "Identity proof: 895010132807", "spans": [{"type": "aadhaar", "start": 16, "end": 28}]}
+{"id": "aadhaar_bare_noctx-006", "group": "aadhaar_bare_noctx", "split": "test", "text": "The number on the card reads 821819512512.", "spans": [{"type": "aadhaar", "start": 29, "end": 41}]}
+{"id": "aadhaar_bare_noctx-007", "group": "aadhaar_bare_noctx", "split": "dev", "text": "My ID is 578173566188 as per the document.", "spans": [{"type": "aadhaar", "start": 9, "end": 21}]}
+{"id": "aadhaar_bare_noctx-008", "group": "aadhaar_bare_noctx", "split": "test", "text": "Verify the applicant with 606628954677.", "spans": [{"type": "aadhaar", "start": 26, "end": 38}]}
+{"id": "aadhaar_bare_noctx-009", "group": "aadhaar_bare_noctx", "split": "dev", "text": "KYC identifier 864522329327 was submitted.", "spans": [{"type": "aadhaar", "start": 15, "end": 27}]}
+{"id": "aadhaar_bare_noctx-010", "group": "aadhaar_bare_noctx", "split": "test", "text": "Identity proof: 555505275292", "spans": [{"type": "aadhaar", "start": 16, "end": 28}]}
+{"id": "aadhaar_bare_noctx-011", "group": "aadhaar_bare_noctx", "split": "dev", "text": "The number on the card reads 521685552329.", "spans": [{"type": "aadhaar", "start": 29, "end": 41}]}
+{"id": "aadhaar_bare_noctx-012", "group": "aadhaar_bare_noctx", "split": "test", "text": "My ID is 858511693233 as per the document.", "spans": [{"type": "aadhaar", "start": 9, "end": 21}]}
+{"id": "aadhaar_bare_noctx-013", "group": "aadhaar_bare_noctx", "split": "dev", "text": "Verify the applicant with 524208266909.", "spans": [{"type": "aadhaar", "start": 26, "end": 38}]}
+{"id": "aadhaar_bare_noctx-014", "group": "aadhaar_bare_noctx", "split": "test", "text": "KYC identifier 708697980895 was submitted.", "spans": [{"type": "aadhaar", "start": 15, "end": 27}]}
+{"id": "aadhaar_bare_noctx-015", "group": "aadhaar_bare_noctx", "split": "dev", "text": "Identity proof: 730833719298", "spans": [{"type": "aadhaar", "start": 16, "end": 28}]}
+{"id": "aadhaar_bare_noctx-016", "group": "aadhaar_bare_noctx", "split": "test", "text": "The number on the card reads 387940269963.", "spans": [{"type": "aadhaar", "start": 29, "end": 41}]}
+{"id": "aadhaar_bare_noctx-017", "group": "aadhaar_bare_noctx", "split": "dev", "text": "My ID is 654854651622 as per the document.", "spans": [{"type": "aadhaar", "start": 9, "end": 21}]}
+{"id": "aadhaar_bare_noctx-018", "group": "aadhaar_bare_noctx", "split": "test", "text": "Verify the applicant with 238906737652.", "spans": [{"type": "aadhaar", "start": 26, "end": 38}]}
+{"id": "aadhaar_bare_noctx-019", "group": "aadhaar_bare_noctx", "split": "dev", "text": "KYC identifier 743468579271 was submitted.", "spans": [{"type": "aadhaar", "start": 15, "end": 27}]}
+{"id": "aadhaar_bare_noctx-020", "group": "aadhaar_bare_noctx", "split": "test", "text": "Identity proof: 947468222652", "spans": [{"type": "aadhaar", "start": 16, "end": 28}]}
+{"id": "aadhaar_ctx_badchecksum-001", "group": "aadhaar_ctx_badchecksum", "split": "dev", "text": "My Aadhaar number is 8124 4318 0056.", "spans": [{"type": "aadhaar", "start": 21, "end": 35}]}
+{"id": "aadhaar_ctx_badchecksum-002", "group": "aadhaar_ctx_badchecksum", "split": "test", "text": "UID: 783349901246", "spans": [{"type": "aadhaar", "start": 5, "end": 17}]}
+{"id": "aadhaar_ctx_badchecksum-003", "group": "aadhaar_ctx_badchecksum", "split": "dev", "text": "Aadhaar card no 245733906118 attached.", "spans": [{"type": "aadhaar", "start": 16, "end": 28}]}
+{"id": "aadhaar_ctx_badchecksum-004", "group": "aadhaar_ctx_badchecksum", "split": "test", "text": "Please link 882937378046 to my Aadhaar profile.", "spans": [{"type": "aadhaar", "start": 12, "end": 24}]}
+{"id": "aadhaar_ctx_badchecksum-005", "group": "aadhaar_ctx_badchecksum", "split": "dev", "text": "Enrolment number 5942 4913 0300 was issued in 2019.", "spans": [{"type": "aadhaar", "start": 17, "end": 31}]}
+{"id": "aadhaar_ctx_badchecksum-006", "group": "aadhaar_ctx_badchecksum", "split": "test", "text": "My Aadhaar number is 570215210904.", "spans": [{"type": "aadhaar", "start": 21, "end": 33}]}
+{"id": "aadhaar_ctx_badchecksum-007", "group": "aadhaar_ctx_badchecksum", "split": "dev", "text": "UID: 393722845126", "spans": [{"type": "aadhaar", "start": 5, "end": 17}]}
+{"id": "aadhaar_ctx_badchecksum-008", "group": "aadhaar_ctx_badchecksum", "split": "test", "text": "Aadhaar card no 3607 4991 4506 attached.", "spans": [{"type": "aadhaar", "start": 16, "end": 30}]}
+{"id": "aadhaar_ctx_badchecksum-009", "group": "aadhaar_ctx_badchecksum", "split": "dev", "text": "Please link 606486626603 to my Aadhaar profile.", "spans": [{"type": "aadhaar", "start": 12, "end": 24}]}
+{"id": "aadhaar_ctx_badchecksum-010", "group": "aadhaar_ctx_badchecksum", "split": "test", "text": "Enrolment number 671092396351 was issued in 2019.", "spans": [{"type": "aadhaar", "start": 17, "end": 29}]}
+{"id": "aadhaar_ctx_badchecksum-011", "group": "aadhaar_ctx_badchecksum", "split": "dev", "text": "My Aadhaar number is 5460 4949 8646.", "spans": [{"type": "aadhaar", "start": 21, "end": 35}]}
+{"id": "aadhaar_ctx_badchecksum-012", "group": "aadhaar_ctx_badchecksum", "split": "test", "text": "UID: 366310347582", "spans": [{"type": "aadhaar", "start": 5, "end": 17}]}
+{"id": "aadhaar_ctx_badchecksum-013", "group": "aadhaar_ctx_badchecksum", "split": "dev", "text": "Aadhaar card no 3279 6227 6462 attached.", "spans": [{"type": "aadhaar", "start": 16, "end": 30}]}
+{"id": "aadhaar_ctx_badchecksum-014", "group": "aadhaar_ctx_badchecksum", "split": "test", "text": "Please link 6489 3171 2977 to my Aadhaar profile.", "spans": [{"type": "aadhaar", "start": 12, "end": 26}]}
+{"id": "aadhaar_ctx_badchecksum-015", "group": "aadhaar_ctx_badchecksum", "split": "dev", "text": "Enrolment number 624948845122 was issued in 2019.", "spans": [{"type": "aadhaar", "start": 17, "end": 29}]}
+{"id": "pan_upper-001", "group": "pan_upper", "split": "dev", "text": "PAN: MXITN8206J", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_upper-002", "group": "pan_upper", "split": "test", "text": "Her PAN is HSPAN1388U for the ITR.", "spans": [{"type": "pan", "start": 11, "end": 21}]}
+{"id": "pan_upper-003", "group": "pan_upper", "split": "dev", "text": "Please attach the PAN card DGLTG9997O.", "spans": [{"type": "pan", "start": 27, "end": 37}]}
+{"id": "pan_upper-004", "group": "pan_upper", "split": "test", "text": "Vendor tax registration FGWGF8824C verified.", "spans": [{"type": "pan", "start": 24, "end": 34}]}
+{"id": "pan_upper-005", "group": "pan_upper", "split": "dev", "text": "Permanent account number RGPPJ5480F.", "spans": [{"type": "pan", "start": 25, "end": 35}]}
+{"id": "pan_upper-006", "group": "pan_upper", "split": "test", "text": "PAN: XHXGZ7431W", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_upper-007", "group": "pan_upper", "split": "dev", "text": "Her PAN is KBMJJ9586J for the ITR.", "spans": [{"type": "pan", "start": 11, "end": 21}]}
+{"id": "pan_upper-008", "group": "pan_upper", "split": "test", "text": "Please attach the PAN card MORGU1405D.", "spans": [{"type": "pan", "start": 27, "end": 37}]}
+{"id": "pan_upper-009", "group": "pan_upper", "split": "dev", "text": "Vendor tax registration BNVCV7099V verified.", "spans": [{"type": "pan", "start": 24, "end": 34}]}
+{"id": "pan_upper-010", "group": "pan_upper", "split": "test", "text": "Permanent account number YDCLO8220K.", "spans": [{"type": "pan", "start": 25, "end": 35}]}
+{"id": "pan_upper-011", "group": "pan_upper", "split": "dev", "text": "PAN: LNKJB0150N", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_upper-012", "group": "pan_upper", "split": "test", "text": "Her PAN is IBALW1971L for the ITR.", "spans": [{"type": "pan", "start": 11, "end": 21}]}
+{"id": "pan_upper-013", "group": "pan_upper", "split": "dev", "text": "Please attach the PAN card IJHAQ4959T.", "spans": [{"type": "pan", "start": 27, "end": 37}]}
+{"id": "pan_upper-014", "group": "pan_upper", "split": "test", "text": "Vendor tax registration IWFHN2349Q verified.", "spans": [{"type": "pan", "start": 24, "end": 34}]}
+{"id": "pan_upper-015", "group": "pan_upper", "split": "dev", "text": "Permanent account number RRJAY9652G.", "spans": [{"type": "pan", "start": 25, "end": 35}]}
+{"id": "pan_upper-016", "group": "pan_upper", "split": "test", "text": "PAN: GLTBO8449L", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_upper-017", "group": "pan_upper", "split": "dev", "text": "Her PAN is BSGJY9077C for the ITR.", "spans": [{"type": "pan", "start": 11, "end": 21}]}
+{"id": "pan_upper-018", "group": "pan_upper", "split": "test", "text": "Please attach the PAN card OMMPT9649B.", "spans": [{"type": "pan", "start": 27, "end": 37}]}
+{"id": "pan_upper-019", "group": "pan_upper", "split": "dev", "text": "Vendor tax registration BYSCL0971E verified.", "spans": [{"type": "pan", "start": 24, "end": 34}]}
+{"id": "pan_upper-020", "group": "pan_upper", "split": "test", "text": "Permanent account number XZULG2242C.", "spans": [{"type": "pan", "start": 25, "end": 35}]}
+{"id": "pan_upper-021", "group": "pan_upper", "split": "dev", "text": "PAN: NBCBB6221X", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_upper-022", "group": "pan_upper", "split": "test", "text": "Her PAN is YXUCM4462U for the ITR.", "spans": [{"type": "pan", "start": 11, "end": 21}]}
+{"id": "pan_upper-023", "group": "pan_upper", "split": "dev", "text": "Please attach the PAN card OSCJG7756A.", "spans": [{"type": "pan", "start": 27, "end": 37}]}
+{"id": "pan_upper-024", "group": "pan_upper", "split": "test", "text": "Vendor tax registration SBNPW2697T verified.", "spans": [{"type": "pan", "start": 24, "end": 34}]}
+{"id": "pan_upper-025", "group": "pan_upper", "split": "dev", "text": "Permanent account number SLXCF1808S.", "spans": [{"type": "pan", "start": 25, "end": 35}]}
+{"id": "pan_upper-026", "group": "pan_upper", "split": "test", "text": "PAN: BESGC1949P", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_upper-027", "group": "pan_upper", "split": "dev", "text": "Her PAN is HZTAP5801D for the ITR.", "spans": [{"type": "pan", "start": 11, "end": 21}]}
+{"id": "pan_upper-028", "group": "pan_upper", "split": "test", "text": "Please attach the PAN card XWWFK8189I.", "spans": [{"type": "pan", "start": 27, "end": 37}]}
+{"id": "pan_upper-029", "group": "pan_upper", "split": "dev", "text": "Vendor tax registration OGUJF6355Z verified.", "spans": [{"type": "pan", "start": 24, "end": 34}]}
+{"id": "pan_upper-030", "group": "pan_upper", "split": "test", "text": "Permanent account number BXPBM9381J.", "spans": [{"type": "pan", "start": 25, "end": 35}]}
+{"id": "pan_upper-031", "group": "pan_upper", "split": "dev", "text": "PAN: CKGBZ8415X", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_upper-032", "group": "pan_upper", "split": "test", "text": "Her PAN is EMHJH8859Q for the ITR.", "spans": [{"type": "pan", "start": 11, "end": 21}]}
+{"id": "pan_upper-033", "group": "pan_upper", "split": "dev", "text": "Please attach the PAN card OCYBV8408J.", "spans": [{"type": "pan", "start": 27, "end": 37}]}
+{"id": "pan_upper-034", "group": "pan_upper", "split": "test", "text": "Vendor tax registration LIRJJ1205W verified.", "spans": [{"type": "pan", "start": 24, "end": 34}]}
+{"id": "pan_upper-035", "group": "pan_upper", "split": "dev", "text": "Permanent account number SGWHM8444I.", "spans": [{"type": "pan", "start": 25, "end": 35}]}
+{"id": "pan_upper-036", "group": "pan_upper", "split": "test", "text": "PAN: QQGLW6532E", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_upper-037", "group": "pan_upper", "split": "dev", "text": "Her PAN is HGLAY9259R for the ITR.", "spans": [{"type": "pan", "start": 11, "end": 21}]}
+{"id": "pan_upper-038", "group": "pan_upper", "split": "test", "text": "Please attach the PAN card AGPFH8157T.", "spans": [{"type": "pan", "start": 27, "end": 37}]}
+{"id": "pan_upper-039", "group": "pan_upper", "split": "dev", "text": "Vendor tax registration MDTPU6705F verified.", "spans": [{"type": "pan", "start": 24, "end": 34}]}
+{"id": "pan_upper-040", "group": "pan_upper", "split": "test", "text": "Permanent account number BBRAI8357W.", "spans": [{"type": "pan", "start": 25, "end": 35}]}
+{"id": "pan_lower_ctx-001", "group": "pan_lower_ctx", "split": "dev", "text": "pan no wrpha1562n please", "spans": [{"type": "pan", "start": 7, "end": 17}]}
+{"id": "pan_lower_ctx-002", "group": "pan_lower_ctx", "split": "test", "text": "my pan is dptle3116e", "spans": [{"type": "pan", "start": 10, "end": 20}]}
+{"id": "pan_lower_ctx-003", "group": "pan_lower_ctx", "split": "dev", "text": "PAN card - rqrtn3836v", "spans": [{"type": "pan", "start": 11, "end": 21}]}
+{"id": "pan_lower_ctx-004", "group": "pan_lower_ctx", "split": "test", "text": "pan no fbqfe8885q please", "spans": [{"type": "pan", "start": 7, "end": 17}]}
+{"id": "pan_lower_ctx-005", "group": "pan_lower_ctx", "split": "dev", "text": "my pan is ojgti3544w", "spans": [{"type": "pan", "start": 10, "end": 20}]}
+{"id": "pan_lower_ctx-006", "group": "pan_lower_ctx", "split": "test", "text": "PAN card - rbzlx9121d", "spans": [{"type": "pan", "start": 11, "end": 21}]}
+{"id": "pan_lower_ctx-007", "group": "pan_lower_ctx", "split": "dev", "text": "pan no oholl1829z please", "spans": [{"type": "pan", "start": 7, "end": 17}]}
+{"id": "pan_lower_ctx-008", "group": "pan_lower_ctx", "split": "test", "text": "my pan is qyetm0868j", "spans": [{"type": "pan", "start": 10, "end": 20}]}
+{"id": "pan_lower_ctx-009", "group": "pan_lower_ctx", "split": "dev", "text": "PAN card - llmcd8462q", "spans": [{"type": "pan", "start": 11, "end": 21}]}
+{"id": "pan_lower_ctx-010", "group": "pan_lower_ctx", "split": "test", "text": "pan no rzpbf0785e please", "spans": [{"type": "pan", "start": 7, "end": 17}]}
+{"id": "pan_lower_ctx-011", "group": "pan_lower_ctx", "split": "dev", "text": "my pan is bwsbx3066h", "spans": [{"type": "pan", "start": 10, "end": 20}]}
+{"id": "pan_lower_ctx-012", "group": "pan_lower_ctx", "split": "test", "text": "PAN card - yvgta8195e", "spans": [{"type": "pan", "start": 11, "end": 21}]}
+{"id": "pan_lower_ctx-013", "group": "pan_lower_ctx", "split": "dev", "text": "pan no qmwje0727c please", "spans": [{"type": "pan", "start": 7, "end": 17}]}
+{"id": "pan_lower_ctx-014", "group": "pan_lower_ctx", "split": "test", "text": "my pan is raxts4702f", "spans": [{"type": "pan", "start": 10, "end": 20}]}
+{"id": "pan_lower_ctx-015", "group": "pan_lower_ctx", "split": "dev", "text": "PAN card - hstls9407u", "spans": [{"type": "pan", "start": 11, "end": 21}]}
+{"id": "pan_lower_noctx-001", "group": "pan_lower_noctx", "split": "dev", "text": "The tax code xiibb5466u was mentioned.", "spans": [{"type": "pan", "start": 13, "end": 23}]}
+{"id": "pan_lower_noctx-002", "group": "pan_lower_noctx", "split": "test", "text": "The tax code alcgi2873v was mentioned.", "spans": [{"type": "pan", "start": 13, "end": 23}]}
+{"id": "pan_lower_noctx-003", "group": "pan_lower_noctx", "split": "dev", "text": "The tax code brffh0516e was mentioned.", "spans": [{"type": "pan", "start": 13, "end": 23}]}
+{"id": "pan_lower_noctx-004", "group": "pan_lower_noctx", "split": "test", "text": "The tax code uqjhb4383f was mentioned.", "spans": [{"type": "pan", "start": 13, "end": 23}]}
+{"id": "pan_lower_noctx-005", "group": "pan_lower_noctx", "split": "dev", "text": "The tax code zifho8232u was mentioned.", "spans": [{"type": "pan", "start": 13, "end": 23}]}
+{"id": "pan_lower_noctx-006", "group": "pan_lower_noctx", "split": "test", "text": "The tax code isbfd2413q was mentioned.", "spans": [{"type": "pan", "start": 13, "end": 23}]}
+{"id": "person-001", "group": "person", "split": "dev", "text": "Please escalate the case raised by Divya Mishra.", "spans": [{"type": "person", "start": 35, "end": 47}]}
+{"id": "person-002", "group": "person", "split": "test", "text": "Meeting with Harish Shetty is at 3 pm.", "spans": [{"type": "person", "start": 13, "end": 26}]}
+{"id": "person-003", "group": "person", "split": "dev", "text": "Sarah Walker approved the purchase order.", "spans": [{"type": "person", "start": 0, "end": 12}]}
+{"id": "person-004", "group": "person", "split": "test", "text": "The complaint was filed by Rekha Verma last week.", "spans": [{"type": "person", "start": 27, "end": 38}]}
+{"id": "person-005", "group": "person", "split": "dev", "text": "Ask Daniel Walker about the delivery.", "spans": [{"type": "person", "start": 4, "end": 17}]}
+{"id": "person-006", "group": "person", "split": "test", "text": "Assign the ticket to Nikhil Kumar.", "spans": [{"type": "person", "start": 21, "end": 33}]}
+{"id": "person-007", "group": "person", "split": "dev", "text": "Please escalate the case raised by Karen Baker.", "spans": [{"type": "person", "start": 35, "end": 46}]}
+{"id": "person-008", "group": "person", "split": "test", "text": "Meeting with Amit Sharma is at 3 pm.", "spans": [{"type": "person", "start": 13, "end": 24}]}
+{"id": "person-009", "group": "person", "split": "dev", "text": "Harish Desai approved the purchase order.", "spans": [{"type": "person", "start": 0, "end": 12}]}
+{"id": "person-010", "group": "person", "split": "test", "text": "The complaint was filed by James Williams last week.", "spans": [{"type": "person", "start": 27, "end": 41}]}
+{"id": "person-011", "group": "person", "split": "dev", "text": "Ask Jessica Wright about the delivery.", "spans": [{"type": "person", "start": 4, "end": 18}]}
+{"id": "person-012", "group": "person", "split": "test", "text": "Assign the ticket to Karen Wilson.", "spans": [{"type": "person", "start": 21, "end": 33}]}
+{"id": "person-013", "group": "person", "split": "dev", "text": "Please escalate the case raised by Anjali Bose.", "spans": [{"type": "person", "start": 35, "end": 46}]}
+{"id": "person-014", "group": "person", "split": "test", "text": "Meeting with Richard Williams is at 3 pm.", "spans": [{"type": "person", "start": 13, "end": 29}]}
+{"id": "person-015", "group": "person", "split": "dev", "text": "Vikram Nair approved the purchase order.", "spans": [{"type": "person", "start": 0, "end": 11}]}
+{"id": "person-016", "group": "person", "split": "test", "text": "The complaint was filed by Patricia Moore last week.", "spans": [{"type": "person", "start": 27, "end": 41}]}
+{"id": "person-017", "group": "person", "split": "dev", "text": "Ask Gaurav Thakur about the delivery.", "spans": [{"type": "person", "start": 4, "end": 17}]}
+{"id": "person-018", "group": "person", "split": "test", "text": "Assign the ticket to Karthik Das.", "spans": [{"type": "person", "start": 21, "end": 32}]}
+{"id": "person-019", "group": "person", "split": "dev", "text": "Please escalate the case raised by Sarah Clark.", "spans": [{"type": "person", "start": 35, "end": 46}]}
+{"id": "person-020", "group": "person", "split": "test", "text": "Meeting with Daniel Allen is at 3 pm.", "spans": [{"type": "person", "start": 13, "end": 25}]}
+{"id": "person-021", "group": "person", "split": "dev", "text": "Sneha Kulkarni approved the purchase order.", "spans": [{"type": "person", "start": 0, "end": 14}]}
+{"id": "person-022", "group": "person", "split": "test", "text": "The complaint was filed by Anjali Das last week.", "spans": [{"type": "person", "start": 27, "end": 37}]}
+{"id": "person-023", "group": "person", "split": "dev", "text": "Ask Ishita Kumar about the delivery.", "spans": [{"type": "person", "start": 4, "end": 16}]}
+{"id": "person-024", "group": "person", "split": "test", "text": "Assign the ticket to Matthew Taylor.", "spans": [{"type": "person", "start": 21, "end": 35}]}
+{"id": "person-025", "group": "person", "split": "dev", "text": "Please escalate the case raised by Ryan Jackson.", "spans": [{"type": "person", "start": 35, "end": 47}]}
+{"id": "person-026", "group": "person", "split": "test", "text": "Meeting with Rahul Mehta is at 3 pm.", "spans": [{"type": "person", "start": 13, "end": 24}]}
+{"id": "person-027", "group": "person", "split": "dev", "text": "Ananya Joshi approved the purchase order.", "spans": [{"type": "person", "start": 0, "end": 12}]}
+{"id": "person-028", "group": "person", "split": "test", "text": "The complaint was filed by Patricia Allen last week.", "spans": [{"type": "person", "start": 27, "end": 41}]}
+{"id": "person-029", "group": "person", "split": "dev", "text": "Ask Karthik Verma about the delivery.", "spans": [{"type": "person", "start": 4, "end": 17}]}
+{"id": "person-030", "group": "person", "split": "test", "text": "Assign the ticket to Pooja Kumar.", "spans": [{"type": "person", "start": 21, "end": 32}]}
+{"id": "person-031", "group": "person", "split": "dev", "text": "Please escalate the case raised by Sunita Kapoor.", "spans": [{"type": "person", "start": 35, "end": 48}]}
+{"id": "person-032", "group": "person", "split": "test", "text": "Meeting with Divya Chopra is at 3 pm.", "spans": [{"type": "person", "start": 13, "end": 25}]}
+{"id": "person-033", "group": "person", "split": "dev", "text": "Lakshmi Mishra approved the purchase order.", "spans": [{"type": "person", "start": 0, "end": 14}]}
+{"id": "person-034", "group": "person", "split": "test", "text": "The complaint was filed by John Adams last week.", "spans": [{"type": "person", "start": 27, "end": 37}]}
+{"id": "person-035", "group": "person", "split": "dev", "text": "Ask Emily Wilson about the delivery.", "spans": [{"type": "person", "start": 4, "end": 16}]}
+{"id": "person-036", "group": "person", "split": "test", "text": "Assign the ticket to Nikhil Kulkarni.", "spans": [{"type": "person", "start": 21, "end": 36}]}
+{"id": "person-037", "group": "person", "split": "dev", "text": "Please escalate the case raised by David Thompson.", "spans": [{"type": "person", "start": 35, "end": 49}]}
+{"id": "person-038", "group": "person", "split": "test", "text": "Meeting with Amit Das is at 3 pm.", "spans": [{"type": "person", "start": 13, "end": 21}]}
+{"id": "person-039", "group": "person", "split": "dev", "text": "David Wright approved the purchase order.", "spans": [{"type": "person", "start": 0, "end": 12}]}
+{"id": "person-040", "group": "person", "split": "test", "text": "The complaint was filed by Jessica Miller last week.", "spans": [{"type": "person", "start": 27, "end": 41}]}
+{"id": "person-041", "group": "person", "split": "dev", "text": "Ask Suresh Agarwal about the delivery.", "spans": [{"type": "person", "start": 4, "end": 18}]}
+{"id": "person-042", "group": "person", "split": "test", "text": "Assign the ticket to Kavya Reddy.", "spans": [{"type": "person", "start": 21, "end": 32}]}
+{"id": "person-043", "group": "person", "split": "dev", "text": "Please escalate the case raised by Elizabeth Wright.", "spans": [{"type": "person", "start": 35, "end": 51}]}
+{"id": "person-044", "group": "person", "split": "test", "text": "Meeting with Sneha Kumar is at 3 pm.", "spans": [{"type": "person", "start": 13, "end": 24}]}
+{"id": "person-045", "group": "person", "split": "dev", "text": "Neha Rao approved the purchase order.", "spans": [{"type": "person", "start": 0, "end": 8}]}
+{"id": "person-046", "group": "person", "split": "test", "text": "The complaint was filed by Sarah Davis last week.", "spans": [{"type": "person", "start": 27, "end": 38}]}
+{"id": "person-047", "group": "person", "split": "dev", "text": "Ask Daniel Brown about the delivery.", "spans": [{"type": "person", "start": 4, "end": 16}]}
+{"id": "person-048", "group": "person", "split": "test", "text": "Assign the ticket to Elizabeth Green.", "spans": [{"type": "person", "start": 21, "end": 36}]}
+{"id": "person-049", "group": "person", "split": "dev", "text": "Please escalate the case raised by Aarav Kumar.", "spans": [{"type": "person", "start": 35, "end": 46}]}
+{"id": "person-050", "group": "person", "split": "test", "text": "Meeting with Anjali Agarwal is at 3 pm.", "spans": [{"type": "person", "start": 13, "end": 27}]}
+{"id": "person-051", "group": "person", "split": "dev", "text": "Amit Agarwal approved the purchase order.", "spans": [{"type": "person", "start": 0, "end": 12}]}
+{"id": "person-052", "group": "person", "split": "test", "text": "The complaint was filed by Andrew Wilson last week.", "spans": [{"type": "person", "start": 27, "end": 40}]}
+{"id": "person-053", "group": "person", "split": "dev", "text": "Ask Karen Clark about the delivery.", "spans": [{"type": "person", "start": 4, "end": 15}]}
+{"id": "person-054", "group": "person", "split": "test", "text": "Assign the ticket to Richard Moore.", "spans": [{"type": "person", "start": 21, "end": 34}]}
+{"id": "person-055", "group": "person", "split": "dev", "text": "Please escalate the case raised by James Young.", "spans": [{"type": "person", "start": 35, "end": 46}]}
+{"id": "person-056", "group": "person", "split": "test", "text": "Meeting with Jessica Thompson is at 3 pm.", "spans": [{"type": "person", "start": 13, "end": 29}]}
+{"id": "person-057", "group": "person", "split": "dev", "text": "Joseph Taylor approved the purchase order.", "spans": [{"type": "person", "start": 0, "end": 13}]}
+{"id": "person-058", "group": "person", "split": "test", "text": "The complaint was filed by Manoj Bhat last week.", "spans": [{"type": "person", "start": 27, "end": 37}]}
+{"id": "person-059", "group": "person", "split": "dev", "text": "Ask Ishita Patel about the delivery.", "spans": [{"type": "person", "start": 4, "end": 16}]}
+{"id": "person-060", "group": "person", "split": "test", "text": "Assign the ticket to Robert Lewis.", "spans": [{"type": "person", "start": 21, "end": 33}]}
+{"id": "neg_order_10digit-001", "group": "neg_order_10digit", "split": "dev", "text": "Order 6558240965 shipped on Monday.", "spans": []}
+{"id": "neg_order_10digit-002", "group": "neg_order_10digit", "split": "test", "text": "Purchase order PO7760009855 is awaiting approval.", "spans": []}
+{"id": "neg_order_10digit-003", "group": "neg_order_10digit", "split": "dev", "text": "Invoice number 8324543290 is overdue.", "spans": []}
+{"id": "neg_order_10digit-004", "group": "neg_order_10digit", "split": "test", "text": "Case 3145822172 was escalated.", "spans": []}
+{"id": "neg_order_10digit-005", "group": "neg_order_10digit", "split": "dev", "text": "Order 8317371809 shipped on Monday.", "spans": []}
+{"id": "neg_order_10digit-006", "group": "neg_order_10digit", "split": "test", "text": "Purchase order PO8796088513 is awaiting approval.", "spans": []}
+{"id": "neg_order_10digit-007", "group": "neg_order_10digit", "split": "dev", "text": "Invoice number 6832338533 is overdue.", "spans": []}
+{"id": "neg_order_10digit-008", "group": "neg_order_10digit", "split": "test", "text": "Case 4262111372 was escalated.", "spans": []}
+{"id": "neg_order_10digit-009", "group": "neg_order_10digit", "split": "dev", "text": "Order 8823965204 shipped on Monday.", "spans": []}
+{"id": "neg_order_10digit-010", "group": "neg_order_10digit", "split": "test", "text": "Purchase order PO4870992194 is awaiting approval.", "spans": []}
+{"id": "neg_order_10digit-011", "group": "neg_order_10digit", "split": "dev", "text": "Invoice number 6931523964 is overdue.", "spans": []}
+{"id": "neg_order_10digit-012", "group": "neg_order_10digit", "split": "test", "text": "Case 4053808471 was escalated.", "spans": []}
+{"id": "neg_order_10digit-013", "group": "neg_order_10digit", "split": "dev", "text": "Order 6546503913 shipped on Monday.", "spans": []}
+{"id": "neg_order_10digit-014", "group": "neg_order_10digit", "split": "test", "text": "Purchase order PO9893647247 is awaiting approval.", "spans": []}
+{"id": "neg_order_10digit-015", "group": "neg_order_10digit", "split": "dev", "text": "Invoice number 7172345919 is overdue.", "spans": []}
+{"id": "neg_order_10digit-016", "group": "neg_order_10digit", "split": "test", "text": "Case 3721753652 was escalated.", "spans": []}
+{"id": "neg_order_10digit-017", "group": "neg_order_10digit", "split": "dev", "text": "Order 8745247652 shipped on Monday.", "spans": []}
+{"id": "neg_order_10digit-018", "group": "neg_order_10digit", "split": "test", "text": "Purchase order PO2885615737 is awaiting approval.", "spans": []}
+{"id": "neg_order_10digit-019", "group": "neg_order_10digit", "split": "dev", "text": "Invoice number 6447441906 is overdue.", "spans": []}
+{"id": "neg_order_10digit-020", "group": "neg_order_10digit", "split": "test", "text": "Case 4381896326 was escalated.", "spans": []}
+{"id": "neg_order_10digit-021", "group": "neg_order_10digit", "split": "dev", "text": "Order 9048363106 shipped on Monday.", "spans": []}
+{"id": "neg_order_10digit-022", "group": "neg_order_10digit", "split": "test", "text": "Purchase order PO9105512790 is awaiting approval.", "spans": []}
+{"id": "neg_order_10digit-023", "group": "neg_order_10digit", "split": "dev", "text": "Invoice number 7992898493 is overdue.", "spans": []}
+{"id": "neg_order_10digit-024", "group": "neg_order_10digit", "split": "test", "text": "Case 4867403432 was escalated.", "spans": []}
+{"id": "neg_order_10digit-025", "group": "neg_order_10digit", "split": "dev", "text": "Order 9540060796 shipped on Monday.", "spans": []}
+{"id": "neg_order_10digit-026", "group": "neg_order_10digit", "split": "test", "text": "Purchase order PO4483175563 is awaiting approval.", "spans": []}
+{"id": "neg_order_10digit-027", "group": "neg_order_10digit", "split": "dev", "text": "Invoice number 7728450045 is overdue.", "spans": []}
+{"id": "neg_order_10digit-028", "group": "neg_order_10digit", "split": "test", "text": "Case 4398531953 was escalated.", "spans": []}
+{"id": "neg_order_10digit-029", "group": "neg_order_10digit", "split": "dev", "text": "Order 9525120017 shipped on Monday.", "spans": []}
+{"id": "neg_order_10digit-030", "group": "neg_order_10digit", "split": "test", "text": "Purchase order PO4838242241 is awaiting approval.", "spans": []}
+{"id": "neg_order_10digit-031", "group": "neg_order_10digit", "split": "dev", "text": "Invoice number 7295276415 is overdue.", "spans": []}
+{"id": "neg_order_10digit-032", "group": "neg_order_10digit", "split": "test", "text": "Case 4779756315 was escalated.", "spans": []}
+{"id": "neg_order_10digit-033", "group": "neg_order_10digit", "split": "dev", "text": "Order 6715628196 shipped on Monday.", "spans": []}
+{"id": "neg_order_10digit-034", "group": "neg_order_10digit", "split": "test", "text": "Purchase order PO3482769499 is awaiting approval.", "spans": []}
+{"id": "neg_order_10digit-035", "group": "neg_order_10digit", "split": "dev", "text": "Invoice number 8144062202 is overdue.", "spans": []}
+{"id": "neg_order_10digit-036", "group": "neg_order_10digit", "split": "test", "text": "Case 4860424987 was escalated.", "spans": []}
+{"id": "neg_order_10digit-037", "group": "neg_order_10digit", "split": "dev", "text": "Order 7442011411 shipped on Monday.", "spans": []}
+{"id": "neg_order_10digit-038", "group": "neg_order_10digit", "split": "test", "text": "Purchase order PO1867281146 is awaiting approval.", "spans": []}
+{"id": "neg_order_10digit-039", "group": "neg_order_10digit", "split": "dev", "text": "Invoice number 6523477136 is overdue.", "spans": []}
+{"id": "neg_order_10digit-040", "group": "neg_order_10digit", "split": "test", "text": "Case 4028646699 was escalated.", "spans": []}
+{"id": "neg_12digit_valid_checksum-001", "group": "neg_12digit_valid_checksum", "split": "dev", "text": "Tracking number 661887467000 is in transit.", "spans": []}
+{"id": "neg_12digit_valid_checksum-002", "group": "neg_12digit_valid_checksum", "split": "test", "text": "Shipment ref 691282471047 was scanned at the depot.", "spans": []}
+{"id": "neg_12digit_valid_checksum-003", "group": "neg_12digit_valid_checksum", "split": "dev", "text": "Consignment 449987640744 left the warehouse.", "spans": []}
+{"id": "neg_12digit_valid_checksum-004", "group": "neg_12digit_valid_checksum", "split": "test", "text": "Tracking number 415864489952 is in transit.", "spans": []}
+{"id": "neg_12digit_valid_checksum-005", "group": "neg_12digit_valid_checksum", "split": "dev", "text": "Shipment ref 281954542509 was scanned at the depot.", "spans": []}
+{"id": "neg_12digit_valid_checksum-006", "group": "neg_12digit_valid_checksum", "split": "test", "text": "Consignment 962931260798 left the warehouse.", "spans": []}
+{"id": "neg_12digit_valid_checksum-007", "group": "neg_12digit_valid_checksum", "split": "dev", "text": "Tracking number 872032274745 is in transit.", "spans": []}
+{"id": "neg_12digit_valid_checksum-008", "group": "neg_12digit_valid_checksum", "split": "test", "text": "Shipment ref 542832862871 was scanned at the depot.", "spans": []}
+{"id": "neg_12digit_valid_checksum-009", "group": "neg_12digit_valid_checksum", "split": "dev", "text": "Consignment 398370387461 left the warehouse.", "spans": []}
+{"id": "neg_12digit_valid_checksum-010", "group": "neg_12digit_valid_checksum", "split": "test", "text": "Tracking number 375490558203 is in transit.", "spans": []}
+{"id": "neg_12digit_valid_checksum-011", "group": "neg_12digit_valid_checksum", "split": "dev", "text": "Shipment ref 644677527712 was scanned at the depot.", "spans": []}
+{"id": "neg_12digit_valid_checksum-012", "group": "neg_12digit_valid_checksum", "split": "test", "text": "Consignment 683508838254 left the warehouse.", "spans": []}
+{"id": "neg_12digit_valid_checksum-013", "group": "neg_12digit_valid_checksum", "split": "dev", "text": "Tracking number 990415107017 is in transit.", "spans": []}
+{"id": "neg_12digit_valid_checksum-014", "group": "neg_12digit_valid_checksum", "split": "test", "text": "Shipment ref 446949927725 was scanned at the depot.", "spans": []}
+{"id": "neg_12digit_valid_checksum-015", "group": "neg_12digit_valid_checksum", "split": "dev", "text": "Consignment 999908024237 left the warehouse.", "spans": []}
+{"id": "neg_12digit_valid_checksum-016", "group": "neg_12digit_valid_checksum", "split": "test", "text": "Tracking number 700458511902 is in transit.", "spans": []}
+{"id": "neg_12digit_valid_checksum-017", "group": "neg_12digit_valid_checksum", "split": "dev", "text": "Shipment ref 615011584159 was scanned at the depot.", "spans": []}
+{"id": "neg_12digit_valid_checksum-018", "group": "neg_12digit_valid_checksum", "split": "test", "text": "Consignment 555993005995 left the warehouse.", "spans": []}
+{"id": "neg_12digit_valid_checksum-019", "group": "neg_12digit_valid_checksum", "split": "dev", "text": "Tracking number 818923681896 is in transit.", "spans": []}
+{"id": "neg_12digit_valid_checksum-020", "group": "neg_12digit_valid_checksum", "split": "test", "text": "Shipment ref 499064776810 was scanned at the depot.", "spans": []}
+{"id": "neg_12digit_valid_checksum-021", "group": "neg_12digit_valid_checksum", "split": "dev", "text": "Consignment 932587784886 left the warehouse.", "spans": []}
+{"id": "neg_12digit_valid_checksum-022", "group": "neg_12digit_valid_checksum", "split": "test", "text": "Tracking number 670697846270 is in transit.", "spans": []}
+{"id": "neg_12digit_valid_checksum-023", "group": "neg_12digit_valid_checksum", "split": "dev", "text": "Shipment ref 389114176615 was scanned at the depot.", "spans": []}
+{"id": "neg_12digit_valid_checksum-024", "group": "neg_12digit_valid_checksum", "split": "test", "text": "Consignment 774804562606 left the warehouse.", "spans": []}
+{"id": "neg_12digit_valid_checksum-025", "group": "neg_12digit_valid_checksum", "split": "dev", "text": "Tracking number 497938156764 is in transit.", "spans": []}
+{"id": "neg_12digit_valid_checksum-026", "group": "neg_12digit_valid_checksum", "split": "test", "text": "Shipment ref 613087257638 was scanned at the depot.", "spans": []}
+{"id": "neg_12digit_valid_checksum-027", "group": "neg_12digit_valid_checksum", "split": "dev", "text": "Consignment 722367923302 left the warehouse.", "spans": []}
+{"id": "neg_12digit_valid_checksum-028", "group": "neg_12digit_valid_checksum", "split": "test", "text": "Tracking number 856474999821 is in transit.", "spans": []}
+{"id": "neg_12digit_valid_checksum-029", "group": "neg_12digit_valid_checksum", "split": "dev", "text": "Shipment ref 483721834322 was scanned at the depot.", "spans": []}
+{"id": "neg_12digit_valid_checksum-030", "group": "neg_12digit_valid_checksum", "split": "test", "text": "Consignment 407440293522 left the warehouse.", "spans": []}
+{"id": "neg_16digit_luhn_fail-001", "group": "neg_16digit_luhn_fail", "split": "dev", "text": "Batch 5520 9368 3986 5785 was archived.", "spans": []}
+{"id": "neg_16digit_luhn_fail-002", "group": "neg_16digit_luhn_fail", "split": "test", "text": "Batch 5781 8901 4121 4931 was archived.", "spans": []}
+{"id": "neg_16digit_luhn_fail-003", "group": "neg_16digit_luhn_fail", "split": "dev", "text": "Batch 4552 7448 7754 7271 was archived.", "spans": []}
+{"id": "neg_16digit_luhn_fail-004", "group": "neg_16digit_luhn_fail", "split": "test", "text": "Batch 5092 7075 2576 3982 was archived.", "spans": []}
+{"id": "neg_16digit_luhn_fail-005", "group": "neg_16digit_luhn_fail", "split": "dev", "text": "Batch 4052 7158 2235 9603 was archived.", "spans": []}
+{"id": "neg_16digit_luhn_fail-006", "group": "neg_16digit_luhn_fail", "split": "test", "text": "Batch 5174 0385 5358 3840 was archived.", "spans": []}
+{"id": "neg_16digit_luhn_fail-007", "group": "neg_16digit_luhn_fail", "split": "dev", "text": "Batch 5768 2442 3133 2855 was archived.", "spans": []}
+{"id": "neg_16digit_luhn_fail-008", "group": "neg_16digit_luhn_fail", "split": "test", "text": "Batch 5950 3143 7725 8145 was archived.", "spans": []}
+{"id": "neg_16digit_luhn_fail-009", "group": "neg_16digit_luhn_fail", "split": "dev", "text": "Batch 4426 8620 5018 9861 was archived.", "spans": []}
+{"id": "neg_16digit_luhn_fail-010", "group": "neg_16digit_luhn_fail", "split": "test", "text": "Batch 4689 7742 0265 6667 was archived.", "spans": []}
+{"id": "neg_16digit_luhn_fail-011", "group": "neg_16digit_luhn_fail", "split": "dev", "text": "Batch 5610 6697 3010 6915 was archived.", "spans": []}
+{"id": "neg_16digit_luhn_fail-012", "group": "neg_16digit_luhn_fail", "split": "test", "text": "Batch 4517 4664 6906 7815 was archived.", "spans": []}
+{"id": "neg_16digit_luhn_fail-013", "group": "neg_16digit_luhn_fail", "split": "dev", "text": "Batch 5666 1793 6537 1118 was archived.", "spans": []}
+{"id": "neg_16digit_luhn_fail-014", "group": "neg_16digit_luhn_fail", "split": "test", "text": "Batch 5916 8151 8026 3828 was archived.", "spans": []}
+{"id": "neg_16digit_luhn_fail-015", "group": "neg_16digit_luhn_fail", "split": "dev", "text": "Batch 5415 6236 7223 1592 was archived.", "spans": []}
+{"id": "neg_16digit_luhn_fail-016", "group": "neg_16digit_luhn_fail", "split": "test", "text": "Batch 4486 6239 8422 8556 was archived.", "spans": []}
+{"id": "neg_16digit_luhn_fail-017", "group": "neg_16digit_luhn_fail", "split": "dev", "text": "Batch 5751 4854 0335 4438 was archived.", "spans": []}
+{"id": "neg_16digit_luhn_fail-018", "group": "neg_16digit_luhn_fail", "split": "test", "text": "Batch 5456 2493 7305 1905 was archived.", "spans": []}
+{"id": "neg_16digit_luhn_fail-019", "group": "neg_16digit_luhn_fail", "split": "dev", "text": "Batch 4696 7961 5849 6534 was archived.", "spans": []}
+{"id": "neg_16digit_luhn_fail-020", "group": "neg_16digit_luhn_fail", "split": "test", "text": "Batch 5919 7458 7583 2826 was archived.", "spans": []}
+{"id": "neg_ssn_invalid_area-001", "group": "neg_ssn_invalid_area", "split": "dev", "text": "Part number 000-94-4764 is back-ordered.", "spans": []}
+{"id": "neg_ssn_invalid_area-002", "group": "neg_ssn_invalid_area", "split": "test", "text": "Part number 946-01-7045 is back-ordered.", "spans": []}
+{"id": "neg_ssn_invalid_area-003", "group": "neg_ssn_invalid_area", "split": "dev", "text": "Part number 983-29-8463 is back-ordered.", "spans": []}
+{"id": "neg_ssn_invalid_area-004", "group": "neg_ssn_invalid_area", "split": "test", "text": "Part number 666-13-5550 is back-ordered.", "spans": []}
+{"id": "neg_ssn_invalid_area-005", "group": "neg_ssn_invalid_area", "split": "dev", "text": "Part number 666-64-8727 is back-ordered.", "spans": []}
+{"id": "neg_ssn_invalid_area-006", "group": "neg_ssn_invalid_area", "split": "test", "text": "Part number 924-85-5085 is back-ordered.", "spans": []}
+{"id": "neg_ssn_invalid_area-007", "group": "neg_ssn_invalid_area", "split": "dev", "text": "Part number 000-42-2800 is back-ordered.", "spans": []}
+{"id": "neg_ssn_invalid_area-008", "group": "neg_ssn_invalid_area", "split": "test", "text": "Part number 990-03-9416 is back-ordered.", "spans": []}
+{"id": "neg_ssn_invalid_area-009", "group": "neg_ssn_invalid_area", "split": "dev", "text": "Part number 911-51-0170 is back-ordered.", "spans": []}
+{"id": "neg_ssn_invalid_area-010", "group": "neg_ssn_invalid_area", "split": "test", "text": "Part number 924-28-5832 is back-ordered.", "spans": []}
+{"id": "neg_ssn_invalid_area-011", "group": "neg_ssn_invalid_area", "split": "dev", "text": "Part number 900-25-5557 is back-ordered.", "spans": []}
+{"id": "neg_ssn_invalid_area-012", "group": "neg_ssn_invalid_area", "split": "test", "text": "Part number 000-79-4711 is back-ordered.", "spans": []}
+{"id": "neg_ssn_invalid_area-013", "group": "neg_ssn_invalid_area", "split": "dev", "text": "Part number 666-19-6511 is back-ordered.", "spans": []}
+{"id": "neg_ssn_invalid_area-014", "group": "neg_ssn_invalid_area", "split": "test", "text": "Part number 998-85-3472 is back-ordered.", "spans": []}
+{"id": "neg_ssn_invalid_area-015", "group": "neg_ssn_invalid_area", "split": "dev", "text": "Part number 666-69-2263 is back-ordered.", "spans": []}
+{"id": "neg_ssn_invalid_area-016", "group": "neg_ssn_invalid_area", "split": "test", "text": "Part number 900-87-1104 is back-ordered.", "spans": []}
+{"id": "neg_ssn_invalid_area-017", "group": "neg_ssn_invalid_area", "split": "dev", "text": "Part number 666-72-2437 is back-ordered.", "spans": []}
+{"id": "neg_ssn_invalid_area-018", "group": "neg_ssn_invalid_area", "split": "test", "text": "Part number 956-70-3225 is back-ordered.", "spans": []}
+{"id": "neg_ssn_invalid_area-019", "group": "neg_ssn_invalid_area", "split": "dev", "text": "Part number 935-03-6322 is back-ordered.", "spans": []}
+{"id": "neg_ssn_invalid_area-020", "group": "neg_ssn_invalid_area", "split": "test", "text": "Part number 988-13-4476 is back-ordered.", "spans": []}
+{"id": "neg_pan_shaped-001", "group": "neg_pan_shaped", "split": "dev", "text": "Catalogue code OSXRK7199C is discontinued.", "spans": []}
+{"id": "neg_pan_shaped-002", "group": "neg_pan_shaped", "split": "test", "text": "Catalogue code WTCIE0842I is discontinued.", "spans": []}
+{"id": "neg_pan_shaped-003", "group": "neg_pan_shaped", "split": "dev", "text": "Catalogue code VOMIF6890S is discontinued.", "spans": []}
+{"id": "neg_pan_shaped-004", "group": "neg_pan_shaped", "split": "test", "text": "Catalogue code AUQEB1728L is discontinued.", "spans": []}
+{"id": "neg_pan_shaped-005", "group": "neg_pan_shaped", "split": "dev", "text": "Catalogue code NFSYF2373R is discontinued.", "spans": []}
+{"id": "neg_pan_shaped-006", "group": "neg_pan_shaped", "split": "test", "text": "Catalogue code EEMXT5138C is discontinued.", "spans": []}
+{"id": "neg_pan_shaped-007", "group": "neg_pan_shaped", "split": "dev", "text": "Catalogue code HRWZZ5795E is discontinued.", "spans": []}
+{"id": "neg_pan_shaped-008", "group": "neg_pan_shaped", "split": "test", "text": "Catalogue code DTLIV0169N is discontinued.", "spans": []}
+{"id": "neg_pan_shaped-009", "group": "neg_pan_shaped", "split": "dev", "text": "Catalogue code UWCOM5309A is discontinued.", "spans": []}
+{"id": "neg_pan_shaped-010", "group": "neg_pan_shaped", "split": "test", "text": "Catalogue code AKGQU8335Q is discontinued.", "spans": []}
+{"id": "neg_pan_shaped-011", "group": "neg_pan_shaped", "split": "dev", "text": "Catalogue code DDLUJ9410R is discontinued.", "spans": []}
+{"id": "neg_pan_shaped-012", "group": "neg_pan_shaped", "split": "test", "text": "Catalogue code JAUOP0651U is discontinued.", "spans": []}
+{"id": "neg_pan_shaped-013", "group": "neg_pan_shaped", "split": "dev", "text": "Catalogue code HPPUO6675Y is discontinued.", "spans": []}
+{"id": "neg_pan_shaped-014", "group": "neg_pan_shaped", "split": "test", "text": "Catalogue code XEAQB8221Q is discontinued.", "spans": []}
+{"id": "neg_pan_shaped-015", "group": "neg_pan_shaped", "split": "dev", "text": "Catalogue code RXLZX5881B is discontinued.", "spans": []}
+{"id": "neg_pan_shaped-016", "group": "neg_pan_shaped", "split": "test", "text": "Catalogue code QOAYK5428O is discontinued.", "spans": []}
+{"id": "neg_pan_shaped-017", "group": "neg_pan_shaped", "split": "dev", "text": "Catalogue code JPTRH7515Q is discontinued.", "spans": []}
+{"id": "neg_pan_shaped-018", "group": "neg_pan_shaped", "split": "test", "text": "Catalogue code EZDVF6290C is discontinued.", "spans": []}
+{"id": "neg_pan_shaped-019", "group": "neg_pan_shaped", "split": "dev", "text": "Catalogue code KUUWR5220A is discontinued.", "spans": []}
+{"id": "neg_pan_shaped-020", "group": "neg_pan_shaped", "split": "test", "text": "Catalogue code FOHOA5682Z is discontinued.", "spans": []}
+{"id": "neg_pan_shaped-021", "group": "neg_pan_shaped", "split": "dev", "text": "Ref EQYG29310 needs review.", "spans": []}
+{"id": "neg_pan_shaped-022", "group": "neg_pan_shaped", "split": "test", "text": "Ref JGLC70613 needs review.", "spans": []}
+{"id": "neg_pan_shaped-023", "group": "neg_pan_shaped", "split": "dev", "text": "Ref YRVS63918 needs review.", "spans": []}
+{"id": "neg_pan_shaped-024", "group": "neg_pan_shaped", "split": "test", "text": "Ref CJVV30349 needs review.", "spans": []}
+{"id": "neg_pan_shaped-025", "group": "neg_pan_shaped", "split": "dev", "text": "Ref ZRBQ86846 needs review.", "spans": []}
+{"id": "neg_pan_shaped-026", "group": "neg_pan_shaped", "split": "test", "text": "Ref LSGL42320 needs review.", "spans": []}
+{"id": "neg_pan_shaped-027", "group": "neg_pan_shaped", "split": "dev", "text": "Ref MDLG85458 needs review.", "spans": []}
+{"id": "neg_pan_shaped-028", "group": "neg_pan_shaped", "split": "test", "text": "Ref DEWY85697 needs review.", "spans": []}
+{"id": "neg_pan_shaped-029", "group": "neg_pan_shaped", "split": "dev", "text": "Ref TGZD95690 needs review.", "spans": []}
+{"id": "neg_pan_shaped-030", "group": "neg_pan_shaped", "split": "test", "text": "Ref XYNI20805 needs review.", "spans": []}
+{"id": "neg_sku_pan_exact_shape-001", "group": "neg_sku_pan_exact_shape", "split": "dev", "text": "SKU NWWAC3255P restocked.", "spans": []}
+{"id": "neg_sku_pan_exact_shape-002", "group": "neg_sku_pan_exact_shape", "split": "test", "text": "SKU IIWPU0151Q restocked.", "spans": []}
+{"id": "neg_sku_pan_exact_shape-003", "group": "neg_sku_pan_exact_shape", "split": "dev", "text": "SKU ZSFTV5734G restocked.", "spans": []}
+{"id": "neg_sku_pan_exact_shape-004", "group": "neg_sku_pan_exact_shape", "split": "test", "text": "SKU EJZAG6364O restocked.", "spans": []}
+{"id": "neg_sku_pan_exact_shape-005", "group": "neg_sku_pan_exact_shape", "split": "dev", "text": "SKU TQKLU5556C restocked.", "spans": []}
+{"id": "neg_sku_pan_exact_shape-006", "group": "neg_sku_pan_exact_shape", "split": "test", "text": "SKU TXPHU5900K restocked.", "spans": []}
+{"id": "neg_sku_pan_exact_shape-007", "group": "neg_sku_pan_exact_shape", "split": "dev", "text": "SKU PCMGS2550N restocked.", "spans": []}
+{"id": "neg_sku_pan_exact_shape-008", "group": "neg_sku_pan_exact_shape", "split": "test", "text": "SKU RDJPW5901U restocked.", "spans": []}
+{"id": "neg_sku_pan_exact_shape-009", "group": "neg_sku_pan_exact_shape", "split": "dev", "text": "SKU BYVTK2333E restocked.", "spans": []}
+{"id": "neg_sku_pan_exact_shape-010", "group": "neg_sku_pan_exact_shape", "split": "test", "text": "SKU BCWPQ9856Z restocked.", "spans": []}
+{"id": "neg_capitalized-001", "group": "neg_capitalized", "split": "dev", "text": "Supplier Blue Harbor Ltd in Chennai requested an extension.", "spans": []}
+{"id": "neg_capitalized-002", "group": "neg_capitalized", "split": "test", "text": "Vendor Apex Freight Ltd in Ahmedabad requested an extension.", "spans": []}
+{"id": "neg_capitalized-003", "group": "neg_capitalized", "split": "dev", "text": "Customer Globex Industries in London requested an extension.", "spans": []}
+{"id": "neg_capitalized-004", "group": "neg_capitalized", "split": "test", "text": "Supplier Reliance Retail in Ahmedabad requested an extension.", "spans": []}
+{"id": "neg_capitalized-005", "group": "neg_capitalized", "split": "dev", "text": "Vendor Tata Steel in London requested an extension.", "spans": []}
+{"id": "neg_capitalized-006", "group": "neg_capitalized", "split": "test", "text": "Customer Larsen and Toubro in Chicago requested an extension.", "spans": []}
+{"id": "neg_capitalized-007", "group": "neg_capitalized", "split": "dev", "text": "Supplier Acme Corp in Chicago requested an extension.", "spans": []}
+{"id": "neg_capitalized-008", "group": "neg_capitalized", "split": "test", "text": "Vendor Northwind Traders in Chicago requested an extension.", "spans": []}
+{"id": "neg_capitalized-009", "group": "neg_capitalized", "split": "dev", "text": "Customer Zenith Logistics in Hyderabad requested an extension.", "spans": []}
+{"id": "neg_capitalized-010", "group": "neg_capitalized", "split": "test", "text": "Supplier Bharat Electricals in Chicago requested an extension.", "spans": []}
+{"id": "neg_capitalized-011", "group": "neg_capitalized", "split": "dev", "text": "Vendor Apex Freight Ltd in Chennai requested an extension.", "spans": []}
+{"id": "neg_capitalized-012", "group": "neg_capitalized", "split": "test", "text": "Customer Apex Freight Ltd in Ahmedabad requested an extension.", "spans": []}
+{"id": "neg_capitalized-013", "group": "neg_capitalized", "split": "dev", "text": "Supplier Globex Industries in Chennai requested an extension.", "spans": []}
+{"id": "neg_capitalized-014", "group": "neg_capitalized", "split": "test", "text": "Vendor Tata Steel in Singapore requested an extension.", "spans": []}
+{"id": "neg_capitalized-015", "group": "neg_capitalized", "split": "dev", "text": "Customer Apex Freight Ltd in Chicago requested an extension.", "spans": []}
+{"id": "neg_capitalized-016", "group": "neg_capitalized", "split": "test", "text": "Supplier Blue Harbor Ltd in Chennai requested an extension.", "spans": []}
+{"id": "neg_capitalized-017", "group": "neg_capitalized", "split": "dev", "text": "Vendor Blue Harbor Ltd in Mumbai requested an extension.", "spans": []}
+{"id": "neg_capitalized-018", "group": "neg_capitalized", "split": "test", "text": "Customer Bharat Electricals in London requested an extension.", "spans": []}
+{"id": "neg_capitalized-019", "group": "neg_capitalized", "split": "dev", "text": "Supplier Reliance Retail in Ahmedabad requested an extension.", "spans": []}
+{"id": "neg_capitalized-020", "group": "neg_capitalized", "split": "test", "text": "Vendor Blue Harbor Ltd in Bengaluru requested an extension.", "spans": []}
+{"id": "neg_capitalized-021", "group": "neg_capitalized", "split": "dev", "text": "Customer Zenith Logistics in Mumbai requested an extension.", "spans": []}
+{"id": "neg_capitalized-022", "group": "neg_capitalized", "split": "test", "text": "Supplier Infosys in Hyderabad requested an extension.", "spans": []}
+{"id": "neg_capitalized-023", "group": "neg_capitalized", "split": "dev", "text": "Vendor Tata Steel in Chennai requested an extension.", "spans": []}
+{"id": "neg_capitalized-024", "group": "neg_capitalized", "split": "test", "text": "Customer Tata Steel in Pune requested an extension.", "spans": []}
+{"id": "neg_capitalized-025", "group": "neg_capitalized", "split": "dev", "text": "Supplier Blue Harbor Ltd in Delhi requested an extension.", "spans": []}
+{"id": "neg_capitalized-026", "group": "neg_capitalized", "split": "test", "text": "Vendor Globex Industries in Bengaluru requested an extension.", "spans": []}
+{"id": "neg_capitalized-027", "group": "neg_capitalized", "split": "dev", "text": "Customer Apex Freight Ltd in London requested an extension.", "spans": []}
+{"id": "neg_capitalized-028", "group": "neg_capitalized", "split": "test", "text": "Supplier Northwind Traders in Delhi requested an extension.", "spans": []}
+{"id": "neg_capitalized-029", "group": "neg_capitalized", "split": "dev", "text": "Vendor Globex Industries in Chennai requested an extension.", "spans": []}
+{"id": "neg_capitalized-030", "group": "neg_capitalized", "split": "test", "text": "Customer Globex Industries in Pune requested an extension.", "spans": []}
+{"id": "neg_capitalized-031", "group": "neg_capitalized", "split": "dev", "text": "Supplier Initech in Ahmedabad requested an extension.", "spans": []}
+{"id": "neg_capitalized-032", "group": "neg_capitalized", "split": "test", "text": "Vendor Infosys in Bengaluru requested an extension.", "spans": []}
+{"id": "neg_capitalized-033", "group": "neg_capitalized", "split": "dev", "text": "Customer Northwind Traders in Chennai requested an extension.", "spans": []}
+{"id": "neg_capitalized-034", "group": "neg_capitalized", "split": "test", "text": "Supplier Northwind Traders in Singapore requested an extension.", "spans": []}
+{"id": "neg_capitalized-035", "group": "neg_capitalized", "split": "dev", "text": "Vendor Initech in Chennai requested an extension.", "spans": []}
+{"id": "neg_capitalized-036", "group": "neg_capitalized", "split": "test", "text": "Customer Reliance Retail in Hyderabad requested an extension.", "spans": []}
+{"id": "neg_capitalized-037", "group": "neg_capitalized", "split": "dev", "text": "Supplier Reliance Retail in London requested an extension.", "spans": []}
+{"id": "neg_capitalized-038", "group": "neg_capitalized", "split": "test", "text": "Vendor Apex Freight Ltd in London requested an extension.", "spans": []}
+{"id": "neg_capitalized-039", "group": "neg_capitalized", "split": "dev", "text": "Customer Bharat Electricals in Pune requested an extension.", "spans": []}
+{"id": "neg_capitalized-040", "group": "neg_capitalized", "split": "test", "text": "Supplier Tata Steel in Pune requested an extension.", "spans": []}
+{"id": "neg_plain-001", "group": "neg_plain", "split": "dev", "text": "Deploy version v2.3.1 to staging on 2026-09-25.", "spans": []}
+{"id": "neg_plain-002", "group": "neg_plain", "split": "test", "text": "The SLA is 99.95 percent over 30 days.", "spans": []}
+{"id": "neg_plain-003", "group": "neg_plain", "split": "dev", "text": "Meeting room 4B is booked from 10:30 to 11:45.", "spans": []}
+{"id": "neg_plain-004", "group": "neg_plain", "split": "test", "text": "Total was $1,250.00 for 12 units.", "spans": []}
+{"id": "neg_plain-005", "group": "neg_plain", "split": "dev", "text": "IP 10.0.0.1 is the internal gateway.", "spans": []}
+{"id": "neg_plain-006", "group": "neg_plain", "split": "test", "text": "See section 4.2.1 and table 7 for details.", "spans": []}
+{"id": "neg_plain-007", "group": "neg_plain", "split": "dev", "text": "Approve within 2 business days of submission.", "spans": []}
+{"id": "neg_plain-008", "group": "neg_plain", "split": "test", "text": "Q3 revenue grew 12 percent year over year.", "spans": []}
+{"id": "neg_plain-009", "group": "neg_plain", "split": "dev", "text": "The cycle time is 4.7 days for category A.", "spans": []}
+{"id": "neg_plain-010", "group": "neg_plain", "split": "test", "text": "Reference ISO 9001:2015 and RFC 2119.", "spans": []}
+{"id": "neg_plain-011", "group": "neg_plain", "split": "dev", "text": "Deploy version v2.3.1 to staging on 2026-09-25.", "spans": []}
+{"id": "neg_plain-012", "group": "neg_plain", "split": "test", "text": "The SLA is 99.95 percent over 30 days.", "spans": []}
+{"id": "neg_plain-013", "group": "neg_plain", "split": "dev", "text": "Meeting room 4B is booked from 10:30 to 11:45.", "spans": []}
+{"id": "neg_plain-014", "group": "neg_plain", "split": "test", "text": "Total was $1,250.00 for 12 units.", "spans": []}
+{"id": "neg_plain-015", "group": "neg_plain", "split": "dev", "text": "IP 10.0.0.1 is the internal gateway.", "spans": []}
+{"id": "neg_plain-016", "group": "neg_plain", "split": "test", "text": "See section 4.2.1 and table 7 for details.", "spans": []}
+{"id": "neg_plain-017", "group": "neg_plain", "split": "dev", "text": "Approve within 2 business days of submission.", "spans": []}
+{"id": "neg_plain-018", "group": "neg_plain", "split": "test", "text": "Q3 revenue grew 12 percent year over year.", "spans": []}
+{"id": "neg_plain-019", "group": "neg_plain", "split": "dev", "text": "The cycle time is 4.7 days for category A.", "spans": []}
+{"id": "neg_plain-020", "group": "neg_plain", "split": "test", "text": "Reference ISO 9001:2015 and RFC 2119.", "spans": []}
+{"id": "neg_plain-021", "group": "neg_plain", "split": "dev", "text": "Deploy version v2.3.1 to staging on 2026-09-25.", "spans": []}
+{"id": "neg_plain-022", "group": "neg_plain", "split": "test", "text": "The SLA is 99.95 percent over 30 days.", "spans": []}
+{"id": "neg_plain-023", "group": "neg_plain", "split": "dev", "text": "Meeting room 4B is booked from 10:30 to 11:45.", "spans": []}
+{"id": "neg_plain-024", "group": "neg_plain", "split": "test", "text": "Total was $1,250.00 for 12 units.", "spans": []}
+{"id": "neg_plain-025", "group": "neg_plain", "split": "dev", "text": "IP 10.0.0.1 is the internal gateway.", "spans": []}
+{"id": "neg_plain-026", "group": "neg_plain", "split": "test", "text": "See section 4.2.1 and table 7 for details.", "spans": []}
+{"id": "neg_plain-027", "group": "neg_plain", "split": "dev", "text": "Approve within 2 business days of submission.", "spans": []}
+{"id": "neg_plain-028", "group": "neg_plain", "split": "test", "text": "Q3 revenue grew 12 percent year over year.", "spans": []}
+{"id": "neg_plain-029", "group": "neg_plain", "split": "dev", "text": "The cycle time is 4.7 days for category A.", "spans": []}
+{"id": "neg_plain-030", "group": "neg_plain", "split": "test", "text": "Reference ISO 9001:2015 and RFC 2119.", "spans": []}
+{"id": "neg_plain-031", "group": "neg_plain", "split": "dev", "text": "Deploy version v2.3.1 to staging on 2026-09-25.", "spans": []}
+{"id": "neg_plain-032", "group": "neg_plain", "split": "test", "text": "The SLA is 99.95 percent over 30 days.", "spans": []}
+{"id": "neg_plain-033", "group": "neg_plain", "split": "dev", "text": "Meeting room 4B is booked from 10:30 to 11:45.", "spans": []}
+{"id": "neg_plain-034", "group": "neg_plain", "split": "test", "text": "Total was $1,250.00 for 12 units.", "spans": []}
+{"id": "neg_plain-035", "group": "neg_plain", "split": "dev", "text": "IP 10.0.0.1 is the internal gateway.", "spans": []}
+{"id": "neg_plain-036", "group": "neg_plain", "split": "test", "text": "See section 4.2.1 and table 7 for details.", "spans": []}
+{"id": "neg_plain-037", "group": "neg_plain", "split": "dev", "text": "Approve within 2 business days of submission.", "spans": []}
+{"id": "neg_plain-038", "group": "neg_plain", "split": "test", "text": "Q3 revenue grew 12 percent year over year.", "spans": []}
+{"id": "neg_plain-039", "group": "neg_plain", "split": "dev", "text": "The cycle time is 4.7 days for category A.", "spans": []}
+{"id": "neg_plain-040", "group": "neg_plain", "split": "test", "text": "Reference ISO 9001:2015 and RFC 2119.", "spans": []}

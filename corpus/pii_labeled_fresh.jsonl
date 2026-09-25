@@ -1,0 +1,599 @@
+{"id": "email-fresh-001", "group": "email", "split": "fresh", "text": "{\"contact_email\": \"karen.young+ops@gmail.com\", \"status\": \"open\"}", "spans": [{"type": "email", "start": 19, "end": 44}]}
+{"id": "email-fresh-002", "group": "email", "split": "fresh", "text": "email = 'harish.naidu+ops@mail.example.org'", "spans": [{"type": "email", "start": 9, "end": 42}]}
+{"id": "email-fresh-003", "group": "email", "split": "fresh", "text": "From: richard.agarwal@mail.example.org\nSubject: renewal", "spans": [{"type": "email", "start": 6, "end": 38}]}
+{"id": "email-fresh-004", "group": "email", "split": "fresh", "text": "To: robert_thakur@gmail.com\n", "spans": [{"type": "email", "start": 4, "end": 27}]}
+{"id": "email-fresh-005", "group": "email", "split": "fresh", "text": "Send the signed form to jessica.allen+ops@northstar-mfg.com by end of day.", "spans": [{"type": "email", "start": 24, "end": 59}]}
+{"id": "email-fresh-006", "group": "email", "split": "fresh", "text": "Note - mailbox is thomasnaidu@vendor.in (monitored)", "spans": [{"type": "email", "start": 18, "end": 39}]}
+{"id": "email-fresh-007", "group": "email", "split": "fresh", "text": "{\"contact_email\": \"mary.mishra+ops@corp.example.net\", \"status\": \"open\"}", "spans": [{"type": "email", "start": 19, "end": 51}]}
+{"id": "email-fresh-008", "group": "email", "split": "fresh", "text": "email = 'shreya_harris@mail.example.org'", "spans": [{"type": "email", "start": 9, "end": 39}]}
+{"id": "email-fresh-009", "group": "email", "split": "fresh", "text": "From: grace65@example.com\nSubject: renewal", "spans": [{"type": "email", "start": 6, "end": 25}]}
+{"id": "email-fresh-010", "group": "email", "split": "fresh", "text": "To: rohan76@outlook.com\n", "spans": [{"type": "email", "start": 4, "end": 23}]}
+{"id": "email-fresh-011", "group": "email", "split": "fresh", "text": "Send the signed form to linda_davis@gmail.com by end of day.", "spans": [{"type": "email", "start": 24, "end": 45}]}
+{"id": "email-fresh-012", "group": "email", "split": "fresh", "text": "Note - mailbox is susanadams@northstar-mfg.com (monitored)", "spans": [{"type": "email", "start": 18, "end": 46}]}
+{"id": "email-fresh-013", "group": "email", "split": "fresh", "text": "{\"contact_email\": \"patricia.reddy@corp.example.net\", \"status\": \"open\"}", "spans": [{"type": "email", "start": 19, "end": 50}]}
+{"id": "email-fresh-014", "group": "email", "split": "fresh", "text": "email = 'rohan.menon+ops@outlook.com'", "spans": [{"type": "email", "start": 9, "end": 36}]}
+{"id": "email-fresh-015", "group": "email", "split": "fresh", "text": "From: wiyer@corp.example.net\nSubject: renewal", "spans": [{"type": "email", "start": 6, "end": 28}]}
+{"id": "email-fresh-016", "group": "email", "split": "fresh", "text": "To: karenmiller@corp.example.net\n", "spans": [{"type": "email", "start": 4, "end": 32}]}
+{"id": "email-fresh-017", "group": "email", "split": "fresh", "text": "Send the signed form to patriciadesai@outlook.com by end of day.", "spans": [{"type": "email", "start": 24, "end": 49}]}
+{"id": "email-fresh-018", "group": "email", "split": "fresh", "text": "Note - mailbox is linda.wright+ops@company.co.in (monitored)", "spans": [{"type": "email", "start": 18, "end": 48}]}
+{"id": "email-fresh-019", "group": "email", "split": "fresh", "text": "{\"contact_email\": \"elizabeth_sharma@outlook.com\", \"status\": \"open\"}", "spans": [{"type": "email", "start": 19, "end": 47}]}
+{"id": "email-fresh-020", "group": "email", "split": "fresh", "text": "email = 'kwright@mail.example.org'", "spans": [{"type": "email", "start": 9, "end": 33}]}
+{"id": "email-fresh-021", "group": "email", "split": "fresh", "text": "From: rbanerjee@outlook.com\nSubject: renewal", "spans": [{"type": "email", "start": 6, "end": 27}]}
+{"id": "email-fresh-022", "group": "email", "split": "fresh", "text": "To: patriciapatel@corp.example.net\n", "spans": [{"type": "email", "start": 4, "end": 34}]}
+{"id": "email-fresh-023", "group": "email", "split": "fresh", "text": "Send the signed form to rahul_brown@outlook.com by end of day.", "spans": [{"type": "email", "start": 24, "end": 47}]}
+{"id": "email-fresh-024", "group": "email", "split": "fresh", "text": "Note - mailbox is williamjones@outlook.com (monitored)", "spans": [{"type": "email", "start": 18, "end": 42}]}
+{"id": "email-fresh-025", "group": "email", "split": "fresh", "text": "{\"contact_email\": \"anjali71@northstar-mfg.com\", \"status\": \"open\"}", "spans": [{"type": "email", "start": 19, "end": 45}]}
+{"id": "email-fresh-026", "group": "email", "split": "fresh", "text": "email = 'joseph.moore+ops@vendor.in'", "spans": [{"type": "email", "start": 9, "end": 35}]}
+{"id": "email-fresh-027", "group": "email", "split": "fresh", "text": "From: gaurav77@corp.example.net\nSubject: renewal", "spans": [{"type": "email", "start": 6, "end": 31}]}
+{"id": "email-fresh-028", "group": "email", "split": "fresh", "text": "To: rtaylor@mail.example.org\n", "spans": [{"type": "email", "start": 4, "end": 28}]}
+{"id": "email-fresh-029", "group": "email", "split": "fresh", "text": "Send the signed form to michael_mishra@mail.example.org by end of day.", "spans": [{"type": "email", "start": 24, "end": 55}]}
+{"id": "email-fresh-030", "group": "email", "split": "fresh", "text": "Note - mailbox is varunmoore@mail.example.org (monitored)", "spans": [{"type": "email", "start": 18, "end": 45}]}
+{"id": "phone_us-fresh-001", "group": "phone_us", "split": "fresh", "text": "tel: 747.531.7583\n", "spans": [{"type": "phone", "start": 5, "end": 17}]}
+{"id": "phone_us-fresh-002", "group": "phone_us", "split": "fresh", "text": "Dial 237-846-4632, thanks", "spans": [{"type": "phone", "start": 5, "end": 17}]}
+{"id": "phone_us-fresh-003", "group": "phone_us", "split": "fresh", "text": "Fax/phone (217) 832-7595 (mobile)", "spans": [{"type": "phone", "start": 10, "end": 24}]}
+{"id": "phone_us-fresh-004", "group": "phone_us", "split": "fresh", "text": "Emergency contact -> +18504213448.", "spans": [{"type": "phone", "start": 21, "end": 33}]}
+{"id": "phone_us-fresh-005", "group": "phone_us", "split": "fresh", "text": "Ring +1 692 354 9891 tomorrow", "spans": [{"type": "phone", "start": 5, "end": 20}]}
+{"id": "phone_us-fresh-006", "group": "phone_us", "split": "fresh", "text": "Callback #311.718.9328 ext 4", "spans": [{"type": "phone", "start": 10, "end": 22}]}
+{"id": "phone_us-fresh-007", "group": "phone_us", "split": "fresh", "text": "tel: 521.670.5640\n", "spans": [{"type": "phone", "start": 5, "end": 17}]}
+{"id": "phone_us-fresh-008", "group": "phone_us", "split": "fresh", "text": "Dial 758-844-7486, thanks", "spans": [{"type": "phone", "start": 5, "end": 17}]}
+{"id": "phone_us-fresh-009", "group": "phone_us", "split": "fresh", "text": "Fax/phone 574.854.4981 (mobile)", "spans": [{"type": "phone", "start": 10, "end": 22}]}
+{"id": "phone_us-fresh-010", "group": "phone_us", "split": "fresh", "text": "Emergency contact -> 207-944-6337.", "spans": [{"type": "phone", "start": 21, "end": 33}]}
+{"id": "phone_us-fresh-011", "group": "phone_us", "split": "fresh", "text": "Ring +16629682896 tomorrow", "spans": [{"type": "phone", "start": 5, "end": 17}]}
+{"id": "phone_us-fresh-012", "group": "phone_us", "split": "fresh", "text": "Callback #988-625-9120 ext 4", "spans": [{"type": "phone", "start": 10, "end": 22}]}
+{"id": "phone_us-fresh-013", "group": "phone_us", "split": "fresh", "text": "tel: +1-745-539-7105\n", "spans": [{"type": "phone", "start": 5, "end": 20}]}
+{"id": "phone_us-fresh-014", "group": "phone_us", "split": "fresh", "text": "Dial 332.344.6802, thanks", "spans": [{"type": "phone", "start": 5, "end": 17}]}
+{"id": "phone_us-fresh-015", "group": "phone_us", "split": "fresh", "text": "Fax/phone +1 807 363 1402 (mobile)", "spans": [{"type": "phone", "start": 10, "end": 25}]}
+{"id": "phone_us-fresh-016", "group": "phone_us", "split": "fresh", "text": "Emergency contact -> (834) 817-3496.", "spans": [{"type": "phone", "start": 21, "end": 35}]}
+{"id": "phone_us-fresh-017", "group": "phone_us", "split": "fresh", "text": "Ring 789.363.6974 tomorrow", "spans": [{"type": "phone", "start": 5, "end": 17}]}
+{"id": "phone_us-fresh-018", "group": "phone_us", "split": "fresh", "text": "Callback #(651) 421-3629 ext 4", "spans": [{"type": "phone", "start": 10, "end": 24}]}
+{"id": "phone_us-fresh-019", "group": "phone_us", "split": "fresh", "text": "tel: +18129578818\n", "spans": [{"type": "phone", "start": 5, "end": 17}]}
+{"id": "phone_us-fresh-020", "group": "phone_us", "split": "fresh", "text": "Dial 307-878-3181, thanks", "spans": [{"type": "phone", "start": 5, "end": 17}]}
+{"id": "phone_us-fresh-021", "group": "phone_us", "split": "fresh", "text": "Fax/phone +1 887 550 5156 (mobile)", "spans": [{"type": "phone", "start": 10, "end": 25}]}
+{"id": "phone_us-fresh-022", "group": "phone_us", "split": "fresh", "text": "Emergency contact -> 203-719-6114.", "spans": [{"type": "phone", "start": 21, "end": 33}]}
+{"id": "phone_us-fresh-023", "group": "phone_us", "split": "fresh", "text": "Ring +1 964 974 5567 tomorrow", "spans": [{"type": "phone", "start": 5, "end": 20}]}
+{"id": "phone_us-fresh-024", "group": "phone_us", "split": "fresh", "text": "Callback #923-218-4090 ext 4", "spans": [{"type": "phone", "start": 10, "end": 22}]}
+{"id": "phone_us-fresh-025", "group": "phone_us", "split": "fresh", "text": "tel: +13534775883\n", "spans": [{"type": "phone", "start": 5, "end": 17}]}
+{"id": "phone_us-fresh-026", "group": "phone_us", "split": "fresh", "text": "Dial +1 654 368 1131, thanks", "spans": [{"type": "phone", "start": 5, "end": 20}]}
+{"id": "phone_us-fresh-027", "group": "phone_us", "split": "fresh", "text": "Fax/phone +1-826-385-2578 (mobile)", "spans": [{"type": "phone", "start": 10, "end": 25}]}
+{"id": "phone_us-fresh-028", "group": "phone_us", "split": "fresh", "text": "Emergency contact -> 355-312-1308.", "spans": [{"type": "phone", "start": 21, "end": 33}]}
+{"id": "phone_us-fresh-029", "group": "phone_us", "split": "fresh", "text": "Ring +1-256-651-7668 tomorrow", "spans": [{"type": "phone", "start": 5, "end": 20}]}
+{"id": "phone_us-fresh-030", "group": "phone_us", "split": "fresh", "text": "Callback #+18568485065 ext 4", "spans": [{"type": "phone", "start": 10, "end": 22}]}
+{"id": "phone_in_prefixed-fresh-001", "group": "phone_in_prefixed", "split": "fresh", "text": "Contact: +91-8883305170", "spans": [{"type": "phone", "start": 9, "end": 23}]}
+{"id": "phone_in_prefixed-fresh-002", "group": "phone_in_prefixed", "split": "fresh", "text": "Whatsapp/Call +91 6526763457 (Rahul)", "spans": [{"type": "phone", "start": 14, "end": 28}]}
+{"id": "phone_in_prefixed-fresh-003", "group": "phone_in_prefixed", "split": "fresh", "text": "Emergency: 91 8118561562 - urgent", "spans": [{"type": "phone", "start": 11, "end": 24}]}
+{"id": "phone_in_prefixed-fresh-004", "group": "phone_in_prefixed", "split": "fresh", "text": "Site engineer 06441710937.", "spans": [{"type": "phone", "start": 14, "end": 25}]}
+{"id": "phone_in_prefixed-fresh-005", "group": "phone_in_prefixed", "split": "fresh", "text": "Ph: +91 92819 95427\nThanks", "spans": [{"type": "phone", "start": 4, "end": 19}]}
+{"id": "phone_in_prefixed-fresh-006", "group": "phone_in_prefixed", "split": "fresh", "text": "Reach me @ +916481521561 pls", "spans": [{"type": "phone", "start": 11, "end": 24}]}
+{"id": "phone_in_prefixed-fresh-007", "group": "phone_in_prefixed", "split": "fresh", "text": "Contact: +91-8978242065", "spans": [{"type": "phone", "start": 9, "end": 23}]}
+{"id": "phone_in_prefixed-fresh-008", "group": "phone_in_prefixed", "split": "fresh", "text": "Whatsapp/Call 91 9231583585 (Rahul)", "spans": [{"type": "phone", "start": 14, "end": 27}]}
+{"id": "phone_in_prefixed-fresh-009", "group": "phone_in_prefixed", "split": "fresh", "text": "Emergency: +91 8059198444 - urgent", "spans": [{"type": "phone", "start": 11, "end": 25}]}
+{"id": "phone_in_prefixed-fresh-010", "group": "phone_in_prefixed", "split": "fresh", "text": "Site engineer 91 8560254721.", "spans": [{"type": "phone", "start": 14, "end": 27}]}
+{"id": "phone_in_prefixed-fresh-011", "group": "phone_in_prefixed", "split": "fresh", "text": "Ph: +91-8271418685\nThanks", "spans": [{"type": "phone", "start": 4, "end": 18}]}
+{"id": "phone_in_prefixed-fresh-012", "group": "phone_in_prefixed", "split": "fresh", "text": "Reach me @ 08074308069 pls", "spans": [{"type": "phone", "start": 11, "end": 22}]}
+{"id": "phone_in_prefixed-fresh-013", "group": "phone_in_prefixed", "split": "fresh", "text": "Contact: +917260011735", "spans": [{"type": "phone", "start": 9, "end": 22}]}
+{"id": "phone_in_prefixed-fresh-014", "group": "phone_in_prefixed", "split": "fresh", "text": "Whatsapp/Call (+91) 72052 37468 (Rahul)", "spans": [{"type": "phone", "start": 14, "end": 31}]}
+{"id": "phone_in_prefixed-fresh-015", "group": "phone_in_prefixed", "split": "fresh", "text": "Emergency: +91 9590593698 - urgent", "spans": [{"type": "phone", "start": 11, "end": 25}]}
+{"id": "phone_in_prefixed-fresh-016", "group": "phone_in_prefixed", "split": "fresh", "text": "Site engineer (+91) 87122 14385.", "spans": [{"type": "phone", "start": 14, "end": 31}]}
+{"id": "phone_in_prefixed-fresh-017", "group": "phone_in_prefixed", "split": "fresh", "text": "Ph: 91 6982680996\nThanks", "spans": [{"type": "phone", "start": 4, "end": 17}]}
+{"id": "phone_in_prefixed-fresh-018", "group": "phone_in_prefixed", "split": "fresh", "text": "Reach me @ (+91) 92526 30292 pls", "spans": [{"type": "phone", "start": 11, "end": 28}]}
+{"id": "phone_in_prefixed-fresh-019", "group": "phone_in_prefixed", "split": "fresh", "text": "Contact: +918425646046", "spans": [{"type": "phone", "start": 9, "end": 22}]}
+{"id": "phone_in_prefixed-fresh-020", "group": "phone_in_prefixed", "split": "fresh", "text": "Whatsapp/Call +91 6759398912 (Rahul)", "spans": [{"type": "phone", "start": 14, "end": 28}]}
+{"id": "phone_in_prefixed-fresh-021", "group": "phone_in_prefixed", "split": "fresh", "text": "Emergency: +91 9839215515 - urgent", "spans": [{"type": "phone", "start": 11, "end": 25}]}
+{"id": "phone_in_prefixed-fresh-022", "group": "phone_in_prefixed", "split": "fresh", "text": "Site engineer +91 80504 14819.", "spans": [{"type": "phone", "start": 14, "end": 29}]}
+{"id": "phone_in_prefixed-fresh-023", "group": "phone_in_prefixed", "split": "fresh", "text": "Ph: 91 6382980553\nThanks", "spans": [{"type": "phone", "start": 4, "end": 17}]}
+{"id": "phone_in_prefixed-fresh-024", "group": "phone_in_prefixed", "split": "fresh", "text": "Reach me @ (+91) 89397 20818 pls", "spans": [{"type": "phone", "start": 11, "end": 28}]}
+{"id": "phone_in_prefixed-fresh-025", "group": "phone_in_prefixed", "split": "fresh", "text": "Contact: +91-9549319304", "spans": [{"type": "phone", "start": 9, "end": 23}]}
+{"id": "phone_in_prefixed-fresh-026", "group": "phone_in_prefixed", "split": "fresh", "text": "Whatsapp/Call +91-9651859334 (Rahul)", "spans": [{"type": "phone", "start": 14, "end": 28}]}
+{"id": "phone_in_prefixed-fresh-027", "group": "phone_in_prefixed", "split": "fresh", "text": "Emergency: +91 7437496449 - urgent", "spans": [{"type": "phone", "start": 11, "end": 25}]}
+{"id": "phone_in_prefixed-fresh-028", "group": "phone_in_prefixed", "split": "fresh", "text": "Site engineer 91 9177392503.", "spans": [{"type": "phone", "start": 14, "end": 27}]}
+{"id": "phone_in_prefixed-fresh-029", "group": "phone_in_prefixed", "split": "fresh", "text": "Ph: +91 84971 00030\nThanks", "spans": [{"type": "phone", "start": 4, "end": 19}]}
+{"id": "phone_in_prefixed-fresh-030", "group": "phone_in_prefixed", "split": "fresh", "text": "Reach me @ +918880596074 pls", "spans": [{"type": "phone", "start": 11, "end": 24}]}
+{"id": "phone_in_grouped-fresh-001", "group": "phone_in_grouped", "split": "fresh", "text": "Number 62644 15133 for delivery.", "spans": [{"type": "phone", "start": 7, "end": 18}]}
+{"id": "phone_in_grouped-fresh-002", "group": "phone_in_grouped", "split": "fresh", "text": "Mob 95117-09886 for delivery.", "spans": [{"type": "phone", "start": 4, "end": 15}]}
+{"id": "phone_in_grouped-fresh-003", "group": "phone_in_grouped", "split": "fresh", "text": "Phone 79686 71959 for delivery.", "spans": [{"type": "phone", "start": 6, "end": 17}]}
+{"id": "phone_in_grouped-fresh-004", "group": "phone_in_grouped", "split": "fresh", "text": "Number 69365-13598 for delivery.", "spans": [{"type": "phone", "start": 7, "end": 18}]}
+{"id": "phone_in_grouped-fresh-005", "group": "phone_in_grouped", "split": "fresh", "text": "Mob 65934 96047 for delivery.", "spans": [{"type": "phone", "start": 4, "end": 15}]}
+{"id": "phone_in_grouped-fresh-006", "group": "phone_in_grouped", "split": "fresh", "text": "Phone 71957-12807 for delivery.", "spans": [{"type": "phone", "start": 6, "end": 17}]}
+{"id": "phone_in_grouped-fresh-007", "group": "phone_in_grouped", "split": "fresh", "text": "Number 85618 12977 for delivery.", "spans": [{"type": "phone", "start": 7, "end": 18}]}
+{"id": "phone_in_grouped-fresh-008", "group": "phone_in_grouped", "split": "fresh", "text": "Mob 91669-56774 for delivery.", "spans": [{"type": "phone", "start": 4, "end": 15}]}
+{"id": "phone_in_grouped-fresh-009", "group": "phone_in_grouped", "split": "fresh", "text": "Phone 62511 94057 for delivery.", "spans": [{"type": "phone", "start": 6, "end": 17}]}
+{"id": "phone_in_grouped-fresh-010", "group": "phone_in_grouped", "split": "fresh", "text": "Number 61593-26811 for delivery.", "spans": [{"type": "phone", "start": 7, "end": 18}]}
+{"id": "phone_in_grouped-fresh-011", "group": "phone_in_grouped", "split": "fresh", "text": "Mob 98562 45871 for delivery.", "spans": [{"type": "phone", "start": 4, "end": 15}]}
+{"id": "phone_in_grouped-fresh-012", "group": "phone_in_grouped", "split": "fresh", "text": "Phone 87699-37720 for delivery.", "spans": [{"type": "phone", "start": 6, "end": 17}]}
+{"id": "phone_in_grouped-fresh-013", "group": "phone_in_grouped", "split": "fresh", "text": "Number 85634 14726 for delivery.", "spans": [{"type": "phone", "start": 7, "end": 18}]}
+{"id": "phone_in_grouped-fresh-014", "group": "phone_in_grouped", "split": "fresh", "text": "Mob 61437-11215 for delivery.", "spans": [{"type": "phone", "start": 4, "end": 15}]}
+{"id": "phone_in_grouped-fresh-015", "group": "phone_in_grouped", "split": "fresh", "text": "Phone 97465 76499 for delivery.", "spans": [{"type": "phone", "start": 6, "end": 17}]}
+{"id": "phone_in_bare_ctx-fresh-001", "group": "phone_in_bare_ctx", "split": "fresh", "text": "mobile no: 9290302411 pls confirm", "spans": [{"type": "phone", "start": 11, "end": 21}]}
+{"id": "phone_in_bare_ctx-fresh-002", "group": "phone_in_bare_ctx", "split": "fresh", "text": "Cell - 8367981017 pls confirm", "spans": [{"type": "phone", "start": 7, "end": 17}]}
+{"id": "phone_in_bare_ctx-fresh-003", "group": "phone_in_bare_ctx", "split": "fresh", "text": "contact number is 7700588809 pls confirm", "spans": [{"type": "phone", "start": 18, "end": 28}]}
+{"id": "phone_in_bare_ctx-fresh-004", "group": "phone_in_bare_ctx", "split": "fresh", "text": "call 9650673034 pls confirm", "spans": [{"type": "phone", "start": 5, "end": 15}]}
+{"id": "phone_in_bare_ctx-fresh-005", "group": "phone_in_bare_ctx", "split": "fresh", "text": "phone: 9098007750 pls confirm", "spans": [{"type": "phone", "start": 7, "end": 17}]}
+{"id": "phone_in_bare_ctx-fresh-006", "group": "phone_in_bare_ctx", "split": "fresh", "text": "mobile no: 8209482755 pls confirm", "spans": [{"type": "phone", "start": 11, "end": 21}]}
+{"id": "phone_in_bare_ctx-fresh-007", "group": "phone_in_bare_ctx", "split": "fresh", "text": "Cell - 6766167017 pls confirm", "spans": [{"type": "phone", "start": 7, "end": 17}]}
+{"id": "phone_in_bare_ctx-fresh-008", "group": "phone_in_bare_ctx", "split": "fresh", "text": "contact number is 9512053649 pls confirm", "spans": [{"type": "phone", "start": 18, "end": 28}]}
+{"id": "phone_in_bare_ctx-fresh-009", "group": "phone_in_bare_ctx", "split": "fresh", "text": "call 6326574048 pls confirm", "spans": [{"type": "phone", "start": 5, "end": 15}]}
+{"id": "phone_in_bare_ctx-fresh-010", "group": "phone_in_bare_ctx", "split": "fresh", "text": "phone: 8860827374 pls confirm", "spans": [{"type": "phone", "start": 7, "end": 17}]}
+{"id": "phone_in_bare_ctx-fresh-011", "group": "phone_in_bare_ctx", "split": "fresh", "text": "mobile no: 6403928391 pls confirm", "spans": [{"type": "phone", "start": 11, "end": 21}]}
+{"id": "phone_in_bare_ctx-fresh-012", "group": "phone_in_bare_ctx", "split": "fresh", "text": "Cell - 8088452965 pls confirm", "spans": [{"type": "phone", "start": 7, "end": 17}]}
+{"id": "phone_in_bare_ctx-fresh-013", "group": "phone_in_bare_ctx", "split": "fresh", "text": "contact number is 9750076243 pls confirm", "spans": [{"type": "phone", "start": 18, "end": 28}]}
+{"id": "phone_in_bare_ctx-fresh-014", "group": "phone_in_bare_ctx", "split": "fresh", "text": "call 8290091622 pls confirm", "spans": [{"type": "phone", "start": 5, "end": 15}]}
+{"id": "phone_in_bare_ctx-fresh-015", "group": "phone_in_bare_ctx", "split": "fresh", "text": "phone: 7262938498 pls confirm", "spans": [{"type": "phone", "start": 7, "end": 17}]}
+{"id": "phone_in_bare_ctx-fresh-016", "group": "phone_in_bare_ctx", "split": "fresh", "text": "mobile no: 6478735691 pls confirm", "spans": [{"type": "phone", "start": 11, "end": 21}]}
+{"id": "phone_in_bare_ctx-fresh-017", "group": "phone_in_bare_ctx", "split": "fresh", "text": "Cell - 7637114723 pls confirm", "spans": [{"type": "phone", "start": 7, "end": 17}]}
+{"id": "phone_in_bare_ctx-fresh-018", "group": "phone_in_bare_ctx", "split": "fresh", "text": "contact number is 8965561149 pls confirm", "spans": [{"type": "phone", "start": 18, "end": 28}]}
+{"id": "phone_in_bare_ctx-fresh-019", "group": "phone_in_bare_ctx", "split": "fresh", "text": "call 9384410496 pls confirm", "spans": [{"type": "phone", "start": 5, "end": 15}]}
+{"id": "phone_in_bare_ctx-fresh-020", "group": "phone_in_bare_ctx", "split": "fresh", "text": "phone: 7420496138 pls confirm", "spans": [{"type": "phone", "start": 7, "end": 17}]}
+{"id": "phone_in_bare_noctx-fresh-001", "group": "phone_in_bare_noctx", "split": "fresh", "text": "Driver: 9657158631 if late", "spans": [{"type": "phone", "start": 8, "end": 18}]}
+{"id": "phone_in_bare_noctx-fresh-002", "group": "phone_in_bare_noctx", "split": "fresh", "text": "Get back to me on 6314050768 if late", "spans": [{"type": "phone", "start": 18, "end": 28}]}
+{"id": "phone_in_bare_noctx-fresh-003", "group": "phone_in_bare_noctx", "split": "fresh", "text": "Hit me at 7094790615 if late", "spans": [{"type": "phone", "start": 10, "end": 20}]}
+{"id": "phone_in_bare_noctx-fresh-004", "group": "phone_in_bare_noctx", "split": "fresh", "text": "Ravi says 9793803266 if late", "spans": [{"type": "phone", "start": 10, "end": 20}]}
+{"id": "phone_in_bare_noctx-fresh-005", "group": "phone_in_bare_noctx", "split": "fresh", "text": "Driver: 7725336494 if late", "spans": [{"type": "phone", "start": 8, "end": 18}]}
+{"id": "phone_in_bare_noctx-fresh-006", "group": "phone_in_bare_noctx", "split": "fresh", "text": "Get back to me on 7775278015 if late", "spans": [{"type": "phone", "start": 18, "end": 28}]}
+{"id": "phone_in_bare_noctx-fresh-007", "group": "phone_in_bare_noctx", "split": "fresh", "text": "Hit me at 8837182688 if late", "spans": [{"type": "phone", "start": 10, "end": 20}]}
+{"id": "phone_in_bare_noctx-fresh-008", "group": "phone_in_bare_noctx", "split": "fresh", "text": "Ravi says 9084587870 if late", "spans": [{"type": "phone", "start": 10, "end": 20}]}
+{"id": "phone_in_bare_noctx-fresh-009", "group": "phone_in_bare_noctx", "split": "fresh", "text": "Driver: 6370796836 if late", "spans": [{"type": "phone", "start": 8, "end": 18}]}
+{"id": "phone_in_bare_noctx-fresh-010", "group": "phone_in_bare_noctx", "split": "fresh", "text": "Get back to me on 8565434209 if late", "spans": [{"type": "phone", "start": 18, "end": 28}]}
+{"id": "phone_in_bare_noctx-fresh-011", "group": "phone_in_bare_noctx", "split": "fresh", "text": "Hit me at 8645262173 if late", "spans": [{"type": "phone", "start": 10, "end": 20}]}
+{"id": "phone_in_bare_noctx-fresh-012", "group": "phone_in_bare_noctx", "split": "fresh", "text": "Ravi says 7640183903 if late", "spans": [{"type": "phone", "start": 10, "end": 20}]}
+{"id": "phone_in_bare_noctx-fresh-013", "group": "phone_in_bare_noctx", "split": "fresh", "text": "Driver: 7592279521 if late", "spans": [{"type": "phone", "start": 8, "end": 18}]}
+{"id": "phone_in_bare_noctx-fresh-014", "group": "phone_in_bare_noctx", "split": "fresh", "text": "Get back to me on 9938265324 if late", "spans": [{"type": "phone", "start": 18, "end": 28}]}
+{"id": "phone_in_bare_noctx-fresh-015", "group": "phone_in_bare_noctx", "split": "fresh", "text": "Hit me at 8702886071 if late", "spans": [{"type": "phone", "start": 10, "end": 20}]}
+{"id": "phone_in_landline-fresh-001", "group": "phone_in_landline", "split": "fresh", "text": "Reception: 011-27149226 (till 6)", "spans": [{"type": "phone", "start": 11, "end": 23}]}
+{"id": "phone_in_landline-fresh-002", "group": "phone_in_landline", "split": "fresh", "text": "Reception: 040-22927943 (till 6)", "spans": [{"type": "phone", "start": 11, "end": 23}]}
+{"id": "phone_in_landline-fresh-003", "group": "phone_in_landline", "split": "fresh", "text": "Reception: 040-24136607 (till 6)", "spans": [{"type": "phone", "start": 11, "end": 23}]}
+{"id": "phone_in_landline-fresh-004", "group": "phone_in_landline", "split": "fresh", "text": "Reception: 033-28756778 (till 6)", "spans": [{"type": "phone", "start": 11, "end": 23}]}
+{"id": "phone_in_landline-fresh-005", "group": "phone_in_landline", "split": "fresh", "text": "Reception: 080-27723441 (till 6)", "spans": [{"type": "phone", "start": 11, "end": 23}]}
+{"id": "phone_in_landline-fresh-006", "group": "phone_in_landline", "split": "fresh", "text": "Reception: 040-28198485 (till 6)", "spans": [{"type": "phone", "start": 11, "end": 23}]}
+{"id": "phone_in_landline-fresh-007", "group": "phone_in_landline", "split": "fresh", "text": "Reception: 080-21166472 (till 6)", "spans": [{"type": "phone", "start": 11, "end": 23}]}
+{"id": "phone_in_landline-fresh-008", "group": "phone_in_landline", "split": "fresh", "text": "Reception: 011-29719939 (till 6)", "spans": [{"type": "phone", "start": 11, "end": 23}]}
+{"id": "phone_in_landline-fresh-009", "group": "phone_in_landline", "split": "fresh", "text": "Reception: 044-23464452 (till 6)", "spans": [{"type": "phone", "start": 11, "end": 23}]}
+{"id": "phone_in_landline-fresh-010", "group": "phone_in_landline", "split": "fresh", "text": "Reception: 044-23599446 (till 6)", "spans": [{"type": "phone", "start": 11, "end": 23}]}
+{"id": "phone_in_landline-fresh-011", "group": "phone_in_landline", "split": "fresh", "text": "Reception: 022-23830029 (till 6)", "spans": [{"type": "phone", "start": 11, "end": 23}]}
+{"id": "phone_in_landline-fresh-012", "group": "phone_in_landline", "split": "fresh", "text": "Reception: 011-20329114 (till 6)", "spans": [{"type": "phone", "start": 11, "end": 23}]}
+{"id": "credit_card-fresh-001", "group": "credit_card", "split": "fresh", "text": "Payment method: 3660 929578 1088", "spans": [{"type": "credit_card", "start": 16, "end": 32}]}
+{"id": "credit_card-fresh-002", "group": "credit_card", "split": "fresh", "text": "CC# 4044-2230-9340-2855 exp 09/28", "spans": [{"type": "credit_card", "start": 4, "end": 23}]}
+{"id": "credit_card-fresh-003", "group": "credit_card", "split": "fresh", "text": "Card on file - 3607 507536 0164 (corporate)", "spans": [{"type": "credit_card", "start": 15, "end": 31}]}
+{"id": "credit_card-fresh-004", "group": "credit_card", "split": "fresh", "text": "Please charge 3497 550706 24795.", "spans": [{"type": "credit_card", "start": 14, "end": 31}]}
+{"id": "credit_card-fresh-005", "group": "credit_card", "split": "fresh", "text": "PAN(card) 3712 937004 17811 CVV withheld", "spans": [{"type": "credit_card", "start": 10, "end": 27}]}
+{"id": "credit_card-fresh-006", "group": "credit_card", "split": "fresh", "text": "Payment method: 3473 002982 13477", "spans": [{"type": "credit_card", "start": 16, "end": 33}]}
+{"id": "credit_card-fresh-007", "group": "credit_card", "split": "fresh", "text": "CC# 3747 934296 73229 exp 09/28", "spans": [{"type": "credit_card", "start": 4, "end": 21}]}
+{"id": "credit_card-fresh-008", "group": "credit_card", "split": "fresh", "text": "Card on file - 5563689532042817 (corporate)", "spans": [{"type": "credit_card", "start": 15, "end": 31}]}
+{"id": "credit_card-fresh-009", "group": "credit_card", "split": "fresh", "text": "Please charge 3400 619253 86931.", "spans": [{"type": "credit_card", "start": 14, "end": 31}]}
+{"id": "credit_card-fresh-010", "group": "credit_card", "split": "fresh", "text": "PAN(card) 3735 449882 77543 CVV withheld", "spans": [{"type": "credit_card", "start": 10, "end": 27}]}
+{"id": "credit_card-fresh-011", "group": "credit_card", "split": "fresh", "text": "Payment method: 5302 8722 3908 5398", "spans": [{"type": "credit_card", "start": 16, "end": 35}]}
+{"id": "credit_card-fresh-012", "group": "credit_card", "split": "fresh", "text": "CC# 5346823285859242 exp 09/28", "spans": [{"type": "credit_card", "start": 4, "end": 20}]}
+{"id": "credit_card-fresh-013", "group": "credit_card", "split": "fresh", "text": "Card on file - 4535 0928 6459 2111 (corporate)", "spans": [{"type": "credit_card", "start": 15, "end": 34}]}
+{"id": "credit_card-fresh-014", "group": "credit_card", "split": "fresh", "text": "Please charge 3621 587324 1287.", "spans": [{"type": "credit_card", "start": 14, "end": 30}]}
+{"id": "credit_card-fresh-015", "group": "credit_card", "split": "fresh", "text": "PAN(card) 3675 771471 3198 CVV withheld", "spans": [{"type": "credit_card", "start": 10, "end": 26}]}
+{"id": "credit_card-fresh-016", "group": "credit_card", "split": "fresh", "text": "Payment method: 377946407004620", "spans": [{"type": "credit_card", "start": 16, "end": 31}]}
+{"id": "credit_card-fresh-017", "group": "credit_card", "split": "fresh", "text": "CC# 3481 434579 20147 exp 09/28", "spans": [{"type": "credit_card", "start": 4, "end": 21}]}
+{"id": "credit_card-fresh-018", "group": "credit_card", "split": "fresh", "text": "Card on file - 5548 7046 6402 7054 (corporate)", "spans": [{"type": "credit_card", "start": 15, "end": 34}]}
+{"id": "credit_card-fresh-019", "group": "credit_card", "split": "fresh", "text": "Please charge 4550-1594-9556-3389.", "spans": [{"type": "credit_card", "start": 14, "end": 33}]}
+{"id": "credit_card-fresh-020", "group": "credit_card", "split": "fresh", "text": "PAN(card) 3625 560022 6342 CVV withheld", "spans": [{"type": "credit_card", "start": 10, "end": 26}]}
+{"id": "credit_card-fresh-021", "group": "credit_card", "split": "fresh", "text": "Payment method: 4626502568072582", "spans": [{"type": "credit_card", "start": 16, "end": 32}]}
+{"id": "credit_card-fresh-022", "group": "credit_card", "split": "fresh", "text": "CC# 3420 252296 13355 exp 09/28", "spans": [{"type": "credit_card", "start": 4, "end": 21}]}
+{"id": "credit_card-fresh-023", "group": "credit_card", "split": "fresh", "text": "Card on file - 4506508998411584 (corporate)", "spans": [{"type": "credit_card", "start": 15, "end": 31}]}
+{"id": "credit_card-fresh-024", "group": "credit_card", "split": "fresh", "text": "Please charge 8174476159894588.", "spans": [{"type": "credit_card", "start": 14, "end": 30}]}
+{"id": "credit_card-fresh-025", "group": "credit_card", "split": "fresh", "text": "PAN(card) 5205-8264-9322-4380 CVV withheld", "spans": [{"type": "credit_card", "start": 10, "end": 29}]}
+{"id": "credit_card-fresh-026", "group": "credit_card", "split": "fresh", "text": "Payment method: 4462-8897-8317-5952", "spans": [{"type": "credit_card", "start": 16, "end": 35}]}
+{"id": "credit_card-fresh-027", "group": "credit_card", "split": "fresh", "text": "CC# 8284 7176 5186 8225 exp 09/28", "spans": [{"type": "credit_card", "start": 4, "end": 23}]}
+{"id": "credit_card-fresh-028", "group": "credit_card", "split": "fresh", "text": "Card on file - 377914736169290 (corporate)", "spans": [{"type": "credit_card", "start": 15, "end": 30}]}
+{"id": "credit_card-fresh-029", "group": "credit_card", "split": "fresh", "text": "Please charge 379241565936419.", "spans": [{"type": "credit_card", "start": 14, "end": 29}]}
+{"id": "credit_card-fresh-030", "group": "credit_card", "split": "fresh", "text": "PAN(card) 8197 3782 5601 2267 CVV withheld", "spans": [{"type": "credit_card", "start": 10, "end": 29}]}
+{"id": "ssn-fresh-001", "group": "ssn", "split": "fresh", "text": "SSN: 822-30-1517\n", "spans": [{"type": "ssn", "start": 5, "end": 16}]}
+{"id": "ssn-fresh-002", "group": "ssn", "split": "fresh", "text": "Tax ID 162-19-6208 verified", "spans": [{"type": "ssn", "start": 7, "end": 18}]}
+{"id": "ssn-fresh-003", "group": "ssn", "split": "fresh", "text": "Social: 194-63-7296.", "spans": [{"type": "ssn", "start": 8, "end": 19}]}
+{"id": "ssn-fresh-004", "group": "ssn", "split": "fresh", "text": "applicant ssn 791-42-8106 (W-9)", "spans": [{"type": "ssn", "start": 14, "end": 25}]}
+{"id": "ssn-fresh-005", "group": "ssn", "split": "fresh", "text": "SSN: 823-92-4459\n", "spans": [{"type": "ssn", "start": 5, "end": 16}]}
+{"id": "ssn-fresh-006", "group": "ssn", "split": "fresh", "text": "Tax ID 685-38-0639 verified", "spans": [{"type": "ssn", "start": 7, "end": 18}]}
+{"id": "ssn-fresh-007", "group": "ssn", "split": "fresh", "text": "Social: 530-94-2063.", "spans": [{"type": "ssn", "start": 8, "end": 19}]}
+{"id": "ssn-fresh-008", "group": "ssn", "split": "fresh", "text": "applicant ssn 272-36-0569 (W-9)", "spans": [{"type": "ssn", "start": 14, "end": 25}]}
+{"id": "ssn-fresh-009", "group": "ssn", "split": "fresh", "text": "SSN: 108-86-6620\n", "spans": [{"type": "ssn", "start": 5, "end": 16}]}
+{"id": "ssn-fresh-010", "group": "ssn", "split": "fresh", "text": "Tax ID 124-31-6642 verified", "spans": [{"type": "ssn", "start": 7, "end": 18}]}
+{"id": "ssn-fresh-011", "group": "ssn", "split": "fresh", "text": "Social: 409-41-7640.", "spans": [{"type": "ssn", "start": 8, "end": 19}]}
+{"id": "ssn-fresh-012", "group": "ssn", "split": "fresh", "text": "applicant ssn 894-95-4298 (W-9)", "spans": [{"type": "ssn", "start": 14, "end": 25}]}
+{"id": "ssn-fresh-013", "group": "ssn", "split": "fresh", "text": "SSN: 147-46-0773\n", "spans": [{"type": "ssn", "start": 5, "end": 16}]}
+{"id": "ssn-fresh-014", "group": "ssn", "split": "fresh", "text": "Tax ID 169-87-8080 verified", "spans": [{"type": "ssn", "start": 7, "end": 18}]}
+{"id": "ssn-fresh-015", "group": "ssn", "split": "fresh", "text": "Social: 200-18-4065.", "spans": [{"type": "ssn", "start": 8, "end": 19}]}
+{"id": "ssn-fresh-016", "group": "ssn", "split": "fresh", "text": "applicant ssn 654-38-2820 (W-9)", "spans": [{"type": "ssn", "start": 14, "end": 25}]}
+{"id": "ssn-fresh-017", "group": "ssn", "split": "fresh", "text": "SSN: 290-59-2836\n", "spans": [{"type": "ssn", "start": 5, "end": 16}]}
+{"id": "ssn-fresh-018", "group": "ssn", "split": "fresh", "text": "Tax ID 038-11-2377 verified", "spans": [{"type": "ssn", "start": 7, "end": 18}]}
+{"id": "ssn-fresh-019", "group": "ssn", "split": "fresh", "text": "Social: 650-63-7552.", "spans": [{"type": "ssn", "start": 8, "end": 19}]}
+{"id": "ssn-fresh-020", "group": "ssn", "split": "fresh", "text": "applicant ssn 174-89-8510 (W-9)", "spans": [{"type": "ssn", "start": 14, "end": 25}]}
+{"id": "ssn-fresh-021", "group": "ssn", "split": "fresh", "text": "SSN: 004-85-8090\n", "spans": [{"type": "ssn", "start": 5, "end": 16}]}
+{"id": "ssn-fresh-022", "group": "ssn", "split": "fresh", "text": "Tax ID 070-27-0958 verified", "spans": [{"type": "ssn", "start": 7, "end": 18}]}
+{"id": "ssn-fresh-023", "group": "ssn", "split": "fresh", "text": "Social: 457-86-8828.", "spans": [{"type": "ssn", "start": 8, "end": 19}]}
+{"id": "ssn-fresh-024", "group": "ssn", "split": "fresh", "text": "applicant ssn 010-29-1218 (W-9)", "spans": [{"type": "ssn", "start": 14, "end": 25}]}
+{"id": "ssn-fresh-025", "group": "ssn", "split": "fresh", "text": "SSN: 529-33-0431\n", "spans": [{"type": "ssn", "start": 5, "end": 16}]}
+{"id": "aadhaar_grouped_ctx-fresh-001", "group": "aadhaar_grouped_ctx", "split": "fresh", "text": "Aadhaar: 2414 1142 1068 (masked in copy)", "spans": [{"type": "aadhaar", "start": 9, "end": 23}]}
+{"id": "aadhaar_grouped_ctx-fresh-002", "group": "aadhaar_grouped_ctx", "split": "fresh", "text": "UID - 9714-0878-1654\n", "spans": [{"type": "aadhaar", "start": 6, "end": 20}]}
+{"id": "aadhaar_grouped_ctx-fresh-003", "group": "aadhaar_grouped_ctx", "split": "fresh", "text": "aadhar number 9627 9038 3704.", "spans": [{"type": "aadhaar", "start": 14, "end": 28}]}
+{"id": "aadhaar_grouped_ctx-fresh-004", "group": "aadhaar_grouped_ctx", "split": "fresh", "text": "AADHAAR NO. 5993-8868-0254 kyc done", "spans": [{"type": "aadhaar", "start": 12, "end": 26}]}
+{"id": "aadhaar_grouped_ctx-fresh-005", "group": "aadhaar_grouped_ctx", "split": "fresh", "text": "Aadhaar: 8151 2410 0310 (masked in copy)", "spans": [{"type": "aadhaar", "start": 9, "end": 23}]}
+{"id": "aadhaar_grouped_ctx-fresh-006", "group": "aadhaar_grouped_ctx", "split": "fresh", "text": "UID - 9212-9124-0621\n", "spans": [{"type": "aadhaar", "start": 6, "end": 20}]}
+{"id": "aadhaar_grouped_ctx-fresh-007", "group": "aadhaar_grouped_ctx", "split": "fresh", "text": "aadhar number 5824 7716 2154.", "spans": [{"type": "aadhaar", "start": 14, "end": 28}]}
+{"id": "aadhaar_grouped_ctx-fresh-008", "group": "aadhaar_grouped_ctx", "split": "fresh", "text": "AADHAAR NO. 4248-9287-9997 kyc done", "spans": [{"type": "aadhaar", "start": 12, "end": 26}]}
+{"id": "aadhaar_grouped_ctx-fresh-009", "group": "aadhaar_grouped_ctx", "split": "fresh", "text": "Aadhaar: 2056 9703 0691 (masked in copy)", "spans": [{"type": "aadhaar", "start": 9, "end": 23}]}
+{"id": "aadhaar_grouped_ctx-fresh-010", "group": "aadhaar_grouped_ctx", "split": "fresh", "text": "UID - 7706-5787-4821\n", "spans": [{"type": "aadhaar", "start": 6, "end": 20}]}
+{"id": "aadhaar_grouped_ctx-fresh-011", "group": "aadhaar_grouped_ctx", "split": "fresh", "text": "aadhar number 6747 8041 3927.", "spans": [{"type": "aadhaar", "start": 14, "end": 28}]}
+{"id": "aadhaar_grouped_ctx-fresh-012", "group": "aadhaar_grouped_ctx", "split": "fresh", "text": "AADHAAR NO. 6941-7658-3522 kyc done", "spans": [{"type": "aadhaar", "start": 12, "end": 26}]}
+{"id": "aadhaar_grouped_ctx-fresh-013", "group": "aadhaar_grouped_ctx", "split": "fresh", "text": "Aadhaar: 5904 3836 8162 (masked in copy)", "spans": [{"type": "aadhaar", "start": 9, "end": 23}]}
+{"id": "aadhaar_grouped_ctx-fresh-014", "group": "aadhaar_grouped_ctx", "split": "fresh", "text": "UID - 6304-3972-7591\n", "spans": [{"type": "aadhaar", "start": 6, "end": 20}]}
+{"id": "aadhaar_grouped_ctx-fresh-015", "group": "aadhaar_grouped_ctx", "split": "fresh", "text": "aadhar number 3270 7233 5778.", "spans": [{"type": "aadhaar", "start": 14, "end": 28}]}
+{"id": "aadhaar_grouped_ctx-fresh-016", "group": "aadhaar_grouped_ctx", "split": "fresh", "text": "AADHAAR NO. 3220-6256-3097 kyc done", "spans": [{"type": "aadhaar", "start": 12, "end": 26}]}
+{"id": "aadhaar_grouped_ctx-fresh-017", "group": "aadhaar_grouped_ctx", "split": "fresh", "text": "Aadhaar: 9020 3441 8431 (masked in copy)", "spans": [{"type": "aadhaar", "start": 9, "end": 23}]}
+{"id": "aadhaar_grouped_ctx-fresh-018", "group": "aadhaar_grouped_ctx", "split": "fresh", "text": "UID - 9119-7597-3986\n", "spans": [{"type": "aadhaar", "start": 6, "end": 20}]}
+{"id": "aadhaar_grouped_ctx-fresh-019", "group": "aadhaar_grouped_ctx", "split": "fresh", "text": "aadhar number 4606 9268 2193.", "spans": [{"type": "aadhaar", "start": 14, "end": 28}]}
+{"id": "aadhaar_grouped_ctx-fresh-020", "group": "aadhaar_grouped_ctx", "split": "fresh", "text": "AADHAAR NO. 5007-8270-4325 kyc done", "spans": [{"type": "aadhaar", "start": 12, "end": 26}]}
+{"id": "aadhaar_grouped_noctx-fresh-001", "group": "aadhaar_grouped_noctx", "split": "fresh", "text": "Identity: 8255 1242 0388.", "spans": [{"type": "aadhaar", "start": 10, "end": 24}]}
+{"id": "aadhaar_grouped_noctx-fresh-002", "group": "aadhaar_grouped_noctx", "split": "fresh", "text": "Applicant number 9696 1795 4089\n", "spans": [{"type": "aadhaar", "start": 17, "end": 31}]}
+{"id": "aadhaar_grouped_noctx-fresh-003", "group": "aadhaar_grouped_noctx", "split": "fresh", "text": "as per card 7749 4184 7089 ok", "spans": [{"type": "aadhaar", "start": 12, "end": 26}]}
+{"id": "aadhaar_grouped_noctx-fresh-004", "group": "aadhaar_grouped_noctx", "split": "fresh", "text": "Proof # 6237 5773 6670", "spans": [{"type": "aadhaar", "start": 8, "end": 22}]}
+{"id": "aadhaar_grouped_noctx-fresh-005", "group": "aadhaar_grouped_noctx", "split": "fresh", "text": "Identity: 5651 0062 0463.", "spans": [{"type": "aadhaar", "start": 10, "end": 24}]}
+{"id": "aadhaar_grouped_noctx-fresh-006", "group": "aadhaar_grouped_noctx", "split": "fresh", "text": "Applicant number 9599 6302 0253\n", "spans": [{"type": "aadhaar", "start": 17, "end": 31}]}
+{"id": "aadhaar_grouped_noctx-fresh-007", "group": "aadhaar_grouped_noctx", "split": "fresh", "text": "as per card 3227 5525 8757 ok", "spans": [{"type": "aadhaar", "start": 12, "end": 26}]}
+{"id": "aadhaar_grouped_noctx-fresh-008", "group": "aadhaar_grouped_noctx", "split": "fresh", "text": "Proof # 6775 2800 4762", "spans": [{"type": "aadhaar", "start": 8, "end": 22}]}
+{"id": "aadhaar_grouped_noctx-fresh-009", "group": "aadhaar_grouped_noctx", "split": "fresh", "text": "Identity: 9994 9920 8142.", "spans": [{"type": "aadhaar", "start": 10, "end": 24}]}
+{"id": "aadhaar_grouped_noctx-fresh-010", "group": "aadhaar_grouped_noctx", "split": "fresh", "text": "Applicant number 8005 3644 1612\n", "spans": [{"type": "aadhaar", "start": 17, "end": 31}]}
+{"id": "aadhaar_grouped_noctx-fresh-011", "group": "aadhaar_grouped_noctx", "split": "fresh", "text": "as per card 6233 6622 2178 ok", "spans": [{"type": "aadhaar", "start": 12, "end": 26}]}
+{"id": "aadhaar_grouped_noctx-fresh-012", "group": "aadhaar_grouped_noctx", "split": "fresh", "text": "Proof # 4531 4101 5915", "spans": [{"type": "aadhaar", "start": 8, "end": 22}]}
+{"id": "aadhaar_grouped_noctx-fresh-013", "group": "aadhaar_grouped_noctx", "split": "fresh", "text": "Identity: 8128 9333 8824.", "spans": [{"type": "aadhaar", "start": 10, "end": 24}]}
+{"id": "aadhaar_grouped_noctx-fresh-014", "group": "aadhaar_grouped_noctx", "split": "fresh", "text": "Applicant number 5898 3672 6782\n", "spans": [{"type": "aadhaar", "start": 17, "end": 31}]}
+{"id": "aadhaar_grouped_noctx-fresh-015", "group": "aadhaar_grouped_noctx", "split": "fresh", "text": "as per card 7922 7687 4290 ok", "spans": [{"type": "aadhaar", "start": 12, "end": 26}]}
+{"id": "aadhaar_grouped_noctx-fresh-016", "group": "aadhaar_grouped_noctx", "split": "fresh", "text": "Proof # 4029 6182 2171", "spans": [{"type": "aadhaar", "start": 8, "end": 22}]}
+{"id": "aadhaar_grouped_noctx-fresh-017", "group": "aadhaar_grouped_noctx", "split": "fresh", "text": "Identity: 3900 7928 0707.", "spans": [{"type": "aadhaar", "start": 10, "end": 24}]}
+{"id": "aadhaar_grouped_noctx-fresh-018", "group": "aadhaar_grouped_noctx", "split": "fresh", "text": "Applicant number 7246 8505 7049\n", "spans": [{"type": "aadhaar", "start": 17, "end": 31}]}
+{"id": "aadhaar_grouped_noctx-fresh-019", "group": "aadhaar_grouped_noctx", "split": "fresh", "text": "as per card 5173 4161 8429 ok", "spans": [{"type": "aadhaar", "start": 12, "end": 26}]}
+{"id": "aadhaar_grouped_noctx-fresh-020", "group": "aadhaar_grouped_noctx", "split": "fresh", "text": "Proof # 4023 5706 0080", "spans": [{"type": "aadhaar", "start": 8, "end": 22}]}
+{"id": "aadhaar_bare_ctx-fresh-001", "group": "aadhaar_bare_ctx", "split": "fresh", "text": "mera aadhaar number hai 567990772849 bhej diya", "spans": [{"type": "aadhaar", "start": 24, "end": 36}]}
+{"id": "aadhaar_bare_ctx-fresh-002", "group": "aadhaar_bare_ctx", "split": "fresh", "text": "aadhaar 529203277010", "spans": [{"type": "aadhaar", "start": 8, "end": 20}]}
+{"id": "aadhaar_bare_ctx-fresh-003", "group": "aadhaar_bare_ctx", "split": "fresh", "text": "UID no 927564104703.", "spans": [{"type": "aadhaar", "start": 7, "end": 19}]}
+{"id": "aadhaar_bare_ctx-fresh-004", "group": "aadhaar_bare_ctx", "split": "fresh", "text": "Aadhar card: 416101754292 (photocopy)", "spans": [{"type": "aadhaar", "start": 13, "end": 25}]}
+{"id": "aadhaar_bare_ctx-fresh-005", "group": "aadhaar_bare_ctx", "split": "fresh", "text": "mera aadhaar number hai 945019618578 bhej diya", "spans": [{"type": "aadhaar", "start": 24, "end": 36}]}
+{"id": "aadhaar_bare_ctx-fresh-006", "group": "aadhaar_bare_ctx", "split": "fresh", "text": "aadhaar 336758223951", "spans": [{"type": "aadhaar", "start": 8, "end": 20}]}
+{"id": "aadhaar_bare_ctx-fresh-007", "group": "aadhaar_bare_ctx", "split": "fresh", "text": "UID no 440466548706.", "spans": [{"type": "aadhaar", "start": 7, "end": 19}]}
+{"id": "aadhaar_bare_ctx-fresh-008", "group": "aadhaar_bare_ctx", "split": "fresh", "text": "Aadhar card: 899090820619 (photocopy)", "spans": [{"type": "aadhaar", "start": 13, "end": 25}]}
+{"id": "aadhaar_bare_ctx-fresh-009", "group": "aadhaar_bare_ctx", "split": "fresh", "text": "mera aadhaar number hai 927695122006 bhej diya", "spans": [{"type": "aadhaar", "start": 24, "end": 36}]}
+{"id": "aadhaar_bare_ctx-fresh-010", "group": "aadhaar_bare_ctx", "split": "fresh", "text": "aadhaar 954546361862", "spans": [{"type": "aadhaar", "start": 8, "end": 20}]}
+{"id": "aadhaar_bare_ctx-fresh-011", "group": "aadhaar_bare_ctx", "split": "fresh", "text": "UID no 604718034938.", "spans": [{"type": "aadhaar", "start": 7, "end": 19}]}
+{"id": "aadhaar_bare_ctx-fresh-012", "group": "aadhaar_bare_ctx", "split": "fresh", "text": "Aadhar card: 317519672128 (photocopy)", "spans": [{"type": "aadhaar", "start": 13, "end": 25}]}
+{"id": "aadhaar_bare_ctx-fresh-013", "group": "aadhaar_bare_ctx", "split": "fresh", "text": "mera aadhaar number hai 959623246215 bhej diya", "spans": [{"type": "aadhaar", "start": 24, "end": 36}]}
+{"id": "aadhaar_bare_ctx-fresh-014", "group": "aadhaar_bare_ctx", "split": "fresh", "text": "aadhaar 456061582936", "spans": [{"type": "aadhaar", "start": 8, "end": 20}]}
+{"id": "aadhaar_bare_ctx-fresh-015", "group": "aadhaar_bare_ctx", "split": "fresh", "text": "UID no 338881832320.", "spans": [{"type": "aadhaar", "start": 7, "end": 19}]}
+{"id": "aadhaar_bare_ctx-fresh-016", "group": "aadhaar_bare_ctx", "split": "fresh", "text": "Aadhar card: 515412485556 (photocopy)", "spans": [{"type": "aadhaar", "start": 13, "end": 25}]}
+{"id": "aadhaar_bare_ctx-fresh-017", "group": "aadhaar_bare_ctx", "split": "fresh", "text": "mera aadhaar number hai 253609674259 bhej diya", "spans": [{"type": "aadhaar", "start": 24, "end": 36}]}
+{"id": "aadhaar_bare_ctx-fresh-018", "group": "aadhaar_bare_ctx", "split": "fresh", "text": "aadhaar 359788345908", "spans": [{"type": "aadhaar", "start": 8, "end": 20}]}
+{"id": "aadhaar_bare_ctx-fresh-019", "group": "aadhaar_bare_ctx", "split": "fresh", "text": "UID no 415947145739.", "spans": [{"type": "aadhaar", "start": 7, "end": 19}]}
+{"id": "aadhaar_bare_ctx-fresh-020", "group": "aadhaar_bare_ctx", "split": "fresh", "text": "Aadhar card: 959995488409 (photocopy)", "spans": [{"type": "aadhaar", "start": 13, "end": 25}]}
+{"id": "aadhaar_bare_noctx-fresh-001", "group": "aadhaar_bare_noctx", "split": "fresh", "text": "Card reads 655076124203", "spans": [{"type": "aadhaar", "start": 11, "end": 23}]}
+{"id": "aadhaar_bare_noctx-fresh-002", "group": "aadhaar_bare_noctx", "split": "fresh", "text": "Verify 348900061724 please", "spans": [{"type": "aadhaar", "start": 7, "end": 19}]}
+{"id": "aadhaar_bare_noctx-fresh-003", "group": "aadhaar_bare_noctx", "split": "fresh", "text": "Number: 747366093957.", "spans": [{"type": "aadhaar", "start": 8, "end": 20}]}
+{"id": "aadhaar_bare_noctx-fresh-004", "group": "aadhaar_bare_noctx", "split": "fresh", "text": "ID 489179553796 today", "spans": [{"type": "aadhaar", "start": 3, "end": 15}]}
+{"id": "aadhaar_bare_noctx-fresh-005", "group": "aadhaar_bare_noctx", "split": "fresh", "text": "Card reads 216128208504", "spans": [{"type": "aadhaar", "start": 11, "end": 23}]}
+{"id": "aadhaar_bare_noctx-fresh-006", "group": "aadhaar_bare_noctx", "split": "fresh", "text": "Verify 406989686037 please", "spans": [{"type": "aadhaar", "start": 7, "end": 19}]}
+{"id": "aadhaar_bare_noctx-fresh-007", "group": "aadhaar_bare_noctx", "split": "fresh", "text": "Number: 983317821929.", "spans": [{"type": "aadhaar", "start": 8, "end": 20}]}
+{"id": "aadhaar_bare_noctx-fresh-008", "group": "aadhaar_bare_noctx", "split": "fresh", "text": "ID 909367855763 today", "spans": [{"type": "aadhaar", "start": 3, "end": 15}]}
+{"id": "aadhaar_bare_noctx-fresh-009", "group": "aadhaar_bare_noctx", "split": "fresh", "text": "Card reads 964483503702", "spans": [{"type": "aadhaar", "start": 11, "end": 23}]}
+{"id": "aadhaar_bare_noctx-fresh-010", "group": "aadhaar_bare_noctx", "split": "fresh", "text": "Verify 545659838065 please", "spans": [{"type": "aadhaar", "start": 7, "end": 19}]}
+{"id": "aadhaar_bare_noctx-fresh-011", "group": "aadhaar_bare_noctx", "split": "fresh", "text": "Number: 413756644994.", "spans": [{"type": "aadhaar", "start": 8, "end": 20}]}
+{"id": "aadhaar_bare_noctx-fresh-012", "group": "aadhaar_bare_noctx", "split": "fresh", "text": "ID 726477502282 today", "spans": [{"type": "aadhaar", "start": 3, "end": 15}]}
+{"id": "aadhaar_bare_noctx-fresh-013", "group": "aadhaar_bare_noctx", "split": "fresh", "text": "Card reads 717281144166", "spans": [{"type": "aadhaar", "start": 11, "end": 23}]}
+{"id": "aadhaar_bare_noctx-fresh-014", "group": "aadhaar_bare_noctx", "split": "fresh", "text": "Verify 810590220259 please", "spans": [{"type": "aadhaar", "start": 7, "end": 19}]}
+{"id": "aadhaar_bare_noctx-fresh-015", "group": "aadhaar_bare_noctx", "split": "fresh", "text": "Number: 557646992477.", "spans": [{"type": "aadhaar", "start": 8, "end": 20}]}
+{"id": "aadhaar_ctx_badchecksum-fresh-001", "group": "aadhaar_ctx_badchecksum", "split": "fresh", "text": "aadhaar 6624 2366 3638 (draft)", "spans": [{"type": "aadhaar", "start": 8, "end": 22}]}
+{"id": "aadhaar_ctx_badchecksum-fresh-002", "group": "aadhaar_ctx_badchecksum", "split": "fresh", "text": "UID: 617458685810 (draft)", "spans": [{"type": "aadhaar", "start": 5, "end": 17}]}
+{"id": "aadhaar_ctx_badchecksum-fresh-003", "group": "aadhaar_ctx_badchecksum", "split": "fresh", "text": "aadhaar 4265 1421 5148 (draft)", "spans": [{"type": "aadhaar", "start": 8, "end": 22}]}
+{"id": "aadhaar_ctx_badchecksum-fresh-004", "group": "aadhaar_ctx_badchecksum", "split": "fresh", "text": "UID: 694427817799 (draft)", "spans": [{"type": "aadhaar", "start": 5, "end": 17}]}
+{"id": "aadhaar_ctx_badchecksum-fresh-005", "group": "aadhaar_ctx_badchecksum", "split": "fresh", "text": "aadhaar 8184 0266 7269 (draft)", "spans": [{"type": "aadhaar", "start": 8, "end": 22}]}
+{"id": "aadhaar_ctx_badchecksum-fresh-006", "group": "aadhaar_ctx_badchecksum", "split": "fresh", "text": "UID: 690070918189 (draft)", "spans": [{"type": "aadhaar", "start": 5, "end": 17}]}
+{"id": "aadhaar_ctx_badchecksum-fresh-007", "group": "aadhaar_ctx_badchecksum", "split": "fresh", "text": "aadhaar 9807 6160 7487 (draft)", "spans": [{"type": "aadhaar", "start": 8, "end": 22}]}
+{"id": "aadhaar_ctx_badchecksum-fresh-008", "group": "aadhaar_ctx_badchecksum", "split": "fresh", "text": "UID: 937085269968 (draft)", "spans": [{"type": "aadhaar", "start": 5, "end": 17}]}
+{"id": "aadhaar_ctx_badchecksum-fresh-009", "group": "aadhaar_ctx_badchecksum", "split": "fresh", "text": "aadhaar 8631 2848 4383 (draft)", "spans": [{"type": "aadhaar", "start": 8, "end": 22}]}
+{"id": "aadhaar_ctx_badchecksum-fresh-010", "group": "aadhaar_ctx_badchecksum", "split": "fresh", "text": "UID: 266417423957 (draft)", "spans": [{"type": "aadhaar", "start": 5, "end": 17}]}
+{"id": "aadhaar_ctx_badchecksum-fresh-011", "group": "aadhaar_ctx_badchecksum", "split": "fresh", "text": "aadhaar 3422 1461 1857 (draft)", "spans": [{"type": "aadhaar", "start": 8, "end": 22}]}
+{"id": "aadhaar_ctx_badchecksum-fresh-012", "group": "aadhaar_ctx_badchecksum", "split": "fresh", "text": "UID: 457579468980 (draft)", "spans": [{"type": "aadhaar", "start": 5, "end": 17}]}
+{"id": "pan_upper-fresh-001", "group": "pan_upper", "split": "fresh", "text": "PAN: UNBGT2041M\n", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_upper-fresh-002", "group": "pan_upper", "split": "fresh", "text": "Permanent Account Number AVTTU0184C verified", "spans": [{"type": "pan", "start": 25, "end": 35}]}
+{"id": "pan_upper-fresh-003", "group": "pan_upper", "split": "fresh", "text": "Tax PAN - TXNCQ1951J.", "spans": [{"type": "pan", "start": 10, "end": 20}]}
+{"id": "pan_upper-fresh-004", "group": "pan_upper", "split": "fresh", "text": "GST/PAN GKJJM5514L on record", "spans": [{"type": "pan", "start": 8, "end": 18}]}
+{"id": "pan_upper-fresh-005", "group": "pan_upper", "split": "fresh", "text": "PAN: APOFH9019K\n", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_upper-fresh-006", "group": "pan_upper", "split": "fresh", "text": "Permanent Account Number XHVHB3430A verified", "spans": [{"type": "pan", "start": 25, "end": 35}]}
+{"id": "pan_upper-fresh-007", "group": "pan_upper", "split": "fresh", "text": "Tax PAN - WDZFK2264J.", "spans": [{"type": "pan", "start": 10, "end": 20}]}
+{"id": "pan_upper-fresh-008", "group": "pan_upper", "split": "fresh", "text": "GST/PAN XUICK0278B on record", "spans": [{"type": "pan", "start": 8, "end": 18}]}
+{"id": "pan_upper-fresh-009", "group": "pan_upper", "split": "fresh", "text": "PAN: CQJGD0474H\n", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_upper-fresh-010", "group": "pan_upper", "split": "fresh", "text": "Permanent Account Number TSAFY7108H verified", "spans": [{"type": "pan", "start": 25, "end": 35}]}
+{"id": "pan_upper-fresh-011", "group": "pan_upper", "split": "fresh", "text": "Tax PAN - HBVGC8771C.", "spans": [{"type": "pan", "start": 10, "end": 20}]}
+{"id": "pan_upper-fresh-012", "group": "pan_upper", "split": "fresh", "text": "GST/PAN AQKBE9679S on record", "spans": [{"type": "pan", "start": 8, "end": 18}]}
+{"id": "pan_upper-fresh-013", "group": "pan_upper", "split": "fresh", "text": "PAN: GUFBS7063H\n", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_upper-fresh-014", "group": "pan_upper", "split": "fresh", "text": "Permanent Account Number CMMLV3465P verified", "spans": [{"type": "pan", "start": 25, "end": 35}]}
+{"id": "pan_upper-fresh-015", "group": "pan_upper", "split": "fresh", "text": "Tax PAN - HWGJG4908L.", "spans": [{"type": "pan", "start": 10, "end": 20}]}
+{"id": "pan_upper-fresh-016", "group": "pan_upper", "split": "fresh", "text": "GST/PAN EEZCO3530A on record", "spans": [{"type": "pan", "start": 8, "end": 18}]}
+{"id": "pan_upper-fresh-017", "group": "pan_upper", "split": "fresh", "text": "PAN: PODFM2615Y\n", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_upper-fresh-018", "group": "pan_upper", "split": "fresh", "text": "Permanent Account Number QPNTB3009K verified", "spans": [{"type": "pan", "start": 25, "end": 35}]}
+{"id": "pan_upper-fresh-019", "group": "pan_upper", "split": "fresh", "text": "Tax PAN - TQGJE9395O.", "spans": [{"type": "pan", "start": 10, "end": 20}]}
+{"id": "pan_upper-fresh-020", "group": "pan_upper", "split": "fresh", "text": "GST/PAN AJOPV2883Q on record", "spans": [{"type": "pan", "start": 8, "end": 18}]}
+{"id": "pan_upper-fresh-021", "group": "pan_upper", "split": "fresh", "text": "PAN: GMUBK3486N\n", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_upper-fresh-022", "group": "pan_upper", "split": "fresh", "text": "Permanent Account Number PFCCB3278W verified", "spans": [{"type": "pan", "start": 25, "end": 35}]}
+{"id": "pan_upper-fresh-023", "group": "pan_upper", "split": "fresh", "text": "Tax PAN - EYIHV6199T.", "spans": [{"type": "pan", "start": 10, "end": 20}]}
+{"id": "pan_upper-fresh-024", "group": "pan_upper", "split": "fresh", "text": "GST/PAN WRTTI4494A on record", "spans": [{"type": "pan", "start": 8, "end": 18}]}
+{"id": "pan_upper-fresh-025", "group": "pan_upper", "split": "fresh", "text": "PAN: PKATR6559A\n", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_upper-fresh-026", "group": "pan_upper", "split": "fresh", "text": "Permanent Account Number TBVBK5903F verified", "spans": [{"type": "pan", "start": 25, "end": 35}]}
+{"id": "pan_upper-fresh-027", "group": "pan_upper", "split": "fresh", "text": "Tax PAN - FRIHS1445T.", "spans": [{"type": "pan", "start": 10, "end": 20}]}
+{"id": "pan_upper-fresh-028", "group": "pan_upper", "split": "fresh", "text": "GST/PAN MJOJU0896P on record", "spans": [{"type": "pan", "start": 8, "end": 18}]}
+{"id": "pan_upper-fresh-029", "group": "pan_upper", "split": "fresh", "text": "PAN: QBTAU9076I\n", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_upper-fresh-030", "group": "pan_upper", "split": "fresh", "text": "Permanent Account Number AIBCD1949D verified", "spans": [{"type": "pan", "start": 25, "end": 35}]}
+{"id": "pan_lower_ctx-fresh-001", "group": "pan_lower_ctx", "split": "fresh", "text": "pan card wgthi2688k ok", "spans": [{"type": "pan", "start": 9, "end": 19}]}
+{"id": "pan_lower_ctx-fresh-002", "group": "pan_lower_ctx", "split": "fresh", "text": "pan: bgwjm9307j ok", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_lower_ctx-fresh-003", "group": "pan_lower_ctx", "split": "fresh", "text": "my pan fxhff4827x ok", "spans": [{"type": "pan", "start": 7, "end": 17}]}
+{"id": "pan_lower_ctx-fresh-004", "group": "pan_lower_ctx", "split": "fresh", "text": "pan card vkead5089e ok", "spans": [{"type": "pan", "start": 9, "end": 19}]}
+{"id": "pan_lower_ctx-fresh-005", "group": "pan_lower_ctx", "split": "fresh", "text": "pan: uxhfk2839s ok", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_lower_ctx-fresh-006", "group": "pan_lower_ctx", "split": "fresh", "text": "my pan afphe0715n ok", "spans": [{"type": "pan", "start": 7, "end": 17}]}
+{"id": "pan_lower_ctx-fresh-007", "group": "pan_lower_ctx", "split": "fresh", "text": "pan card drobn9658c ok", "spans": [{"type": "pan", "start": 9, "end": 19}]}
+{"id": "pan_lower_ctx-fresh-008", "group": "pan_lower_ctx", "split": "fresh", "text": "pan: ljvcg5355x ok", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_lower_ctx-fresh-009", "group": "pan_lower_ctx", "split": "fresh", "text": "my pan wutba6925b ok", "spans": [{"type": "pan", "start": 7, "end": 17}]}
+{"id": "pan_lower_ctx-fresh-010", "group": "pan_lower_ctx", "split": "fresh", "text": "pan card wkofl6038c ok", "spans": [{"type": "pan", "start": 9, "end": 19}]}
+{"id": "pan_lower_ctx-fresh-011", "group": "pan_lower_ctx", "split": "fresh", "text": "pan: ldsci5159d ok", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_lower_ctx-fresh-012", "group": "pan_lower_ctx", "split": "fresh", "text": "my pan kziao2802j ok", "spans": [{"type": "pan", "start": 7, "end": 17}]}
+{"id": "pan_lower_noctx-fresh-001", "group": "pan_lower_noctx", "split": "fresh", "text": "code sdijf7644u noted", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_lower_noctx-fresh-002", "group": "pan_lower_noctx", "split": "fresh", "text": "code wkwgj6472x noted", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_lower_noctx-fresh-003", "group": "pan_lower_noctx", "split": "fresh", "text": "code nmojm0237g noted", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_lower_noctx-fresh-004", "group": "pan_lower_noctx", "split": "fresh", "text": "code chfgr4142r noted", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "pan_lower_noctx-fresh-005", "group": "pan_lower_noctx", "split": "fresh", "text": "code unlce3598h noted", "spans": [{"type": "pan", "start": 5, "end": 15}]}
+{"id": "person-fresh-001", "group": "person", "split": "fresh", "text": "Signed by Karthik Naidu on 12 June.", "spans": [{"type": "person", "start": 10, "end": 23}]}
+{"id": "person-fresh-002", "group": "person", "split": "fresh", "text": "Regards, Rekha Shetty\nPlease revert.", "spans": [{"type": "person", "start": 9, "end": 21}]}
+{"id": "person-fresh-003", "group": "person", "split": "fresh", "text": "Dear Rohan Rao,", "spans": [{"type": "person", "start": 5, "end": 14}]}
+{"id": "person-fresh-004", "group": "person", "split": "fresh", "text": "Interviewed Robert Martin yesterday.", "spans": [{"type": "person", "start": 12, "end": 25}]}
+{"id": "person-fresh-005", "group": "person", "split": "fresh", "text": "Raised by Meera Malhotra via portal.", "spans": [{"type": "person", "start": 10, "end": 24}]}
+{"id": "person-fresh-006", "group": "person", "split": "fresh", "text": "Customer: William Williams", "spans": [{"type": "person", "start": 10, "end": 26}]}
+{"id": "person-fresh-007", "group": "person", "split": "fresh", "text": "Signed by Sarah Jones on 12 June.", "spans": [{"type": "person", "start": 10, "end": 21}]}
+{"id": "person-fresh-008", "group": "person", "split": "fresh", "text": "Regards, Amit Patel\nPlease revert.", "spans": [{"type": "person", "start": 9, "end": 19}]}
+{"id": "person-fresh-009", "group": "person", "split": "fresh", "text": "Dear Susan Lewis,", "spans": [{"type": "person", "start": 5, "end": 16}]}
+{"id": "person-fresh-010", "group": "person", "split": "fresh", "text": "Interviewed Susan Williams yesterday.", "spans": [{"type": "person", "start": 12, "end": 26}]}
+{"id": "person-fresh-011", "group": "person", "split": "fresh", "text": "Raised by Daniel King via portal.", "spans": [{"type": "person", "start": 10, "end": 21}]}
+{"id": "person-fresh-012", "group": "person", "split": "fresh", "text": "Customer: Manoj Malhotra", "spans": [{"type": "person", "start": 10, "end": 24}]}
+{"id": "person-fresh-013", "group": "person", "split": "fresh", "text": "Signed by Michael Davis on 12 June.", "spans": [{"type": "person", "start": 10, "end": 23}]}
+{"id": "person-fresh-014", "group": "person", "split": "fresh", "text": "Regards, Lakshmi Kulkarni\nPlease revert.", "spans": [{"type": "person", "start": 9, "end": 25}]}
+{"id": "person-fresh-015", "group": "person", "split": "fresh", "text": "Dear James Taylor,", "spans": [{"type": "person", "start": 5, "end": 17}]}
+{"id": "person-fresh-016", "group": "person", "split": "fresh", "text": "Interviewed Ishita Thakur yesterday.", "spans": [{"type": "person", "start": 12, "end": 25}]}
+{"id": "person-fresh-017", "group": "person", "split": "fresh", "text": "Raised by David Jones via portal.", "spans": [{"type": "person", "start": 10, "end": 21}]}
+{"id": "person-fresh-018", "group": "person", "split": "fresh", "text": "Customer: Richard Davis", "spans": [{"type": "person", "start": 10, "end": 23}]}
+{"id": "person-fresh-019", "group": "person", "split": "fresh", "text": "Signed by Linda King on 12 June.", "spans": [{"type": "person", "start": 10, "end": 20}]}
+{"id": "person-fresh-020", "group": "person", "split": "fresh", "text": "Regards, Elizabeth Thomas\nPlease revert.", "spans": [{"type": "person", "start": 9, "end": 25}]}
+{"id": "person-fresh-021", "group": "person", "split": "fresh", "text": "Dear John Williams,", "spans": [{"type": "person", "start": 5, "end": 18}]}
+{"id": "person-fresh-022", "group": "person", "split": "fresh", "text": "Interviewed Arjun Singh yesterday.", "spans": [{"type": "person", "start": 12, "end": 23}]}
+{"id": "person-fresh-023", "group": "person", "split": "fresh", "text": "Raised by Grace Young via portal.", "spans": [{"type": "person", "start": 10, "end": 21}]}
+{"id": "person-fresh-024", "group": "person", "split": "fresh", "text": "Customer: Ishita Kapoor", "spans": [{"type": "person", "start": 10, "end": 23}]}
+{"id": "person-fresh-025", "group": "person", "split": "fresh", "text": "Signed by Kavya Kulkarni on 12 June.", "spans": [{"type": "person", "start": 10, "end": 24}]}
+{"id": "person-fresh-026", "group": "person", "split": "fresh", "text": "Regards, John Clark\nPlease revert.", "spans": [{"type": "person", "start": 9, "end": 19}]}
+{"id": "person-fresh-027", "group": "person", "split": "fresh", "text": "Dear Emily Harris,", "spans": [{"type": "person", "start": 5, "end": 17}]}
+{"id": "person-fresh-028", "group": "person", "split": "fresh", "text": "Interviewed Joseph Smith yesterday.", "spans": [{"type": "person", "start": 12, "end": 24}]}
+{"id": "person-fresh-029", "group": "person", "split": "fresh", "text": "Raised by Linda Thompson via portal.", "spans": [{"type": "person", "start": 10, "end": 24}]}
+{"id": "person-fresh-030", "group": "person", "split": "fresh", "text": "Customer: Matthew Wilson", "spans": [{"type": "person", "start": 10, "end": 24}]}
+{"id": "person-fresh-031", "group": "person", "split": "fresh", "text": "Signed by Jennifer Thomas on 12 June.", "spans": [{"type": "person", "start": 10, "end": 25}]}
+{"id": "person-fresh-032", "group": "person", "split": "fresh", "text": "Regards, Mary White\nPlease revert.", "spans": [{"type": "person", "start": 9, "end": 19}]}
+{"id": "person-fresh-033", "group": "person", "split": "fresh", "text": "Dear Patricia Allen,", "spans": [{"type": "person", "start": 5, "end": 19}]}
+{"id": "person-fresh-034", "group": "person", "split": "fresh", "text": "Interviewed Jennifer Smith yesterday.", "spans": [{"type": "person", "start": 12, "end": 26}]}
+{"id": "person-fresh-035", "group": "person", "split": "fresh", "text": "Raised by Pooja Bose via portal.", "spans": [{"type": "person", "start": 10, "end": 20}]}
+{"id": "person-fresh-036", "group": "person", "split": "fresh", "text": "Customer: Karen Wilson", "spans": [{"type": "person", "start": 10, "end": 22}]}
+{"id": "person-fresh-037", "group": "person", "split": "fresh", "text": "Signed by Manoj Sharma on 12 June.", "spans": [{"type": "person", "start": 10, "end": 22}]}
+{"id": "person-fresh-038", "group": "person", "split": "fresh", "text": "Regards, Kavya Sharma\nPlease revert.", "spans": [{"type": "person", "start": 9, "end": 21}]}
+{"id": "person-fresh-039", "group": "person", "split": "fresh", "text": "Dear Robert Clark,", "spans": [{"type": "person", "start": 5, "end": 17}]}
+{"id": "person-fresh-040", "group": "person", "split": "fresh", "text": "Interviewed Ishita Rao yesterday.", "spans": [{"type": "person", "start": 12, "end": 22}]}
+{"id": "mixed-fresh-001", "group": "mixed", "split": "fresh", "text": "Applicant Thomas King (divya_thompson@northstar-mfg.com, +91 75113 77899) PAN KJNLF4549Z Aadhaar 9159 0960 1083.", "spans": [{"type": "person", "start": 10, "end": 21}, {"type": "email", "start": 23, "end": 55}, {"type": "phone", "start": 57, "end": 72}, {"type": "pan", "start": 78, "end": 88}, {"type": "aadhaar", "start": 97, "end": 111}]}
+{"id": "mixed-fresh-002", "group": "mixed", "split": "fresh", "text": "Applicant Linda Jones (ishitaverma@northstar-mfg.com, 07256845010) PAN IFJBF4284W Aadhaar 8817 4800 5646.", "spans": [{"type": "person", "start": 10, "end": 21}, {"type": "email", "start": 23, "end": 52}, {"type": "phone", "start": 54, "end": 65}, {"type": "pan", "start": 71, "end": 81}, {"type": "aadhaar", "start": 90, "end": 104}]}
+{"id": "mixed-fresh-003", "group": "mixed", "split": "fresh", "text": "Applicant Anjali Banerjee (matthew_wilson@corp.example.net, 91 6655735079) PAN YIYPH9141B Aadhaar 5446 7297 5676.", "spans": [{"type": "person", "start": 10, "end": 25}, {"type": "email", "start": 27, "end": 58}, {"type": "phone", "start": 60, "end": 73}, {"type": "pan", "start": 79, "end": 89}, {"type": "aadhaar", "start": 98, "end": 112}]}
+{"id": "mixed-fresh-004", "group": "mixed", "split": "fresh", "text": "Applicant Meera Patel (ramesh23@company.co.in, 91 7341747601) PAN XCETC2245E Aadhaar 3359 0683 4750.", "spans": [{"type": "person", "start": 10, "end": 21}, {"type": "email", "start": 23, "end": 45}, {"type": "phone", "start": 47, "end": 60}, {"type": "pan", "start": 66, "end": 76}, {"type": "aadhaar", "start": 85, "end": 99}]}
+{"id": "mixed-fresh-005", "group": "mixed", "split": "fresh", "text": "Applicant Kavya Menon (rahul.walker@corp.example.net, +91-8028604945) PAN YEYCG5646B Aadhaar 6161 8113 2190.", "spans": [{"type": "person", "start": 10, "end": 21}, {"type": "email", "start": 23, "end": 52}, {"type": "phone", "start": 54, "end": 68}, {"type": "pan", "start": 74, "end": 84}, {"type": "aadhaar", "start": 93, "end": 107}]}
+{"id": "mixed-fresh-006", "group": "mixed", "split": "fresh", "text": "Applicant Patricia Moore (susanjohnson@example.com, +91 60571 74377) PAN HRUFX2344V Aadhaar 9726 5818 7813.", "spans": [{"type": "person", "start": 10, "end": 24}, {"type": "email", "start": 26, "end": 50}, {"type": "phone", "start": 52, "end": 67}, {"type": "pan", "start": 73, "end": 83}, {"type": "aadhaar", "start": 92, "end": 106}]}
+{"id": "mixed-fresh-007", "group": "mixed", "split": "fresh", "text": "Applicant Joseph White (sarah.mehta@gmail.com, 91 8588709392) PAN WEZHJ3918B Aadhaar 8773 9555 3464.", "spans": [{"type": "person", "start": 10, "end": 22}, {"type": "email", "start": 24, "end": 45}, {"type": "phone", "start": 47, "end": 60}, {"type": "pan", "start": 66, "end": 76}, {"type": "aadhaar", "start": 85, "end": 99}]}
+{"id": "mixed-fresh-008", "group": "mixed", "split": "fresh", "text": "Applicant Daniel Scott (rmishra@example.com, 91 7838795691) PAN LOOJH8954E Aadhaar 3867 7727 6825.", "spans": [{"type": "person", "start": 10, "end": 22}, {"type": "email", "start": 24, "end": 43}, {"type": "phone", "start": 45, "end": 58}, {"type": "pan", "start": 64, "end": 74}, {"type": "aadhaar", "start": 83, "end": 97}]}
+{"id": "mixed-fresh-009", "group": "mixed", "split": "fresh", "text": "Applicant Ryan Thomas (sgreen@northstar-mfg.com, (+91) 76439 93272) PAN GMMBS6069Y Aadhaar 2945 7953 8924.", "spans": [{"type": "person", "start": 10, "end": 21}, {"type": "email", "start": 23, "end": 47}, {"type": "phone", "start": 49, "end": 66}, {"type": "pan", "start": 72, "end": 82}, {"type": "aadhaar", "start": 91, "end": 105}]}
+{"id": "mixed-fresh-010", "group": "mixed", "split": "fresh", "text": "Applicant Shreya Rao (varun_johnson@vendor.in, +916450050118) PAN UPTBV7026K Aadhaar 3417 3673 8636.", "spans": [{"type": "person", "start": 10, "end": 20}, {"type": "email", "start": 22, "end": 45}, {"type": "phone", "start": 47, "end": 60}, {"type": "pan", "start": 66, "end": 76}, {"type": "aadhaar", "start": 85, "end": 99}]}
+{"id": "mixed-fresh-011", "group": "mixed", "split": "fresh", "text": "Applicant Matthew Johnson (nikhil_singh@corp.example.net, +91 9479737692) PAN QRFGK3207C Aadhaar 5991 8220 1307.", "spans": [{"type": "person", "start": 10, "end": 25}, {"type": "email", "start": 27, "end": 56}, {"type": "phone", "start": 58, "end": 72}, {"type": "pan", "start": 78, "end": 88}, {"type": "aadhaar", "start": 97, "end": 111}]}
+{"id": "mixed-fresh-012", "group": "mixed", "split": "fresh", "text": "Applicant Ananya Chatterjee (siddharth_banerjee@vendor.in, +916367672734) PAN BWZAM7171V Aadhaar 6725 3109 4336.", "spans": [{"type": "person", "start": 10, "end": 27}, {"type": "email", "start": 29, "end": 57}, {"type": "phone", "start": 59, "end": 72}, {"type": "pan", "start": 78, "end": 88}, {"type": "aadhaar", "start": 97, "end": 111}]}
+{"id": "mixed-fresh-013", "group": "mixed", "split": "fresh", "text": "Applicant Karthik Banerjee (sarahwilliams@outlook.com, (+91) 99754 58442) PAN DCFAN9487X Aadhaar 8688 7850 0338.", "spans": [{"type": "person", "start": 10, "end": 26}, {"type": "email", "start": 28, "end": 53}, {"type": "phone", "start": 55, "end": 72}, {"type": "pan", "start": 78, "end": 88}, {"type": "aadhaar", "start": 97, "end": 111}]}
+{"id": "mixed-fresh-014", "group": "mixed", "split": "fresh", "text": "Applicant Aarav Kulkarni (john_agarwal@gmail.com, +917748327966) PAN JORBF4749U Aadhaar 2145 2264 9198.", "spans": [{"type": "person", "start": 10, "end": 24}, {"type": "email", "start": 26, "end": 48}, {"type": "phone", "start": 50, "end": 63}, {"type": "pan", "start": 69, "end": 79}, {"type": "aadhaar", "start": 88, "end": 102}]}
+{"id": "mixed-fresh-015", "group": "mixed", "split": "fresh", "text": "Applicant Rohan Kulkarni (aiyer@example.com, (+91) 78276 17345) PAN JLFBO6157J Aadhaar 3100 8536 7936.", "spans": [{"type": "person", "start": 10, "end": 24}, {"type": "email", "start": 26, "end": 43}, {"type": "phone", "start": 45, "end": 62}, {"type": "pan", "start": 68, "end": 78}, {"type": "aadhaar", "start": 87, "end": 101}]}
+{"id": "mixed-fresh-016", "group": "mixed", "split": "fresh", "text": "Applicant Sneha Shetty (emily.moore+ops@corp.example.net, (+91) 66648 68035) PAN PKNLW0634S Aadhaar 3393 4795 0590.", "spans": [{"type": "person", "start": 10, "end": 22}, {"type": "email", "start": 24, "end": 56}, {"type": "phone", "start": 58, "end": 75}, {"type": "pan", "start": 81, "end": 91}, {"type": "aadhaar", "start": 100, "end": 114}]}
+{"id": "mixed-fresh-017", "group": "mixed", "split": "fresh", "text": "Applicant Nikhil Gupta (kking@gmail.com, 91 7961201031) PAN XDGGC1935H Aadhaar 7852 8626 3810.", "spans": [{"type": "person", "start": 10, "end": 22}, {"type": "email", "start": 24, "end": 39}, {"type": "phone", "start": 41, "end": 54}, {"type": "pan", "start": 60, "end": 70}, {"type": "aadhaar", "start": 79, "end": 93}]}
+{"id": "mixed-fresh-018", "group": "mixed", "split": "fresh", "text": "Applicant Jennifer Baker (harish_chopra@vendor.in, 07901214862) PAN NTWJB2740A Aadhaar 2626 6643 4214.", "spans": [{"type": "person", "start": 10, "end": 24}, {"type": "email", "start": 26, "end": 49}, {"type": "phone", "start": 51, "end": 62}, {"type": "pan", "start": 68, "end": 78}, {"type": "aadhaar", "start": 87, "end": 101}]}
+{"id": "mixed-fresh-019", "group": "mixed", "split": "fresh", "text": "Applicant William Miller (divyakapoor@corp.example.net, +91 83580 70655) PAN OAZLH9972S Aadhaar 4801 7934 6839.", "spans": [{"type": "person", "start": 10, "end": 24}, {"type": "email", "start": 26, "end": 54}, {"type": "phone", "start": 56, "end": 71}, {"type": "pan", "start": 77, "end": 87}, {"type": "aadhaar", "start": 96, "end": 110}]}
+{"id": "mixed-fresh-020", "group": "mixed", "split": "fresh", "text": "Applicant Kavya Reddy (thomas_bose@example.com, 08886218421) PAN YMDTK0844N Aadhaar 7220 7393 4634.", "spans": [{"type": "person", "start": 10, "end": 21}, {"type": "email", "start": 23, "end": 46}, {"type": "phone", "start": 48, "end": 59}, {"type": "pan", "start": 65, "end": 75}, {"type": "aadhaar", "start": 84, "end": 98}]}
+{"id": "mixed-fresh-021", "group": "mixed", "split": "fresh", "text": "Applicant Susan Smith (olivia_martin@corp.example.net, (+91) 63251 63191) PAN JMZGE4873B Aadhaar 2063 7690 0990.", "spans": [{"type": "person", "start": 10, "end": 21}, {"type": "email", "start": 23, "end": 53}, {"type": "phone", "start": 55, "end": 72}, {"type": "pan", "start": 78, "end": 88}, {"type": "aadhaar", "start": 97, "end": 111}]}
+{"id": "mixed-fresh-022", "group": "mixed", "split": "fresh", "text": "Applicant James Scott (john.brown+ops@outlook.com, 91 6784240744) PAN DWKGQ3664B Aadhaar 8601 9953 3884.", "spans": [{"type": "person", "start": 10, "end": 21}, {"type": "email", "start": 23, "end": 49}, {"type": "phone", "start": 51, "end": 64}, {"type": "pan", "start": 70, "end": 80}, {"type": "aadhaar", "start": 89, "end": 103}]}
+{"id": "mixed-fresh-023", "group": "mixed", "split": "fresh", "text": "Applicant Thomas Thomas (vikram.singh+ops@company.co.in, (+91) 89190 94506) PAN WVIGD5220W Aadhaar 5187 2152 3933.", "spans": [{"type": "person", "start": 10, "end": 23}, {"type": "email", "start": 25, "end": 55}, {"type": "phone", "start": 57, "end": 74}, {"type": "pan", "start": 80, "end": 90}, {"type": "aadhaar", "start": 99, "end": 113}]}
+{"id": "mixed-fresh-024", "group": "mixed", "split": "fresh", "text": "Applicant Arjun Verma (ryan.chatterjee+ops@outlook.com, 91 7758558536) PAN YCHAJ6698F Aadhaar 3652 3717 6331.", "spans": [{"type": "person", "start": 10, "end": 21}, {"type": "email", "start": 23, "end": 54}, {"type": "phone", "start": 56, "end": 69}, {"type": "pan", "start": 75, "end": 85}, {"type": "aadhaar", "start": 94, "end": 108}]}
+{"id": "mixed-fresh-025", "group": "mixed", "split": "fresh", "text": "Applicant Karen Moore (hannahyadav@example.com, +91-6518528142) PAN QTDCA2328O Aadhaar 8939 5345 0021.", "spans": [{"type": "person", "start": 10, "end": 21}, {"type": "email", "start": 23, "end": 46}, {"type": "phone", "start": 48, "end": 62}, {"type": "pan", "start": 68, "end": 78}, {"type": "aadhaar", "start": 87, "end": 101}]}
+{"id": "mixed-fresh-026", "group": "mixed", "split": "fresh", "text": "Applicant Emily Adams (elizabethbrown@corp.example.net, +91 72923 55753) PAN ZYHBH5035S Aadhaar 2617 4115 3078.", "spans": [{"type": "person", "start": 10, "end": 21}, {"type": "email", "start": 23, "end": 54}, {"type": "phone", "start": 56, "end": 71}, {"type": "pan", "start": 77, "end": 87}, {"type": "aadhaar", "start": 96, "end": 110}]}
+{"id": "mixed-fresh-027", "group": "mixed", "split": "fresh", "text": "Applicant Hannah Walker (priya.agarwal+ops@example.com, (+91) 76294 60974) PAN DGQCA8591I Aadhaar 3445 2047 0336.", "spans": [{"type": "person", "start": 10, "end": 23}, {"type": "email", "start": 25, "end": 54}, {"type": "phone", "start": 56, "end": 73}, {"type": "pan", "start": 79, "end": 89}, {"type": "aadhaar", "start": 98, "end": 112}]}
+{"id": "mixed-fresh-028", "group": "mixed", "split": "fresh", "text": "Applicant Ramesh Joshi (matthew.thompson+ops@vendor.in, 91 7072663576) PAN JKNJV0190Q Aadhaar 7840 0793 0429.", "spans": [{"type": "person", "start": 10, "end": 22}, {"type": "email", "start": 24, "end": 54}, {"type": "phone", "start": 56, "end": 69}, {"type": "pan", "start": 75, "end": 85}, {"type": "aadhaar", "start": 94, "end": 108}]}
+{"id": "mixed-fresh-029", "group": "mixed", "split": "fresh", "text": "Applicant Vikram Reddy (manoj.iyer+ops@vendor.in, (+91) 78131 44910) PAN KTUGW9533I Aadhaar 3560 8534 9504.", "spans": [{"type": "person", "start": 10, "end": 22}, {"type": "email", "start": 24, "end": 48}, {"type": "phone", "start": 50, "end": 67}, {"type": "pan", "start": 73, "end": 83}, {"type": "aadhaar", "start": 92, "end": 106}]}
+{"id": "mixed-fresh-030", "group": "mixed", "split": "fresh", "text": "Applicant Robert King (richard_thomas@mail.example.org, +91-7182461855) PAN MFNLU1059F Aadhaar 9523 4608 4065.", "spans": [{"type": "person", "start": 10, "end": 21}, {"type": "email", "start": 23, "end": 54}, {"type": "phone", "start": 56, "end": 70}, {"type": "pan", "start": 76, "end": 86}, {"type": "aadhaar", "start": 95, "end": 109}]}
+{"id": "neg_order_10digit-fresh-001", "group": "neg_order_10digit", "split": "fresh", "text": "Ticket #7076053522 closed.", "spans": []}
+{"id": "neg_order_10digit-fresh-002", "group": "neg_order_10digit", "split": "fresh", "text": "AWB 6044343918 delivered.", "spans": []}
+{"id": "neg_order_10digit-fresh-003", "group": "neg_order_10digit", "split": "fresh", "text": "Docket 9893896619 pending.", "spans": []}
+{"id": "neg_order_10digit-fresh-004", "group": "neg_order_10digit", "split": "fresh", "text": "Ref: 9944894936", "spans": []}
+{"id": "neg_order_10digit-fresh-005", "group": "neg_order_10digit", "split": "fresh", "text": "Ticket #6548022087 closed.", "spans": []}
+{"id": "neg_order_10digit-fresh-006", "group": "neg_order_10digit", "split": "fresh", "text": "AWB 7827870803 delivered.", "spans": []}
+{"id": "neg_order_10digit-fresh-007", "group": "neg_order_10digit", "split": "fresh", "text": "Docket 9806188680 pending.", "spans": []}
+{"id": "neg_order_10digit-fresh-008", "group": "neg_order_10digit", "split": "fresh", "text": "Ref: 6277616952", "spans": []}
+{"id": "neg_order_10digit-fresh-009", "group": "neg_order_10digit", "split": "fresh", "text": "Ticket #9457006578 closed.", "spans": []}
+{"id": "neg_order_10digit-fresh-010", "group": "neg_order_10digit", "split": "fresh", "text": "AWB 8310007407 delivered.", "spans": []}
+{"id": "neg_order_10digit-fresh-011", "group": "neg_order_10digit", "split": "fresh", "text": "Docket 9087477735 pending.", "spans": []}
+{"id": "neg_order_10digit-fresh-012", "group": "neg_order_10digit", "split": "fresh", "text": "Ref: 7729135933", "spans": []}
+{"id": "neg_order_10digit-fresh-013", "group": "neg_order_10digit", "split": "fresh", "text": "Ticket #6022434433 closed.", "spans": []}
+{"id": "neg_order_10digit-fresh-014", "group": "neg_order_10digit", "split": "fresh", "text": "AWB 8934815377 delivered.", "spans": []}
+{"id": "neg_order_10digit-fresh-015", "group": "neg_order_10digit", "split": "fresh", "text": "Docket 6918051807 pending.", "spans": []}
+{"id": "neg_order_10digit-fresh-016", "group": "neg_order_10digit", "split": "fresh", "text": "Ref: 8690597829", "spans": []}
+{"id": "neg_order_10digit-fresh-017", "group": "neg_order_10digit", "split": "fresh", "text": "Ticket #9245787188 closed.", "spans": []}
+{"id": "neg_order_10digit-fresh-018", "group": "neg_order_10digit", "split": "fresh", "text": "AWB 8569244197 delivered.", "spans": []}
+{"id": "neg_order_10digit-fresh-019", "group": "neg_order_10digit", "split": "fresh", "text": "Docket 7267256949 pending.", "spans": []}
+{"id": "neg_order_10digit-fresh-020", "group": "neg_order_10digit", "split": "fresh", "text": "Ref: 7012399630", "spans": []}
+{"id": "neg_order_10digit-fresh-021", "group": "neg_order_10digit", "split": "fresh", "text": "Ticket #6381333897 closed.", "spans": []}
+{"id": "neg_order_10digit-fresh-022", "group": "neg_order_10digit", "split": "fresh", "text": "AWB 7869715040 delivered.", "spans": []}
+{"id": "neg_order_10digit-fresh-023", "group": "neg_order_10digit", "split": "fresh", "text": "Docket 6255216139 pending.", "spans": []}
+{"id": "neg_order_10digit-fresh-024", "group": "neg_order_10digit", "split": "fresh", "text": "Ref: 9356263490", "spans": []}
+{"id": "neg_order_10digit-fresh-025", "group": "neg_order_10digit", "split": "fresh", "text": "Ticket #6617049980 closed.", "spans": []}
+{"id": "neg_order_10digit-fresh-026", "group": "neg_order_10digit", "split": "fresh", "text": "AWB 7918941061 delivered.", "spans": []}
+{"id": "neg_order_10digit-fresh-027", "group": "neg_order_10digit", "split": "fresh", "text": "Docket 8587545810 pending.", "spans": []}
+{"id": "neg_order_10digit-fresh-028", "group": "neg_order_10digit", "split": "fresh", "text": "Ref: 8542928158", "spans": []}
+{"id": "neg_order_10digit-fresh-029", "group": "neg_order_10digit", "split": "fresh", "text": "Ticket #9723922448 closed.", "spans": []}
+{"id": "neg_order_10digit-fresh-030", "group": "neg_order_10digit", "split": "fresh", "text": "AWB 6056861950 delivered.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-001", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Container 837731004729 loaded.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-002", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Reference number 682525452673 scanned.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-003", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Job 369053581367 billed.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-004", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Parcel 834982385529 arrived.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-005", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Container 235151404364 loaded.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-006", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Reference number 393921644929 scanned.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-007", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Job 304993709331 billed.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-008", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Parcel 881380383350 arrived.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-009", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Container 359275541148 loaded.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-010", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Reference number 778709464369 scanned.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-011", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Job 787603653451 billed.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-012", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Parcel 245637209730 arrived.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-013", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Container 872722572308 loaded.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-014", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Reference number 423020577755 scanned.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-015", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Job 544304908079 billed.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-016", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Parcel 481533857678 arrived.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-017", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Container 757856850833 loaded.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-018", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Reference number 849429952928 scanned.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-019", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Job 642327872268 billed.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-020", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Parcel 464966900072 arrived.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-021", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Container 620583647706 loaded.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-022", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Reference number 236056793867 scanned.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-023", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Job 450156737336 billed.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-024", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Parcel 988067345253 arrived.", "spans": []}
+{"id": "neg_12digit_valid_checksum-fresh-025", "group": "neg_12digit_valid_checksum", "split": "fresh", "text": "Container 297456388627 loaded.", "spans": []}
+{"id": "neg_16digit_luhn_fail-fresh-001", "group": "neg_16digit_luhn_fail", "split": "fresh", "text": "Serial 5065-6878-0263-1768 logged.", "spans": []}
+{"id": "neg_16digit_luhn_fail-fresh-002", "group": "neg_16digit_luhn_fail", "split": "fresh", "text": "Lot 4194-3630-9932-1342 logged.", "spans": []}
+{"id": "neg_16digit_luhn_fail-fresh-003", "group": "neg_16digit_luhn_fail", "split": "fresh", "text": "Order key 4248-6435-4067-8424 logged.", "spans": []}
+{"id": "neg_16digit_luhn_fail-fresh-004", "group": "neg_16digit_luhn_fail", "split": "fresh", "text": "Serial 5117-5834-5272-4870 logged.", "spans": []}
+{"id": "neg_16digit_luhn_fail-fresh-005", "group": "neg_16digit_luhn_fail", "split": "fresh", "text": "Lot 5551-7942-9336-0641 logged.", "spans": []}
+{"id": "neg_16digit_luhn_fail-fresh-006", "group": "neg_16digit_luhn_fail", "split": "fresh", "text": "Order key 5401-5703-9286-9928 logged.", "spans": []}
+{"id": "neg_16digit_luhn_fail-fresh-007", "group": "neg_16digit_luhn_fail", "split": "fresh", "text": "Serial 4054-6969-0391-0043 logged.", "spans": []}
+{"id": "neg_16digit_luhn_fail-fresh-008", "group": "neg_16digit_luhn_fail", "split": "fresh", "text": "Lot 5632-8254-4647-6265 logged.", "spans": []}
+{"id": "neg_16digit_luhn_fail-fresh-009", "group": "neg_16digit_luhn_fail", "split": "fresh", "text": "Order key 4653-7318-8160-6118 logged.", "spans": []}
+{"id": "neg_16digit_luhn_fail-fresh-010", "group": "neg_16digit_luhn_fail", "split": "fresh", "text": "Serial 4067-5070-3178-8232 logged.", "spans": []}
+{"id": "neg_16digit_luhn_fail-fresh-011", "group": "neg_16digit_luhn_fail", "split": "fresh", "text": "Lot 5568-7835-2881-0414 logged.", "spans": []}
+{"id": "neg_16digit_luhn_fail-fresh-012", "group": "neg_16digit_luhn_fail", "split": "fresh", "text": "Order key 4732-0298-6276-8162 logged.", "spans": []}
+{"id": "neg_16digit_luhn_fail-fresh-013", "group": "neg_16digit_luhn_fail", "split": "fresh", "text": "Serial 5676-6144-1743-1575 logged.", "spans": []}
+{"id": "neg_16digit_luhn_fail-fresh-014", "group": "neg_16digit_luhn_fail", "split": "fresh", "text": "Lot 4521-4825-1880-4771 logged.", "spans": []}
+{"id": "neg_16digit_luhn_fail-fresh-015", "group": "neg_16digit_luhn_fail", "split": "fresh", "text": "Order key 4432-1641-5443-7409 logged.", "spans": []}
+{"id": "neg_16digit_luhn_fail-fresh-016", "group": "neg_16digit_luhn_fail", "split": "fresh", "text": "Serial 5282-4978-6778-9239 logged.", "spans": []}
+{"id": "neg_16digit_luhn_fail-fresh-017", "group": "neg_16digit_luhn_fail", "split": "fresh", "text": "Lot 4079-1119-5293-6965 logged.", "spans": []}
+{"id": "neg_16digit_luhn_fail-fresh-018", "group": "neg_16digit_luhn_fail", "split": "fresh", "text": "Order key 5867-1697-7238-3654 logged.", "spans": []}
+{"id": "neg_16digit_luhn_fail-fresh-019", "group": "neg_16digit_luhn_fail", "split": "fresh", "text": "Serial 4651-2807-0530-7489 logged.", "spans": []}
+{"id": "neg_16digit_luhn_fail-fresh-020", "group": "neg_16digit_luhn_fail", "split": "fresh", "text": "Lot 4680-6997-1584-9518 logged.", "spans": []}
+{"id": "neg_ssn_invalid_area-fresh-001", "group": "neg_ssn_invalid_area", "split": "fresh", "text": "Drawing 000-45-4270 revised.", "spans": []}
+{"id": "neg_ssn_invalid_area-fresh-002", "group": "neg_ssn_invalid_area", "split": "fresh", "text": "Model 928-67-4767 revised.", "spans": []}
+{"id": "neg_ssn_invalid_area-fresh-003", "group": "neg_ssn_invalid_area", "split": "fresh", "text": "Item 666-43-5324 revised.", "spans": []}
+{"id": "neg_ssn_invalid_area-fresh-004", "group": "neg_ssn_invalid_area", "split": "fresh", "text": "Drawing 666-87-5621 revised.", "spans": []}
+{"id": "neg_ssn_invalid_area-fresh-005", "group": "neg_ssn_invalid_area", "split": "fresh", "text": "Model 666-84-3410 revised.", "spans": []}
+{"id": "neg_ssn_invalid_area-fresh-006", "group": "neg_ssn_invalid_area", "split": "fresh", "text": "Item 948-81-6016 revised.", "spans": []}
+{"id": "neg_ssn_invalid_area-fresh-007", "group": "neg_ssn_invalid_area", "split": "fresh", "text": "Drawing 930-36-8105 revised.", "spans": []}
+{"id": "neg_ssn_invalid_area-fresh-008", "group": "neg_ssn_invalid_area", "split": "fresh", "text": "Model 952-17-0121 revised.", "spans": []}
+{"id": "neg_ssn_invalid_area-fresh-009", "group": "neg_ssn_invalid_area", "split": "fresh", "text": "Item 000-99-8042 revised.", "spans": []}
+{"id": "neg_ssn_invalid_area-fresh-010", "group": "neg_ssn_invalid_area", "split": "fresh", "text": "Drawing 666-81-2673 revised.", "spans": []}
+{"id": "neg_ssn_invalid_area-fresh-011", "group": "neg_ssn_invalid_area", "split": "fresh", "text": "Model 902-85-5878 revised.", "spans": []}
+{"id": "neg_ssn_invalid_area-fresh-012", "group": "neg_ssn_invalid_area", "split": "fresh", "text": "Item 911-37-3657 revised.", "spans": []}
+{"id": "neg_ssn_invalid_area-fresh-013", "group": "neg_ssn_invalid_area", "split": "fresh", "text": "Drawing 666-19-5073 revised.", "spans": []}
+{"id": "neg_ssn_invalid_area-fresh-014", "group": "neg_ssn_invalid_area", "split": "fresh", "text": "Model 928-96-4944 revised.", "spans": []}
+{"id": "neg_ssn_invalid_area-fresh-015", "group": "neg_ssn_invalid_area", "split": "fresh", "text": "Item 983-29-9099 revised.", "spans": []}
+{"id": "neg_ssn_invalid_area-fresh-016", "group": "neg_ssn_invalid_area", "split": "fresh", "text": "Drawing 000-55-9883 revised.", "spans": []}
+{"id": "neg_ssn_invalid_area-fresh-017", "group": "neg_ssn_invalid_area", "split": "fresh", "text": "Model 000-33-2722 revised.", "spans": []}
+{"id": "neg_ssn_invalid_area-fresh-018", "group": "neg_ssn_invalid_area", "split": "fresh", "text": "Item 666-08-0681 revised.", "spans": []}
+{"id": "neg_ssn_invalid_area-fresh-019", "group": "neg_ssn_invalid_area", "split": "fresh", "text": "Drawing 904-38-1999 revised.", "spans": []}
+{"id": "neg_ssn_invalid_area-fresh-020", "group": "neg_ssn_invalid_area", "split": "fresh", "text": "Model 666-72-9942 revised.", "spans": []}
+{"id": "neg_pan_shaped-fresh-001", "group": "neg_pan_shaped", "split": "fresh", "text": "Model JAARQ7215O superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-002", "group": "neg_pan_shaped", "split": "fresh", "text": "Catalogue DQKVO6743T superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-003", "group": "neg_pan_shaped", "split": "fresh", "text": "Part QKNUT2296D superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-004", "group": "neg_pan_shaped", "split": "fresh", "text": "Model NMEUI1394H superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-005", "group": "neg_pan_shaped", "split": "fresh", "text": "Catalogue XIBYZ5073M superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-006", "group": "neg_pan_shaped", "split": "fresh", "text": "Part WGQED0212W superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-007", "group": "neg_pan_shaped", "split": "fresh", "text": "Model FXLSH1763X superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-008", "group": "neg_pan_shaped", "split": "fresh", "text": "Catalogue CMEQY9652D superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-009", "group": "neg_pan_shaped", "split": "fresh", "text": "Part OQGSR4894J superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-010", "group": "neg_pan_shaped", "split": "fresh", "text": "Model VSLXS4253F superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-011", "group": "neg_pan_shaped", "split": "fresh", "text": "Catalogue NECZT6007R superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-012", "group": "neg_pan_shaped", "split": "fresh", "text": "Part JIOQH8593K superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-013", "group": "neg_pan_shaped", "split": "fresh", "text": "Model VADWZ9865D superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-014", "group": "neg_pan_shaped", "split": "fresh", "text": "Catalogue IZJDO6160J superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-015", "group": "neg_pan_shaped", "split": "fresh", "text": "Part QQOMY2724W superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-016", "group": "neg_pan_shaped", "split": "fresh", "text": "Model EVBZA8424T superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-017", "group": "neg_pan_shaped", "split": "fresh", "text": "Catalogue LUMIS5360C superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-018", "group": "neg_pan_shaped", "split": "fresh", "text": "Part BQJIW8611W superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-019", "group": "neg_pan_shaped", "split": "fresh", "text": "Model FQNDJ8999I superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-020", "group": "neg_pan_shaped", "split": "fresh", "text": "Catalogue LPOIJ2081E superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-021", "group": "neg_pan_shaped", "split": "fresh", "text": "Part DVPDM3254A superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-022", "group": "neg_pan_shaped", "split": "fresh", "text": "Model WIHOA2675D superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-023", "group": "neg_pan_shaped", "split": "fresh", "text": "Catalogue WFLML9566M superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-024", "group": "neg_pan_shaped", "split": "fresh", "text": "Part RDTRL7197O superseded.", "spans": []}
+{"id": "neg_pan_shaped-fresh-025", "group": "neg_pan_shaped", "split": "fresh", "text": "Model XJVEG4815P superseded.", "spans": []}
+{"id": "neg_sku_pan_exact_shape-fresh-001", "group": "neg_sku_pan_exact_shape", "split": "fresh", "text": "SKU LUCTA7940V in stock.", "spans": []}
+{"id": "neg_sku_pan_exact_shape-fresh-002", "group": "neg_sku_pan_exact_shape", "split": "fresh", "text": "SKU PVGLM8670A in stock.", "spans": []}
+{"id": "neg_sku_pan_exact_shape-fresh-003", "group": "neg_sku_pan_exact_shape", "split": "fresh", "text": "SKU WIUBG2099C in stock.", "spans": []}
+{"id": "neg_sku_pan_exact_shape-fresh-004", "group": "neg_sku_pan_exact_shape", "split": "fresh", "text": "SKU XAUTD4342G in stock.", "spans": []}
+{"id": "neg_sku_pan_exact_shape-fresh-005", "group": "neg_sku_pan_exact_shape", "split": "fresh", "text": "SKU ZUYLU9631A in stock.", "spans": []}
+{"id": "neg_sku_pan_exact_shape-fresh-006", "group": "neg_sku_pan_exact_shape", "split": "fresh", "text": "SKU LDXJU9163K in stock.", "spans": []}
+{"id": "neg_sku_pan_exact_shape-fresh-007", "group": "neg_sku_pan_exact_shape", "split": "fresh", "text": "SKU OJAFX7820J in stock.", "spans": []}
+{"id": "neg_sku_pan_exact_shape-fresh-008", "group": "neg_sku_pan_exact_shape", "split": "fresh", "text": "SKU PVRHZ7959K in stock.", "spans": []}
+{"id": "neg_capitalized-fresh-001", "group": "neg_capitalized", "split": "fresh", "text": "Meeting at Acme Corp (Hyderabad) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-002", "group": "neg_capitalized", "split": "fresh", "text": "Shipment to Initech (London) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-003", "group": "neg_capitalized", "split": "fresh", "text": "Contract with Northwind Traders (London) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-004", "group": "neg_capitalized", "split": "fresh", "text": "Meeting at Zenith Logistics (Hyderabad) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-005", "group": "neg_capitalized", "split": "fresh", "text": "Shipment to Acme Corp (Chicago) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-006", "group": "neg_capitalized", "split": "fresh", "text": "Contract with Tata Steel (Rotterdam) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-007", "group": "neg_capitalized", "split": "fresh", "text": "Meeting at Apex Freight Ltd (Pune) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-008", "group": "neg_capitalized", "split": "fresh", "text": "Shipment to Bharat Electricals (Delhi) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-009", "group": "neg_capitalized", "split": "fresh", "text": "Contract with Globex Industries (London) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-010", "group": "neg_capitalized", "split": "fresh", "text": "Meeting at Reliance Retail (Hyderabad) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-011", "group": "neg_capitalized", "split": "fresh", "text": "Shipment to Larsen and Toubro (Chicago) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-012", "group": "neg_capitalized", "split": "fresh", "text": "Contract with Northwind Traders (Delhi) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-013", "group": "neg_capitalized", "split": "fresh", "text": "Meeting at Globex Industries (Chennai) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-014", "group": "neg_capitalized", "split": "fresh", "text": "Shipment to Northwind Traders (Bengaluru) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-015", "group": "neg_capitalized", "split": "fresh", "text": "Contract with Globex Industries (Kolkata) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-016", "group": "neg_capitalized", "split": "fresh", "text": "Meeting at Initech (Bengaluru) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-017", "group": "neg_capitalized", "split": "fresh", "text": "Shipment to Bharat Electricals (Singapore) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-018", "group": "neg_capitalized", "split": "fresh", "text": "Contract with Globex Industries (Singapore) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-019", "group": "neg_capitalized", "split": "fresh", "text": "Meeting at Zenith Logistics (Pune) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-020", "group": "neg_capitalized", "split": "fresh", "text": "Shipment to Northwind Traders (Pune) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-021", "group": "neg_capitalized", "split": "fresh", "text": "Contract with Apex Freight Ltd (Delhi) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-022", "group": "neg_capitalized", "split": "fresh", "text": "Meeting at Initech (Mumbai) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-023", "group": "neg_capitalized", "split": "fresh", "text": "Shipment to Initech (Pune) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-024", "group": "neg_capitalized", "split": "fresh", "text": "Contract with Apex Freight Ltd (London) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-025", "group": "neg_capitalized", "split": "fresh", "text": "Meeting at Larsen and Toubro (Rotterdam) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-026", "group": "neg_capitalized", "split": "fresh", "text": "Shipment to Tata Steel (Pune) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-027", "group": "neg_capitalized", "split": "fresh", "text": "Contract with Tata Steel (Chennai) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-028", "group": "neg_capitalized", "split": "fresh", "text": "Meeting at Reliance Retail (Hyderabad) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-029", "group": "neg_capitalized", "split": "fresh", "text": "Shipment to Blue Harbor Ltd (London) confirmed.", "spans": []}
+{"id": "neg_capitalized-fresh-030", "group": "neg_capitalized", "split": "fresh", "text": "Contract with Zenith Logistics (Kolkata) confirmed.", "spans": []}
+{"id": "neg_plain-fresh-001", "group": "neg_plain", "split": "fresh", "text": "Version 4.12.0 released on 2026-10-01.", "spans": []}
+{"id": "neg_plain-fresh-002", "group": "neg_plain", "split": "fresh", "text": "Budget is 4,500,000 INR for FY 2026-27.", "spans": []}
+{"id": "neg_plain-fresh-003", "group": "neg_plain", "split": "fresh", "text": "Room 12B, floor 3, gate 7.", "spans": []}
+{"id": "neg_plain-fresh-004", "group": "neg_plain", "split": "fresh", "text": "Throughput hit 2,400 requests per second at 14:05.", "spans": []}
+{"id": "neg_plain-fresh-005", "group": "neg_plain", "split": "fresh", "text": "Section 3.4.2 refers to clause 17(b).", "spans": []}
+{"id": "neg_plain-fresh-006", "group": "neg_plain", "split": "fresh", "text": "The ratio was 0.87 with a p-value of 0.031.", "spans": []}
+{"id": "neg_plain-fresh-007", "group": "neg_plain", "split": "fresh", "text": "Batch 20260925 completed in 41 minutes.", "spans": []}
+{"id": "neg_plain-fresh-008", "group": "neg_plain", "split": "fresh", "text": "See appendix C, figure 9 and table 12.", "spans": []}
+{"id": "neg_plain-fresh-009", "group": "neg_plain", "split": "fresh", "text": "Version 4.12.0 released on 2026-10-01.", "spans": []}
+{"id": "neg_plain-fresh-010", "group": "neg_plain", "split": "fresh", "text": "Budget is 4,500,000 INR for FY 2026-27.", "spans": []}
+{"id": "neg_plain-fresh-011", "group": "neg_plain", "split": "fresh", "text": "Room 12B, floor 3, gate 7.", "spans": []}
+{"id": "neg_plain-fresh-012", "group": "neg_plain", "split": "fresh", "text": "Throughput hit 2,400 requests per second at 14:05.", "spans": []}
+{"id": "neg_plain-fresh-013", "group": "neg_plain", "split": "fresh", "text": "Section 3.4.2 refers to clause 17(b).", "spans": []}
+{"id": "neg_plain-fresh-014", "group": "neg_plain", "split": "fresh", "text": "The ratio was 0.87 with a p-value of 0.031.", "spans": []}
+{"id": "neg_plain-fresh-015", "group": "neg_plain", "split": "fresh", "text": "Batch 20260925 completed in 41 minutes.", "spans": []}
+{"id": "neg_plain-fresh-016", "group": "neg_plain", "split": "fresh", "text": "See appendix C, figure 9 and table 12.", "spans": []}
+{"id": "neg_plain-fresh-017", "group": "neg_plain", "split": "fresh", "text": "Version 4.12.0 released on 2026-10-01.", "spans": []}
+{"id": "neg_plain-fresh-018", "group": "neg_plain", "split": "fresh", "text": "Budget is 4,500,000 INR for FY 2026-27.", "spans": []}
+{"id": "neg_plain-fresh-019", "group": "neg_plain", "split": "fresh", "text": "Room 12B, floor 3, gate 7.", "spans": []}
+{"id": "neg_plain-fresh-020", "group": "neg_plain", "split": "fresh", "text": "Throughput hit 2,400 requests per second at 14:05.", "spans": []}
+{"id": "neg_plain-fresh-021", "group": "neg_plain", "split": "fresh", "text": "Section 3.4.2 refers to clause 17(b).", "spans": []}
+{"id": "neg_plain-fresh-022", "group": "neg_plain", "split": "fresh", "text": "The ratio was 0.87 with a p-value of 0.031.", "spans": []}
+{"id": "neg_plain-fresh-023", "group": "neg_plain", "split": "fresh", "text": "Batch 20260925 completed in 41 minutes.", "spans": []}
+{"id": "neg_plain-fresh-024", "group": "neg_plain", "split": "fresh", "text": "See appendix C, figure 9 and table 12.", "spans": []}
+{"id": "neg_plain-fresh-025", "group": "neg_plain", "split": "fresh", "text": "Version 4.12.0 released on 2026-10-01.", "spans": []}
+{"id": "neg_plain-fresh-026", "group": "neg_plain", "split": "fresh", "text": "Budget is 4,500,000 INR for FY 2026-27.", "spans": []}
+{"id": "neg_plain-fresh-027", "group": "neg_plain", "split": "fresh", "text": "Room 12B, floor 3, gate 7.", "spans": []}
+{"id": "neg_plain-fresh-028", "group": "neg_plain", "split": "fresh", "text": "Throughput hit 2,400 requests per second at 14:05.", "spans": []}
+{"id": "neg_plain-fresh-029", "group": "neg_plain", "split": "fresh", "text": "Section 3.4.2 refers to clause 17(b).", "spans": []}
+{"id": "neg_plain-fresh-030", "group": "neg_plain", "split": "fresh", "text": "The ratio was 0.87 with a p-value of 0.031.", "spans": []}

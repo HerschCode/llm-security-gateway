@@ -271,6 +271,16 @@ false positive, confidential data from a trusted tool). Against the action firew
 approval, **none executed**. Text layers alone let a hijacked call through on 3 of 6 goals against a naive agent, the firewall on 0 of 6. Small samples and same-author test design are
 stated in the report; the open findings and residual misses are pinned as `xfail(strict)` tests. Reproduce: `redteam/README.md`.
 
+### PII: regex, Presidio and Indian identifiers (Phase 5)
+
+The PII step gained Indian identifiers (Aadhaar with the Verhoeff checksum, PAN, Indian mobile and landline numbers) in dependency-free code, span-based backends
+(`PII_BACKEND=regex|presidio|presidio_ner`), and reversible pseudonymization (`PII_MODE=pseudonymize`: stable per-session tokens the model can refer to, restored for authorized roles).
+Measured on a labeled set with hard negatives, a fresh set written after the fixes, and Gretel's independent Apache-2.0 PII set (full method and limits in
+[`docs/pii-evaluation.md`](docs/pii-evaluation.md)): structured-type F1 **0.94** for the new default regex path against 0.48 for what shipped before and
+0.91 for Presidio with the same Indian recognizers; no false alarms on 3,000 benign instructions. Presidio is **not** the default: it is not more accurate on the structured
+types here (its phone recogniser flags every 10-digit order number, the RT-09 failure), costs about 85 MB more RAM, and its NER for names flags 394 of 3,000 ordinary prompts. It stays an optional extra (`pip install -e .[pii]`).
+The synthetic data shares an author with the recognizers, bare numbers with no context word are missed by design, and identity in pseudonymization is caller-asserted; all stated in the doc.
+
 ### Retiring the dead layer, and trying to make the guard model servable (Phase 2)
 
 The TF-IDF layer scores 0/78 on our own corpus, so it was ablated
