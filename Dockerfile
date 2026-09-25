@@ -5,7 +5,7 @@
 # file (requirements.lock, installed with --require-hashes), unprivileged runtime user, model
 # integrity enforced. The build context is filtered by .dockerignore (virtual environments,
 # red-team run output and scan reports do not belong in an image).
-FROM python:3.12-slim@sha256:2f17fc044b579bab302c2e8054d3a686e2cb9a83de48e70534b94cd8ebbe06a9
+FROM python:3.14-slim@sha256:caaf356f40667c496d405780745b9ac25771c189a51dfcc42430d531ea09f8a2
 
 ENV PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
