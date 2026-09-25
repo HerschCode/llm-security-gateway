@@ -1,0 +1,117 @@
+# Tool-level capability policy for the action firewall (gateway/actions/).
+#
+# Semantics (see docs/action-firewall.md):
+#   * default-deny: a tool that is not listed here cannot be called by anyone.
+#   * a call is allowed only if some rule of that tool matches the caller's role AND every
+#     argument satisfies its constraints; rules are evaluated in order, first match wins.
+#   * strict_args: an argument that is not declared in the matching rule is rejected
+#     (blocks smuggled parameters such as `skip_approval=true`).
+#   * approval: required  -> the call is queued for human approval instead of running.
+#   * output_trust: untrusted -> this tool's results are free text that may carry injected
+#     instructions; they are registered as untrusted spans for taint tracking.
+#   * taint: per-argument reaction when the value was copied from an untrusted span without
+#     corroboration from a trusted source: deny | flag (flag = raise risk, still needs approval).
+#   * `$principal.user_id` / `$principal.role` in `equals` bind an argument to the caller.
+#
+# Roles mirror gateway/role_exposure.py: employee < manager < admin, listed explicitly per rule.
+version: 1
+default_effect: deny
+strict_args: true
+
+tools:
+  # ---- read tools: the 9 tools exposed by operations-assistant's MCP server ----
+  get_cycle_time:
+    kind: read
+    output_trust: trusted
+    rules:
+      - roles: [employee, manager, admin]
+        args: {segment: {in: [category, supplier]}}
+  get_bottlenecks:
+    kind: read
+    output_trust: trusted
+    rules:
+      - roles: [employee, manager, admin]
+        args: {top_n: {type: integer, min: 1, max: 50}}
+  get_sla_metrics:
+    kind: read
+    output_trust: trusted
+    rules:
+      - roles: [employee, manager, admin]
+        args: {segment: {in: [category, supplier]}}
+  get_supplier_performance:
+    kind: read
+    output_trust: trusted
+    rules:
+      - roles: [manager, admin]
+        args:
+          min_volume: {type: integer, min: 1, max: 1000}
+          top_n: {type: integer, min: 1, max: 50}
+  get_management_report:
+    kind: read
+    output_trust: trusted
+    rules:
+      - roles: [manager, admin]
+        args: {}
+  predict_sla_risk:
+    kind: read
+    output_trust: trusted
+    rules:
+      - roles: [employee, manager, admin]
+        args:
+          case_id: {required: true, type: string, pattern: '[A-Za-z0-9_-]{1,40}'}
+  get_pipeline_status:
+    kind: read
+    output_trust: trusted
+    rules:
+      - roles: [employee, manager, admin]
+        args: {limit: {type: integer, min: 1, max: 20}}
+  search_policy_documents:
+    kind: read
+    output_trust: untrusted        # retrieved document text: the classic indirect-injection carrier
+    rules:
+      - roles: [employee, manager, admin]
+        args: {query: {required: true, type: string, max_length: 300}}
+  get_conformance:
+    kind: read
+    output_trust: trusted
+    rules:
+      - roles: [employee, manager, admin]
+        args: {}
+
+  # ---- illustrative user-scoped read (own records only) ----
+  get_my_cases:
+    kind: read
+    output_trust: trusted
+    rules:
+      - roles: [employee]
+        args:
+          user_id: {required: true, equals: '$principal.user_id'}   # employees see only their own
+      - roles: [manager, admin]
+        args:
+          user_id: {required: true, type: string, pattern: '[A-Za-z0-9_.-]{1,40}'}
+
+  # ---- the write tool (operations-assistant's propose_intervention) ----
+  propose_intervention:
+    kind: write
+    output_trust: trusted
+    max_per_session: 5
+    taint:
+      target: deny       # an attacker-chosen entity is the core of a confused-deputy attack
+      reason: flag       # agents legitimately summarise documents into reasons: raise risk, keep approval
+    rules:
+      - name: manager-standard
+        roles: [manager, admin]
+        approval: required
+        args:
+          action: {required: true, in: [escalate_case, flag_supplier, notify_manager, request_approval, mark_exception]}
+          target: {required: true, type: string, pattern: '[A-Za-z0-9 _.-]{1,60}'}
+          reason: {required: true, type: string, max_length: 500, not_pattern: '(?i)(https?://|www\.|@[a-z0-9-]+\.|password|api[_ -]?key|secret|\bssn\b|salary)'}
+          priority: {in: [low, normal, high]}
+      - name: admin-urgent
+        roles: [admin]
+        approval: required
+        args:
+          action: {required: true, in: [escalate_case, flag_supplier, notify_manager, request_approval, mark_exception]}
+          target: {required: true, type: string, pattern: '[A-Za-z0-9 _.-]{1,60}'}
+          reason: {required: true, type: string, max_length: 500, not_pattern: '(?i)(https?://|www\.|@[a-z0-9-]+\.|password|api[_ -]?key|secret|\bssn\b|salary)'}
+          priority: {in: [urgent]}

@@ -246,6 +246,17 @@ a detector to prefer over an existing guard model when memory and latency allow.
 (86M/22M) and Llama Guard were **not evaluated**: both are gated behind manual license approval and no
 Hugging Face token was available.
 
+### Action firewall: from inspecting text to authorizing actions (Phase 3)
+
+The text layers only see prompts. `gateway/actions/` adds a second control point for what an agent *does*: a default-deny per-tool policy
+(`config/tool_policies.yaml`), provenance tracking that catches write-tool arguments copied from untrusted text, a human approval queue with
+separation of duties, an audit log, an HTTP decision point, and a stdio **MCP proxy** verified in front of operations-assistant's real MCP
+server. On a 54-scenario agentic corpus (45 harmful, 9 benign), the firewall stopped **38 of 39** in-scope harmful scenarios outright (28 by
+policy, 10 by taint) and held the last for approval at high risk; **6 known evasions** (paraphrase, encoding, translation, data via a trusted
+tool) reach the approval queue. The deployed text layers detected 2 of 2 user-message attacks, blocked 5 of 52 innocuous messages, and saw none of
+the indirect injections. Not CaMeL, and results are optimistic (same author as the corpus). Demo: `python -X utf8 -m scripts.demo_action_firewall`.
+Full write-up, limits, and side-findings (a stored XSS in the dashboard, fixed): [`docs/action-firewall.md`](docs/action-firewall.md).
+
 ### Retiring the dead layer, and trying to make the guard model servable (Phase 2)
 
 The TF-IDF layer scores 0/78 on our own corpus, so it was ablated

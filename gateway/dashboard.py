@@ -168,11 +168,25 @@ DASHBOARD_HTML = f"""<!DOCTYPE html>
     <tbody></tbody>
   </table>
 
+  <h2>Pending actions (action firewall)</h2>
+  <p style="font-size:11px;color:var(--muted);margin:0 0 6px">
+    Write actions the firewall will not run on its own. Deciding needs the approver token
+    (<code>GATEWAY_APPROVER_TOKEN</code>); the requester cannot approve their own request.
+    <b>risk high</b> = an argument was copied from untrusted content.
+  </p>
+  <table id="actions">
+    <thead><tr><th>Id</th><th>Requested by</th><th>Tool</th><th>Arguments</th><th>Risk</th><th>Why / evidence</th><th></th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <p id="actions-empty" style="font-size:12px;color:var(--muted)" hidden>No pending actions.</p>
+
   <h2>Backends &amp; connectivity</h2>
   <table id="conn"><thead><tr><th>Backend</th><th>Transport</th><th>Reachable</th><th>Detail</th></tr></thead><tbody></tbody></table>
 </div>
 
 <script>
+const ESC = {{'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}};
+const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ESC[c]);
 async function refresh() {{
   try {{
     const d = await (await fetch('/gateway/stats')).json();
@@ -183,27 +197,70 @@ async function refresh() {{
       <div class="tile"><div class="k">Avg latency</div><div class="v">${{d.avg_latency_ms}}ms</div><div class="ctx">per-request detection overhead (pre-flight)</div></div>
       <div class="tile"><div class="k">Allowed / Blocked</div><div class="v">${{d.decisions.allow || 0}} / ${{d.decisions.block || 0}}</div><div class="ctx">in last 5 min window</div></div>`;
     document.querySelector('#events tbody').innerHTML = d.recent_events.map(e => `
-      <tr><td>${{e.session_id}}</td><td>${{e.phase}}</td><td class="${{e.decision}}">${{e.decision}}</td>
-      <td>${{e.layer || '-'}}</td><td>${{e.matched_pattern_id || '-'}}</td><td>${{e.latency_ms}}</td></tr>`).join('');
+      <tr><td>${{esc(e.session_id)}}</td><td>${{esc(e.phase)}}</td><td class="${{e.decision === 'block' ? 'block' : 'allow'}}">${{esc(e.decision)}}</td>
+      <td>${{esc(e.layer || '-')}}</td><td>${{esc(e.matched_pattern_id || '-')}}</td><td>${{esc(e.latency_ms)}}</td></tr>`).join('');
     const bl = d.blocks_by_layer || {{}};
-    const layerLabels = {{'rule_based': 'Rule-based', 'embedding_similarity': 'Embedding similarity', 'scratch_classifier': 'MLP classifier'}};
+    const layerLabels = {{'rule_based': 'Rule-based', 'embedding_similarity': 'Embedding similarity (off by default)', 'scratch_classifier': 'MLP classifier'}};
     document.getElementById('layer-tiles').innerHTML = Object.entries(layerLabels).map(([k, label]) =>
       `<div class="tile"><div class="k">${{label}}</div><div class="v">${{bl[k] || 0}} blocks</div></div>`
     ).join('');
   }} catch {{}}
 }}
+let approver = null;
+function credentials() {{
+  if (approver) return approver;
+  const id = prompt('Approver user id (must differ from the requester):');
+  const role = prompt('Approver role (manager or admin):', 'manager');
+  const token = prompt('Approver token:');
+  if (!id || !role || !token) return null;
+  approver = {{id, role, token}};
+  return approver;
+}}
+async function loadActions() {{
+  try {{
+    const rows = await (await fetch('/gateway/actions/approvals?status=pending')).json();
+    document.getElementById('actions-empty').hidden = rows.length !== 0;
+    document.querySelector('#actions tbody').innerHTML = rows.map(r => {{
+      const ev = (r.evidence && r.evidence.tainted || []).map(t =>
+        `${{esc(t.field)}} copied from ${{esc(t.source)}}: <i>${{esc(t.snippet)}}</i>`).join('<br>');
+      return `<tr><td>${{esc(r.id)}}</td><td>${{esc(r.requester_id)}} (${{esc(r.requester_role)}})</td><td>${{esc(r.tool)}}</td>
+        <td><code>${{esc(JSON.stringify(r.args))}}</code></td>
+        <td class="${{r.risk === 'high' ? 'block' : ''}}">${{esc(r.risk)}}</td>
+        <td>${{esc((r.reasons || []).join('; '))}}${{ev ? '<br>' + ev : ''}}</td>
+        <td><button data-id="${{esc(r.id)}}" data-verb="approve">Approve</button>
+            <button data-id="${{esc(r.id)}}" data-verb="deny">Deny</button></td></tr>`;
+    }}).join('');
+  }} catch {{}}
+}}
+document.addEventListener('click', async ev => {{
+  const b = ev.target.closest('button[data-verb]');
+  if (!b) return;
+  const cred = credentials();
+  if (!cred) return;
+  const res = await fetch(`/gateway/actions/approvals/${{encodeURIComponent(b.dataset.id)}}/${{b.dataset.verb}}`, {{
+    method: 'POST',
+    headers: {{'Content-Type': 'application/json', 'X-Approver-Token': cred.token}},
+    body: JSON.stringify({{approver_id: cred.id, approver_role: cred.role}}),
+  }});
+  if (!res.ok) {{
+    if (res.status === 401) approver = null;
+    alert(`${{res.status}}: ${{(await res.json()).detail}}`);
+  }}
+  loadActions();
+}});
 async function loadConn() {{
   try {{
     const c = await (await fetch('/gateway/connectivity')).json();
     document.querySelector('#conn tbody').innerHTML = Object.entries(c.backends || {{}}).map(([k, v]) => {{
       const ok = v.reachable ? '<span class="pill ok">reachable</span>' : '<span class="pill bad">unreachable</span>';
       const tp = `<span class="pill mut">${{v.transport === 'http' ? 'http' : 'in-process'}}</span>`;
-      return `<tr><td>${{k}}</td><td>${{tp}}</td><td>${{ok}}</td><td>${{(v.detail || '').slice(0, 120)}}</td></tr>`;
+      return `<tr><td>${{esc(k)}}</td><td>${{tp}}</td><td>${{ok}}</td><td>${{esc((v.detail || '').slice(0, 120))}}</td></tr>`;
     }}).join('');
   }} catch {{}}
 }}
-refresh(); loadConn();
+refresh(); loadConn(); loadActions();
 setInterval(refresh, 2000);
+setInterval(loadActions, 3000);
 setInterval(loadConn, 15000);
 </script>
 </body></html>

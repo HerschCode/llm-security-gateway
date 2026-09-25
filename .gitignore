@@ -38,3 +38,9 @@ models/distilbert_finetuned/
 
 .venv/
 venv/
+
+# Action firewall runtime state (approval queue + WAL files), not source
+logs/*.db
+logs/*.db-wal
+logs/*.db-shm
+logs/*.db-journal

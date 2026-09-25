@@ -928,3 +928,15 @@ such rather than conflated.
 **Evidence.** Ablation (scripts/baselines/ensemble_ablation.py, docs/ensemble-ablation.md): removing it leaves own-corpus results identical (42/78, 3/17), cuts deepset false positives 14/56 to 6/56 while losing 8 detections, and takes p50 from 4.4 ms to 0.11 ms. Swapping in the fp32 sentence-transformer raised JailbreakBench benign false positives from 9% to 24%. Guard model to ONNX: fp32 exact (771 MB RSS), int8 breaks it (own-corpus detection 81% to 10-12%; per-channel and FFN-only recover to 62-64%; 534-612 MB RSS).
 
 **Decision.** `EMBEDDING_BACKEND` defaults to `none` (layer 2 disabled); `tfidf` and `sentence_transformer` stay opt-in; unknown values raise instead of silently falling back. The guard model stays a reference baseline; nothing that fits 512 MB kept its accuracy. Red-team reports regenerated (through gateway: stub 71/100, project2 66/100). Not tried: quantization-aware fine-tuning, static quantization with calibration data, embedding-vocabulary pruning, Prompt Guard 2 22M (gated).
+
+## 2026-09-25: Phase 3, action firewall (policy + taint + approvals + MCP proxy)
+
+**Context.** The gateway inspected text only; an injection that passes the text layers becomes a tool call. The plan asked for an action-level control point.
+
+**Decisions.** (1) Policy engine: a small YAML evaluator (default-deny, first matching rule, strict arguments, validated on load) rather than OPA/Rego or Cedar: OPA needs a separate server or binary and Cedar's bindings are a native dependency, against a torch-free 512 MB target; migration to Cedar is the documented path for larger policy sets. (2) Taint: string-overlap provenance on observable strings, trusted-wins, per-argument `deny`/`flag`; explicitly not CaMeL, and its evasions are pinned in tests and measured. (3) Approvals: SQLite (shared between the stdio proxy process and the web app), manager/admin only, separation of duties, expiry, pending cap, execution tracked separately, policy re-checked at execution time. (4) MCP proxy: stdlib stdio JSON-RPC filter; unknown protocol methods blocked, id-less `tools/call` dropped, non-object arguments rejected, reserved id prefix.
+
+**Evidence.** 54-scenario corpus: 38 of 39 in-scope harmful scenarios stopped outright (28 policy, 10 taint), 1 held at high risk, 6 known evasions held for approval, 0 benign false blocks; 53 of 59 calls match ground truth (all mismatches are the known evasions). Text layers: 2 of 2 user-message attacks detected but 5 of 52 innocuous messages blocked; an earlier version of the evaluation credited those 5 false positives as detections and was corrected. Verified against P2's real MCP server (employee sees 7 of 9 tools). 142 new tests; full suite 221 passing.
+
+**Found and fixed on the way.** Stored XSS in the dashboard (request-controlled fields in innerHTML); `Dockerfile.render` did not copy `config/`; unbounded memory/queue growth on unauthenticated endpoints; a clock-resolution-dependent test.
+
+**Not done.** Principal/approver authentication, HTTP MCP transports, the user's message in MCP mode, multi-instance state, an independent red-team of the firewall (Phase 4).
