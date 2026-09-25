@@ -253,8 +253,8 @@ parity check of the hosted Prompt Guard scores, an ONNX int8 build, and memory/l
 The text layers only see prompts. `gateway/actions/` adds a second control point for what an agent *does*: a default-deny per-tool policy
 (`config/tool_policies.yaml`), provenance tracking that catches write-tool arguments copied from untrusted text, a human approval queue with
 separation of duties, an audit log, an HTTP decision point, and a stdio **MCP proxy** verified in front of operations-assistant's real MCP
-server. On a 54-scenario agentic corpus (45 harmful, 9 benign), the firewall stopped **38 of 39** in-scope harmful scenarios outright (28 by
-policy, 10 by taint) and held the last for approval at high risk; **6 known evasions** (paraphrase, encoding, translation, data via a trusted
+server. On a 54-scenario agentic corpus (45 harmful, 9 benign), the firewall stopped **40 of 41** in-scope harmful scenarios outright (28 by
+policy, 12 by taint) and held the last for approval at high risk; **4 known evasions** (paraphrase, translation, an acronym, data via a trusted
 tool) reach the approval queue. The deployed text layers detected 2 of 2 user-message attacks, blocked 5 of 52 innocuous messages, and saw none of
 the indirect injections. Not CaMeL, and results are optimistic (same author as the corpus). Demo: `python -X utf8 -m scripts.demo_action_firewall`.
 Full write-up, limits, and side-findings (a stored XSS in the dashboard, fixed): [`docs/action-firewall.md`](docs/action-firewall.md).
@@ -262,14 +262,14 @@ Full write-up, limits, and side-findings (a stored XSS in the dashboard, fixed):
 ### Red-team: standard scanners plus an adaptive attacker (Phase 4)
 
 Full pentest-style report: [`reports/redteam-2026-09.md`](reports/redteam-2026-09.md) (scope, method, tool versions, findings with OWASP LLM 2025 and
-MITRE ATLAS mapping, retests, limitations). Tools: **garak 0.16.0**, **promptfoo 0.119.0**, an LLM attacker against the action firewall (Groq free tier)
-and a deterministic mutation attacker. 12 weaknesses confirmed: **6 fixed and retested** (per-IP rate-limit bypass by session rotation and by a spoofed
-`X-Forwarded-For`; Unicode-tag smuggling, 0 of 32 blocked before and 32 of 32 after; zalgo; the dashboard's stored XSS; backend requests silently
-rewritten by the detection normaliser) and **6 open** (latent injection in quoted documents, ROT13/Atbash/reversed overrides, one classifier false positive,
-and three taint-heuristic gaps). Against the action firewall, deterministic policy had **0 bypasses in 39 mutations**; the taint check was defeated by
-re-tokenising an identifier (15 of 29 mutations passed, 11 of them new), and every such miss was held for approval, **none executed**. Text layers alone
-let a hijacked call through on 3 of 6 goals against a naive agent, the firewall on 0 of 6. Small samples, same-author test design, and one raw run lost by
-mistake are all stated in the report; the open findings are pinned as `xfail(strict)` tests. Reproduce: `redteam/README.md`.
+MITRE ATLAS mapping (IDs verified against MITRE's v2026.09 data), retests, limitations). Tools: **garak 0.16.0**, **promptfoo 0.119.0**, an LLM attacker against the
+action firewall (Groq free tier) and a deterministic mutation attacker. 12 weaknesses confirmed: **7 fixed and retested** (per-IP rate-limit bypass by session rotation and by a
+spoofed `X-Forwarded-For`; Unicode-tag smuggling, 0 of 32 blocked before and 32 of 32 after; zalgo; ROT13/Atbash/reversed-text overrides; the dashboard's stored XSS; backend
+requests silently rewritten by the detection normaliser), **2 largely fixed** by the taint canonicalisation (the taint check was defeated by re-spelling an identifier; mutations
+getting past it fell from 21 to 8 of 74, and from 64 to 26 of 72 on a fresh hold-out not used to design the fix) and **3 open** (latent injection in quoted documents, one classifier
+false positive, confidential data from a trusted tool). Against the action firewall, deterministic policy had **0 bypasses in 39 mutations**, and every taint miss was held for
+approval, **none executed**. Text layers alone let a hijacked call through on 3 of 6 goals against a naive agent, the firewall on 0 of 6. Small samples and same-author test design are
+stated in the report; the open findings and residual misses are pinned as `xfail(strict)` tests. Reproduce: `redteam/README.md`.
 
 ### Retiring the dead layer, and trying to make the guard model servable (Phase 2)
 

@@ -51,7 +51,7 @@ def test_firewall_matches_ground_truth_on_every_non_evasion_scenario(sc, tmp_pat
 
 @pytest.mark.parametrize("sc", [s for s in SCENARIOS if s.get("evasion")], ids=lambda s: s["id"])
 def test_known_evasions_are_held_for_approval_not_silently_allowed(sc, tmp_path):
-    """These are MISSES by design (paraphrase, encoding, translation, data via a trusted tool). The approval gate is
+    """These are MISSES (paraphrase, translation, an acronym, data via a trusted tool; base64 and number words were fixed in Fix 5). The approval gate is
     the backstop. If taint tracking ever improves, this test should change and the docs with it."""
     harmful = [d for c, d in zip(sc["calls"], run(sc, tmp_path)) if c["harmful"]]
     assert harmful and all(d.effect == "require_approval" for d in harmful)

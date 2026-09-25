@@ -64,6 +64,8 @@ Cost of running each. **These numbers are noisy on this machine** (a hybrid-core
 - **Label mapping verified first**: on 10 hand-labelled examples the returned number read as P(malicious) is right on 10/10 for both models, and its complement on 0/10.
 - **Truncation**: the hosted API rejects inputs over 512 tokens, so texts were cut to their first 1,500 characters (about 350-400 tokens). 134 of 625 texts are affected, nearly all of them
   jailbreak_llms prompts. Meta recommends scoring long inputs in segments and taking the max, which would raise those detection rates; not done here.
+  **The inputs were therefore not cut identically across models**: hosted Prompt Guard saw about 1,500 characters, ProtectAI ran locally on the first 512 tokens, and the shipped default sees the full text.
+  This does not change the decision: the own corpus and deepset (where Prompt Guard 2 lost) have no text over 632 characters, so nothing there was cut for anyone; it only affects the long jailbreak_llms rows.
 - **Fidelity is unverified**: this assumes Groq serves the same checkpoints as the gated repos. A parity check of hosted against local scores is still to do (needs `HF_TOKEN`).
 
 | Held-out set | Shipped default | PG2 22M alone | PG2 86M alone | Rules + PG2 22M | Rules + classifier + PG2 22M |

@@ -25,7 +25,7 @@ from gateway.adaptive_threshold import AdaptiveThresholdTracker
 from gateway.adapters.base import BackendAdapter
 from gateway.detectors import rule_based
 from gateway.logging_schema import GatewayLogger, LogRecord
-from gateway.text_normalizer import find_hidden_tag_text, normalize as _normalize_text, sanitize as _sanitize_text
+from gateway.text_normalizer import find_hidden_tag_text, normalize as _normalize_text, sanitize as _sanitize_text, decoding_candidates
 
 # CLASSIFIER_THRESHOLD is re-declared here (rather than imported from a
 # detector module) to keep this file import-cheap. Keep in sync with
@@ -122,6 +122,15 @@ class GatewayMiddleware:
         if rb_result.blocked:
             self.adaptive_tracker.record_block(session_id)
             return True, "rule_based", rb_result.matched_pattern_id, per_layer
+
+        # RT-06: the rules also read the text as an attacker who applied a trivial cipher would have written it
+        for label, reading in decoding_candidates(text):
+            cand = rule_based.detect(reading)
+            if cand.blocked:
+                per_layer["rule_based"]["blocked"] = True
+                per_layer["rule_based"]["decoded_via"] = label
+                self.adaptive_tracker.record_block(session_id)
+                return True, "rule_based", cand.matched_pattern_id, per_layer
 
         if self.embedding_detector is None:  # layer 2 disabled (default)
             per_layer["embedding_similarity"] = {"blocked": False, "skipped": "disabled"}

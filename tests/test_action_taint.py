@@ -98,8 +98,9 @@ def test_KNOWN_EVASION_paraphrase_is_not_detected():
     assert tainted(tracker().analyze({"reason": reason})) == set()
 
 
-def test_KNOWN_EVASION_encoded_value_is_not_detected():
-    assert tainted(tracker().analyze({"target": "WlgtOTAwMA=="})) == set()   # base64 of ZX-9000
+def test_encoded_value_is_now_detected():
+    """Was a KNOWN_EVASION until the Fix 5 canonicalisation (see tests/test_taint_canonicalisation.py)."""
+    assert tainted(tracker().analyze({"target": "WlgtOTAwMA=="})) == {"target"}   # base64 of ZX-9000
 
 
 def test_KNOWN_EVASION_translation_is_not_detected():

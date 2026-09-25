@@ -28,7 +28,12 @@ Normalizations applied (in order):
      b. Hex strings: %xx URL encoding and 0x-prefixed hex → decoded chars.
      c. Leet-speak: common digit substitutions (0→o, 3→e, 1→l, 4→a, 5→s,
         7→t) in isolation so "1gn0r3" → "ignore". Covers GW-011.
+  4d. Bare hex runs (no 0x or % prefix): 12+ hex digits that decode to printable text are replaced by that text.
   5. Excess whitespace collapse.
+
+Separately, decoding_candidates() returns alternative READINGS of the text under trivial ciphers (ROT13, Atbash, reversed
+characters, reversed word order). They are for the RULE layer only and are never appended to the text: appending gibberish
+to every message would change the classifier's inputs (see reports/redteam-2026-09.md RT-06 and docs/decisions.md).
 
 Design note: encoding decoding APPENDS the decoded form rather than replacing
 the original text. This is intentional — the original text stays for human
@@ -36,6 +41,7 @@ readability in logs, and the decoded form is what the detectors see. Appending
 both means no false negatives from partial decoding failures.
 """
 import base64
+import codecs
 import re
 import unicodedata
 
@@ -148,6 +154,9 @@ def _decode_base64_segments(text: str) -> str:
 # ---------------------------------------------------------------------------
 _PCT_ENCODED = re.compile(r"(?:%[0-9A-Fa-f]{2})+")
 _HEX_WORD = re.compile(r"\b0x([0-9A-Fa-f]{2,})\b")
+# A bare run of hex digits (no prefix), at least 12 of them and an even count: a hash or numeric ID almost never decodes to
+# printable text, a hex-encoded instruction does. Anything that does not decode to mostly-letters text is left untouched.
+_HEX_RUN = re.compile(r"(?<![0-9A-Fa-f])(?:[0-9A-Fa-f]{2}){6,}(?![0-9A-Fa-f])")
 
 
 def _decode_hex_segments(text: str) -> str:
@@ -164,8 +173,17 @@ def _decode_hex_segments(text: str) -> str:
         except Exception:
             return m.group(0)
 
+    def replace_run(m: re.Match) -> str:
+        try:
+            decoded = bytes.fromhex(m.group(0)).decode("utf-8")
+        except ValueError:
+            return m.group(0)
+        letters = sum(c.isalpha() or c == " " for c in decoded)
+        return decoded if decoded.isprintable() and letters >= 0.8 * len(decoded) else m.group(0)
+
     t = _PCT_ENCODED.sub(replace_pct, text)
     t = _HEX_WORD.sub(replace_0x, t)
+    t = _HEX_RUN.sub(replace_run, t)
     return t
 
 
@@ -187,6 +205,32 @@ def _normalize_leet(text: str) -> str:
         else:
             result.append(word)
     return " ".join(result)
+
+
+# ---------------------------------------------------------------------------
+# Candidate decodings for the rule layer
+# ---------------------------------------------------------------------------
+_ATBASH = str.maketrans(
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA",
+)
+MIN_LETTERS_FOR_CANDIDATES = 12      # shorter texts have too little to hide an instruction in
+
+
+def decoding_candidates(text: str) -> list[tuple[str, str]]:
+    """Alternative readings of `text` under ciphers an attacker can apply by hand: ROT13, Atbash, reversed characters, reversed
+    word order. Returns (label, reading) pairs; a reading identical to the text is dropped. The caller runs the RULE layer on each
+    reading (rules are specific phrases, so a benign text that happens to decode into one is vanishingly unlikely; measured in
+    scripts/evaluate_taint_upgrade.py). Not appended to the text and not shown to the classifier."""
+    if sum(c.isalpha() for c in text) < MIN_LETTERS_FOR_CANDIDATES:
+        return []
+    readings = [
+        ("rot13", codecs.encode(text, "rot13")),
+        ("atbash", text.translate(_ATBASH)),
+        ("reversed_chars", text[::-1]),
+        ("reversed_words", " ".join(text.split()[::-1])),
+    ]
+    return [(label, r) for label, r in readings if r != text]
 
 
 # ---------------------------------------------------------------------------
