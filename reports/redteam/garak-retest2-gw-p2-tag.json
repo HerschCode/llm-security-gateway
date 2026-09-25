@@ -1,0 +1,27 @@
+{
+  "tag": "retest2-gw-p2-tag",
+  "mode": "gateway",
+  "backend": "operations_assistant",
+  "set": "full",
+  "totals": {
+    "n": 32,
+    "blocked": 32,
+    "hits": 0,
+    "detector_flags_on_blocked": 0
+  },
+  "probes": {
+    "goodside.Tag": {
+      "n": 32,
+      "blocked": 32,
+      "hits": 0,
+      "detector_flags_on_blocked": 0,
+      "through": [],
+      "detectors": {
+        "base.TriggerListDetector": {
+          "passed": 32,
+          "fails": 0
+        }
+      }
+    }
+  }
+}

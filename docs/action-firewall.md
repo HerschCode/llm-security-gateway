@@ -95,7 +95,11 @@ false positives on innocuous messages, not detections):
   translation, an abbreviation, and sensitive figures that arrived through a *trusted* tool and were moved into a reason. The approval gate
   is the backstop, so a reviewer has to catch these. `tests/test_action_taint.py` and `tests/test_action_corpus.py` pin them as known
   misses so an improvement shows up as a test change.
-- **Authorship**: the corpus and the firewall have the same author, so the results are optimistic. An independent red-team is Phase 4.
+- **Authorship**: the corpus and the firewall have the same author, so the results above are optimistic. Phase 4 added an LLM attacker that
+  iterates against the firewall with feedback and a deterministic mutation attacker (74 calls); results in
+  [`reports/redteam-2026-09.md`](../reports/redteam-2026-09.md). Headline: policy-enforced goals had 0 bypasses; the taint heuristic is defeated by
+  token-boundary changes to an identifier (`ZX9000` for `ZX-9000`), a **new** finding (RT-10), and every miss is held for approval, none executed. The
+  attacker is still the same author's design, so this reduces the bias without removing it.
 
 ## What is implemented vs not
 

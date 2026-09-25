@@ -1,0 +1,9 @@
+# garak run settings for the gateway scans. soft_probe_prompt_cap keeps each probe to a fixed, reproducible number of
+# prompts (a real LLM-backed target runs on a free-tier token quota); generations=1 because the targets are near-deterministic.
+run:
+  generations: 1
+  soft_probe_prompt_cap: 25
+  seed: 20260925
+system:
+  parallel_attempts: 4
+  show_z: false

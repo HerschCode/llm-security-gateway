@@ -7,7 +7,7 @@ Backend selection via `backend` field proves pluggability at the API level,
 not just in code -- swapping /gateway/chat's target is a request parameter,
 not a redeploy.
 """
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
@@ -23,6 +23,7 @@ from gateway.adapters.operations_assistant_adapter import (
 from project2_agent.agent import FAKE_SYSTEM_PROMPT as PROJECT2_FAKE_SYSTEM_PROMPT
 from gateway.actions.api import router as actions_router
 from gateway.dashboard import router as dashboard_router
+from gateway.ip_limits import ip_rate_limit
 from gateway.demo import router as demo_router
 from gateway.webui import router as webui_router
 from gateway.middleware import GatewayMiddleware
@@ -63,7 +64,7 @@ class ChatResponse(BaseModel):
     trace: dict
 
 
-@app.post("/gateway/chat", response_model=ChatResponse)
+@app.post("/gateway/chat", response_model=ChatResponse, dependencies=[Depends(ip_rate_limit)])
 def chat(req: ChatRequest):
     if req.backend not in BACKENDS:
         return ChatResponse(
@@ -89,7 +90,7 @@ def chat(req: ChatRequest):
     )
 
 
-@app.post("/gateway/chat/stream")
+@app.post("/gateway/chat/stream", dependencies=[Depends(ip_rate_limit)])
 def chat_stream(req: ChatRequest):
     """Tier 3: streaming endpoint. Checks the response incrementally as it
     streams from the backend, cutting off mid-stream on a post-flight

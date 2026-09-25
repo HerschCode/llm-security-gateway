@@ -25,7 +25,7 @@ from gateway.adaptive_threshold import AdaptiveThresholdTracker
 from gateway.adapters.base import BackendAdapter
 from gateway.detectors import rule_based
 from gateway.logging_schema import GatewayLogger, LogRecord
-from gateway.text_normalizer import normalize as _normalize_text
+from gateway.text_normalizer import find_hidden_tag_text, normalize as _normalize_text, sanitize as _sanitize_text
 
 # CLASSIFIER_THRESHOLD is re-declared here (rather than imported from a
 # detector module) to keep this file import-cheap. Keep in sync with
@@ -168,7 +168,8 @@ class GatewayMiddleware:
         pre_start = time.perf_counter()
 
         pii_result = scan_and_redact(prompt)
-        working_text = _normalize_text(pii_result.redacted_text)
+        working_text = _normalize_text(pii_result.redacted_text)      # DETECTION only (leet/homoglyph/decoding rewrite text)
+        forward_text = _sanitize_text(pii_result.redacted_text)       # what the backend receives: removal-only cleanup
 
         session_check = self.session_tracker.record_and_check(session_id)
         if not session_check.allowed:
@@ -193,6 +194,9 @@ class GatewayMiddleware:
         # detection-only reconstruction.
         context_text = self.session_content_tracker.get_context_text(session_id, working_text)
         blocked, layer_used, pattern_id, per_layer_trace = self._run_injection_ensemble(context_text, session_id)
+        if not blocked and find_hidden_tag_text(pii_result.redacted_text):     # invisible Unicode Tag payload: RT-03
+            blocked, layer_used, pattern_id = True, "input_hygiene", "IH-TAG-CHARS"
+            per_layer_trace["input_hygiene"] = {"blocked": True, "latency_ms": 0.0}
         pre_latency_ms = (time.perf_counter() - pre_start) * 1000
 
         self.logger.log(LogRecord(
@@ -218,7 +222,7 @@ class GatewayMiddleware:
             )
 
         # ---------- FORWARD TO BACKEND ----------
-        backend_response = backend.send(working_text, session_id=session_id, role=role, user_id=user_id)
+        backend_response = backend.send(forward_text, session_id=session_id, role=role, user_id=user_id)
 
         # ---------- POST-FLIGHT ----------
         post_start = time.perf_counter()
@@ -304,7 +308,8 @@ class GatewayMiddleware:
 
         # ---------- PRE-FLIGHT (identical to process()) ----------
         pii_result = scan_and_redact(prompt)
-        working_text = _normalize_text(pii_result.redacted_text)
+        working_text = _normalize_text(pii_result.redacted_text)      # DETECTION only (leet/homoglyph/decoding rewrite text)
+        forward_text = _sanitize_text(pii_result.redacted_text)       # what the backend receives: removal-only cleanup
 
         session_check = self.session_tracker.record_and_check(session_id)
         if not session_check.allowed:
@@ -320,6 +325,8 @@ class GatewayMiddleware:
         # comment for why. The backend still only ever receives working_text.
         context_text = self.session_content_tracker.get_context_text(session_id, working_text)
         blocked, layer_used, pattern_id, _ = self._run_injection_ensemble(context_text, session_id)
+        if not blocked and find_hidden_tag_text(pii_result.redacted_text):     # invisible Unicode Tag payload: RT-03
+            blocked, layer_used, pattern_id = True, "input_hygiene", "IH-TAG-CHARS"
         if blocked:
             self.logger.log(LogRecord(
                 timestamp=self.logger.now(), session_id=session_id, request_id=request_id, user_id=user_id,
@@ -333,7 +340,7 @@ class GatewayMiddleware:
 
         # ---------- STREAM FROM BACKEND, CHECKING INCREMENTALLY ----------
         buffer = ""
-        for chunk in backend.stream(working_text, session_id=session_id, role=role, user_id=user_id):
+        for chunk in backend.stream(forward_text, session_id=session_id, role=role, user_id=user_id):
             buffer += chunk
 
             role_result = check_role_exposure(buffer, role)

@@ -44,3 +44,7 @@ logs/*.db
 logs/*.db-wal
 logs/*.db-shm
 logs/*.db-journal
+
+# garak scan environment and raw scan artefacts (regenerated; results are summarised in reports/)
+redteam/.venv-garak/
+redteam/runs/

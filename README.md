@@ -257,6 +257,18 @@ tool) reach the approval queue. The deployed text layers detected 2 of 2 user-me
 the indirect injections. Not CaMeL, and results are optimistic (same author as the corpus). Demo: `python -X utf8 -m scripts.demo_action_firewall`.
 Full write-up, limits, and side-findings (a stored XSS in the dashboard, fixed): [`docs/action-firewall.md`](docs/action-firewall.md).
 
+### Red-team: standard scanners plus an adaptive attacker (Phase 4)
+
+Full pentest-style report: [`reports/redteam-2026-09.md`](reports/redteam-2026-09.md) (scope, method, tool versions, findings with OWASP LLM 2025 and
+MITRE ATLAS mapping, retests, limitations). Tools: **garak 0.16.0**, **promptfoo 0.119.0**, an LLM attacker against the action firewall (Groq free tier)
+and a deterministic mutation attacker. 12 weaknesses confirmed: **6 fixed and retested** (per-IP rate-limit bypass by session rotation and by a spoofed
+`X-Forwarded-For`; Unicode-tag smuggling, 0 of 32 blocked before and 32 of 32 after; zalgo; the dashboard's stored XSS; backend requests silently
+rewritten by the detection normaliser) and **6 open** (latent injection in quoted documents, ROT13/Atbash/reversed overrides, one classifier false positive,
+and three taint-heuristic gaps). Against the action firewall, deterministic policy had **0 bypasses in 39 mutations**; the taint check was defeated by
+re-tokenising an identifier (15 of 29 mutations passed, 11 of them new), and every such miss was held for approval, **none executed**. Text layers alone
+let a hijacked call through on 3 of 6 goals against a naive agent, the firewall on 0 of 6. Small samples, same-author test design, and one raw run lost by
+mistake are all stated in the report; the open findings are pinned as `xfail(strict)` tests. Reproduce: `redteam/README.md`.
+
 ### Retiring the dead layer, and trying to make the guard model servable (Phase 2)
 
 The TF-IDF layer scores 0/78 on our own corpus, so it was ablated

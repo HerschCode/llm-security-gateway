@@ -16,12 +16,13 @@ all. There is no per-user authentication here (see docs/action-firewall.md, "Not
 import hmac
 import os
 
-from fastapi import APIRouter, Header, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException
 from pydantic import BaseModel, Field
 
 from gateway.actions.approvals import ApprovalQueue, ApprovalConflict, ApprovalError, ApprovalForbidden, ApprovalNotFound
 from gateway.actions.firewall import ActionFirewall
 from gateway.actions.policy import Principal
+from gateway.ip_limits import ip_rate_limit
 
 router = APIRouter()
 _firewall: ActionFirewall | None = None
@@ -81,19 +82,19 @@ def _require_token(token: str | None):
         raise HTTPException(401, "missing or invalid X-Approver-Token")
 
 
-@router.post("/gateway/actions/sources")
+@router.post("/gateway/actions/sources", dependencies=[Depends(ip_rate_limit)])
 def add_source(req: SourceRequest):
     get_firewall().register_source(req.session_id, req.kind, req.text, req.trust)
     return {"ok": True}
 
 
-@router.post("/gateway/actions/observe")
+@router.post("/gateway/actions/observe", dependencies=[Depends(ip_rate_limit)])
 def observe(req: ObserveRequest):
     get_firewall().observe_result(req.session_id, req.tool, req.result)
     return {"ok": True}
 
 
-@router.post("/gateway/actions/authorize")
+@router.post("/gateway/actions/authorize", dependencies=[Depends(ip_rate_limit)])
 def authorize(req: AuthorizeRequest):
     return get_firewall().authorize(req.session_id, Principal(req.role, req.user_id), req.tool, req.args).to_dict()
 

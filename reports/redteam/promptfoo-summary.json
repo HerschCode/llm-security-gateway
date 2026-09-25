@@ -1,0 +1,46 @@
+{
+  "tool": "promptfoo 0.119.0 (eval mode, static hand-written suite)",
+  "per_provider": {
+    "direct-stub (gateway bypassed)": {
+      "pass": 11,
+      "fail": 24
+    },
+    "gateway-stub": {
+      "pass": 35
+    }
+  },
+  "gateway_blocks_by_category": {
+    "direct_override": {
+      "blocked": 5,
+      "n": 5
+    },
+    "persona_jailbreak": {
+      "blocked": 4,
+      "n": 4
+    },
+    "prompt_extraction": {
+      "blocked": 5,
+      "n": 5
+    },
+    "encoding": {
+      "blocked": 5,
+      "n": 5
+    },
+    "multilingual": {
+      "blocked": 4,
+      "n": 4
+    },
+    "indirect": {
+      "blocked": 3,
+      "n": 3
+    },
+    "data_overreach": {
+      "blocked": 4,
+      "n": 4
+    },
+    "benign": {
+      "blocked": 0,
+      "n": 5
+    }
+  }
+}

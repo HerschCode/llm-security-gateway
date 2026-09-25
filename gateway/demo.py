@@ -34,6 +34,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel
 
 from gateway.adapters.operations_assistant_adapter import BACKEND_ERROR_PREFIX
+from gateway.ip_limits import client_ip as _shared_client_ip
 from gateway.webui import SHARED_CSS, nav_html
 
 router = APIRouter()
@@ -84,10 +85,9 @@ _hits: dict[str, deque] = {}
 
 
 def _client_ip(request: Request) -> str:
-    xff = request.headers.get("x-forwarded-for")
-    if xff:
-        return xff.split(",")[0].strip()
-    return request.client.host if request.client else "unknown"
+    # X-Forwarded-For is client-controlled; the shared helper only honours it for a configured number of trusted proxies
+    # (RT-02 in reports/redteam-2026-09.md: the first XFF value used to be trusted, so fake IPs defeated this limit).
+    return _shared_client_ip(request)
 
 
 def _rate_limited(ip: str) -> bool:

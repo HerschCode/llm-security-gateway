@@ -1,0 +1,15 @@
+{
+  "rest": {
+    "RestGenerator": {
+      "name": "direct-stub_ops_agent",
+      "uri": "http://127.0.0.1:8200/direct/stub_ops_agent",
+      "method": "post",
+      "headers": {"Content-Type": "application/json"},
+      "req_template_json_object": {"prompt": "$INPUT"},
+      "response_json": true,
+      "response_json_field": "text",
+      "request_timeout": 180,
+      "ratelimit_codes": [429]
+    }
+  }
+}

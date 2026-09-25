@@ -32,3 +32,8 @@ services:
       # code default; kept explicit here so the intent is clear.
       - key: EMBEDDING_BACKEND
         value: "none"
+      # Per-IP request budget for the unauthenticated endpoints (0 disables). TRUSTED_PROXY_HOPS is deliberately NOT set: it must equal
+      # the number of proxies in front of the app, which has to be verified against the real X-Forwarded-For chain on this host.
+      # Until then the peer address is used (all clients share one budget behind the platform proxy): conservative, not spoofable.
+      - key: GATEWAY_IP_RATE_LIMIT
+        value: "120"
