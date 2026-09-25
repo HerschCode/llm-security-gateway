@@ -4,5 +4,5 @@ pytest>=8.0
 ruff>=0.6
 bandit>=1.7.9
 pip-audit>=2.7
-semgrep>=1.80
+semgrep>=1.177.0
 cyclonedx-bom>=4.5
