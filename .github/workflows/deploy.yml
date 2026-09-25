@@ -1,0 +1,128 @@
+name: deploy
+
+# Deploys llm-security-gateway to Cloud Run: build the image, scan it, push it to Artifact Registry, roll the
+# service over to it. MANUAL ONLY (Actions > deploy > Run workflow), and only from main.
+#
+# It changes the IMAGE and nothing else. Environment variables, secrets, scaling and IAM belong to
+# the northstar-infra Terraform (https://github.com/HerschCode/northstar-infra), which created the
+# service, its runtime identity and the deploy identity used below.
+#
+# It is a deliberate NO-OP until that infrastructure exists: the `preflight` job passes with a notice
+# naming any repository variable that is not set yet, and the `deploy` job is skipped. Nothing here
+# needs a secret. Authentication is workload identity federation: a short-lived token for this
+# repository's deploy identity, no key, which Google only issues to a workflow running from
+# refs/heads/main of this repository.
+#
+# Repository VARIABLES (Settings > Secrets and variables > Actions > Variables; none is secret).
+# `terraform output github_repository_variables` in northstar-infra/envs/bootstrap prints them:
+#   GCP_PROJECT_ID   GCP_REGION   GCP_WIF_PROVIDER   GCP_DEPLOY_SA
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false # never interrupt a rollout half-way
+
+env:
+  SERVICE: llm-security-gateway # the Cloud Run service (and the image name) in northstar-infra
+  REGISTRY_REPOSITORY: northstar # the Artifact Registry repository in northstar-infra
+
+jobs:
+  preflight:
+    name: preflight (may this run, and is the cloud project configured?)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    outputs:
+      configured: ${{ steps.check.outputs.configured }}
+    steps:
+      - id: check
+        env:
+          PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          REGION: ${{ vars.GCP_REGION }}
+          WIF_PROVIDER: ${{ vars.GCP_WIF_PROVIDER }}
+          DEPLOY_SA: ${{ vars.GCP_DEPLOY_SA }}
+        run: |
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            echo "::notice title=deploy skipped::Deploys run from main only (this is $GITHUB_REF). Google grants this repository's deploy identity to workflows on refs/heads/main and nothing else."
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          missing=""
+          [ -n "$PROJECT_ID" ]   || missing="$missing GCP_PROJECT_ID"
+          [ -n "$REGION" ]       || missing="$missing GCP_REGION"
+          [ -n "$WIF_PROVIDER" ] || missing="$missing GCP_WIF_PROVIDER"
+          [ -n "$DEPLOY_SA" ]    || missing="$missing GCP_DEPLOY_SA"
+          if [ -n "$missing" ]; then
+            echo "::notice title=deploy skipped (expected until the cloud project exists)::Repository variables not set:$missing. Nothing was built or deployed. See docs/runbook.md in northstar-infra."
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  deploy:
+    name: build, scan, push, roll out
+    needs: preflight
+    if: ${{ needs.preflight.outputs.configured == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      id-token: write # mint the OIDC token for workload identity federation
+    env:
+      PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+      REGION: ${{ vars.GCP_REGION }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # This repository's own tests run in its CI on every push and pull request; deploy a commit
+      # that is green there.
+
+      - name: Authenticate to Google Cloud (workload identity federation, no keys)
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SA }}
+
+      - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
+
+      - name: Work out the image name
+        run: echo "IMAGE=${REGION}-docker.pkg.dev/${PROJECT_ID}/${REGISTRY_REPOSITORY}/${SERVICE}" >> "$GITHUB_ENV"
+
+      - name: Build
+        run: docker build -f Dockerfile.render -t "$IMAGE:$GITHUB_SHA" .
+
+      - name: Scan (a fixable HIGH or CRITICAL finding stops the deploy)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ${{ env.IMAGE }}:${{ github.sha }}
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+
+      - name: Push to Artifact Registry
+        id: push
+        run: |
+          gcloud auth configure-docker "${REGION}-docker.pkg.dev" --quiet
+          docker push "$IMAGE:$GITHUB_SHA"
+          # Roll out by digest, not tag: the revision then runs exactly the bytes that were scanned.
+          echo "ref=$(docker inspect --format '{{index .RepoDigests 0}}' "$IMAGE:$GITHUB_SHA")" >> "$GITHUB_OUTPUT"
+
+      - name: Roll out the new image (image only)
+        env:
+          IMAGE_REF: ${{ steps.push.outputs.ref }}
+        run: |
+          # No --allow-unauthenticated / --no-allow-unauthenticated: who may call the service is
+          # decided in northstar-infra, never here.
+          gcloud run deploy "$SERVICE" --image "$IMAGE_REF" --region "$REGION" --project "$PROJECT_ID" --quiet
+
+      - name: Summary
+        env:
+          IMAGE_REF: ${{ steps.push.outputs.ref }}
+        run: echo "Deployed $IMAGE_REF" >> "$GITHUB_STEP_SUMMARY"
