@@ -1,6 +1,6 @@
 # Engineering highlights
 
-Four moments from this build where checking a result mattered more than
+Eight moments from this build where checking a result mattered more than
 producing one. Full running log: [`docs/decisions.md`](docs/decisions.md).
 
 ---
@@ -104,8 +104,67 @@ fix. → [`docs/corpus_expansion_result.md`](docs/corpus_expansion_result.md)
 
 ---
 
+## 5. The best detector on my own data was not the one to ship
+
+A pre-trained guard model (ProtectAI's DeBERTa) beats the from-scratch ensemble
+on this project's own corpus: **80.8% vs 53.8%** detection. It is reported next
+to the shipped default in the README, and so is the reason it is not the default:
+704 MB does not fit the free 512 MB tier. Meta's Prompt Guard 2 was then
+evaluated through a hosted API and, at a matched false-positive rate, did not beat
+the shipped classifier either, so the hosted layer was **not built** and the
+reasons (30 requests a minute, an availability dependency, prompts leaving the
+box) are on record.
+
+**A correction along the way:** the "needs 860 MB" figure in the docs was one
+noisy measurement. Re-runs on the same machine gave +396 to +588 MB, and no
+container test was ever run, so the docs now say the 512 MB fit is *inferred*.
+→ [`docs/guard-baselines.md`](docs/guard-baselines.md)
+
+---
+
+## 6. I red-teamed my own gateway, and it had holes
+
+garak, promptfoo, an LLM attacker and a deterministic mutation attacker produced
+12 findings. Among them: a **stored XSS in the gateway's own dashboard**, and a
+rate limiter that a client could reset by **changing a self-chosen session id**.
+Seven are fixed and retested, two largely or partly fixed, and three are open,
+each pinned by a test that records the current miss so it cannot be forgotten.
+
+**The report needed the same scrutiny.** The MITRE ATLAS IDs had been written from
+memory; they were checked against MITRE's data and the report now says when. The
+raw JSON of one adaptive run was lost to my own `rm`; it was rerun, the free-tier
+token quota ran out after 4 of 6 goals, and the tables show the rerun only,
+labelled partial. → [`reports/redteam-2026-09.md`](reports/redteam-2026-09.md)
+
+---
+
+## 7. The evaluation found a bug in my own PII recognizer
+
+Measuring the new Indian-identifier recognizers on a labelled set showed the
+Aadhaar pattern matching the first three groups of a card-style 4-4-4-4 number:
+**10% of 16-digit numbers that fail the Luhn check** (a checksum digit passes by
+chance one time in ten). Fixed, with a regression test, and because the test
+split had been consulted, a fresh set was written and used **once** for the final
+numbers. Presidio, added as an option, turned out *not* to be more accurate on the
+structured types, and its NER flagged 394 of 3,000 ordinary prompts, so it stays
+optional. → [`docs/pii-evaluation.md`](docs/pii-evaluation.md)
+
+---
+
+## 8. Two bugs no scanner found
+
+Writing the threat model turned up a missing request size limit and an email
+pattern that took **270 ms on 20,000 characters** of `a` (quadratic). Both are
+fixed, with a scaling test that fails on the old pattern. Separately, a `# nosec`
+comment I put in the middle of a `Popen(...)` line turned its `stdin`/`stdout`/
+`stderr` arguments into comment text: the file still parsed and Bandit was
+satisfied. Only the MCP proxy test noticed, by **hanging**. It now has a test that
+the pipes are set. → [`SECURITY.md`](SECURITY.md), [`docs/security-scans.md`](docs/security-scans.md)
+
+---
+
 ### The through-line
 
-Every one of these made a headline number *worse*. They're in the repo because a
-portfolio that only shows the good runs isn't showing the part of the job that
-actually matters.
+Every one of these made a headline number *worse*, or found a flaw in my own work.
+They're in the repo because a portfolio that only shows the good runs isn't showing
+the part of the job that actually matters.

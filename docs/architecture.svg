@@ -1,67 +1,128 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="500" viewBox="0 0 960 500" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
-  <rect width="960" height="500" fill="#ffffff"/>
-  <text x="480" y="34" text-anchor="middle" font-size="18" font-weight="700" fill="#1f2328">LLM Security Gateway &#8212; request lifecycle</text>
-
-  <!-- Caller -->
-  <rect x="24" y="210" width="110" height="60" rx="8" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
-  <text x="79" y="245" text-anchor="middle" font-size="13" fill="#1f2328">Caller</text>
-
-  <!-- Pre-flight -->
-  <rect x="176" y="90" width="250" height="300" rx="10" fill="#f6f8fa" stroke="#3fb950" stroke-width="1.5"/>
-  <text x="301" y="116" text-anchor="middle" font-size="13" font-weight="700" fill="#1a7f37">1 &#183; PRE-FLIGHT</text>
-  <rect x="196" y="132" width="210" height="46" rx="6" fill="#fff" stroke="#d0d7de"/>
-  <text x="301" y="152" text-anchor="middle" font-size="11" fill="#1f2328">PII detection / redaction</text>
-  <text x="301" y="167" text-anchor="middle" font-size="9.5" fill="#656d76">gateway/pii.py</text>
-  <rect x="196" y="186" width="210" height="86" rx="6" fill="#fff" stroke="#d0d7de"/>
-  <text x="301" y="205" text-anchor="middle" font-size="11" fill="#1f2328">Injection ensemble &#8212; block on any</text>
-  <text x="301" y="222" text-anchor="middle" font-size="9.5" fill="#656d76">1. rule-based (regex/keyword)</text>
-  <text x="301" y="236" text-anchor="middle" font-size="9.5" fill="#656d76">2. embedding similarity (TF-IDF)</text>
-  <text x="301" y="250" text-anchor="middle" font-size="9.5" fill="#656d76">3. from-scratch torch classifier</text>
-  <text x="301" y="264" text-anchor="middle" font-size="8.5" fill="#8c959f">+ adaptive per-session thresholds</text>
-  <rect x="196" y="280" width="210" height="46" rx="6" fill="#fff" stroke="#d0d7de"/>
-  <text x="301" y="300" text-anchor="middle" font-size="11" fill="#1f2328">Rate limit + session anomaly</text>
-  <text x="301" y="315" text-anchor="middle" font-size="9.5" fill="#656d76">gateway/session_checks.py</text>
-  <text x="301" y="352" text-anchor="middle" font-size="9.5" fill="#8c959f">clean &#8594; forward</text>
-  <text x="301" y="368" text-anchor="middle" font-size="9.5" fill="#cf222e">hit &#8594; block (no backend call)</text>
-
-  <!-- Backend -->
-  <rect x="468" y="180" width="180" height="120" rx="10" fill="#fff8f0" stroke="#d29922" stroke-width="1.5"/>
-  <text x="558" y="204" text-anchor="middle" font-size="12" font-weight="700" fill="#9a6700">BACKEND ADAPTER</text>
-  <text x="558" y="222" text-anchor="middle" font-size="9" fill="#656d76">send(prompt, session, role, user_id)</text>
-  <text x="558" y="244" text-anchor="middle" font-size="9.5" fill="#1f2328">stub_ops_agent</text>
-  <text x="558" y="258" text-anchor="middle" font-size="9.5" fill="#1f2328">project2_agent (reconstruction)</text>
-  <text x="558" y="272" text-anchor="middle" font-size="9.5" fill="#1f2328">operations_assistant (real, HTTP)</text>
-  <text x="558" y="290" text-anchor="middle" font-size="8.5" fill="#8c959f">one small class per backend</text>
-
-  <!-- Post-flight -->
-  <rect x="690" y="90" width="246" height="300" rx="10" fill="#f6f8fa" stroke="#3fb950" stroke-width="1.5"/>
-  <text x="813" y="116" text-anchor="middle" font-size="13" font-weight="700" fill="#1a7f37">3 &#183; POST-FLIGHT</text>
-  <rect x="710" y="140" width="206" height="46" rx="6" fill="#fff" stroke="#d0d7de"/>
-  <text x="813" y="160" text-anchor="middle" font-size="11" fill="#1f2328">Role-based data exposure</text>
-  <text x="813" y="175" text-anchor="middle" font-size="9.5" fill="#656d76">gateway/role_exposure.py</text>
-  <rect x="710" y="198" width="206" height="46" rx="6" fill="#fff" stroke="#d0d7de"/>
-  <text x="813" y="218" text-anchor="middle" font-size="11" fill="#1f2328">Jailbreak-compliance check</text>
-  <text x="813" y="233" text-anchor="middle" font-size="9.5" fill="#656d76">gateway/response_checks.py</text>
-  <rect x="710" y="256" width="206" height="46" rx="6" fill="#fff" stroke="#d0d7de"/>
-  <text x="813" y="276" text-anchor="middle" font-size="11" fill="#1f2328">System-prompt leak check</text>
-  <text x="813" y="291" text-anchor="middle" font-size="9.5" fill="#656d76">re-run per chunk when streaming</text>
-  <text x="813" y="332" text-anchor="middle" font-size="9.5" fill="#8c959f">clean &#8594; return response</text>
-  <text x="813" y="348" text-anchor="middle" font-size="9.5" fill="#cf222e">hit &#8594; block / redact</text>
-
-  <!-- Decision / log -->
-  <rect x="404" y="418" width="152" height="54" rx="8" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
-  <text x="480" y="440" text-anchor="middle" font-size="11" fill="#1f2328">allow / block + trace</text>
-  <text x="480" y="456" text-anchor="middle" font-size="9" fill="#656d76">JSONL log &#8594; /gateway/dashboard</text>
-
-  <!-- arrows -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="620" viewBox="0 0 1000 620" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" role="img" aria-label="LLM Security Gateway architecture: a text pipeline for prompts and responses, and an action firewall for an agent's tool calls">
   <defs>
-    <marker id="a" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
-      <path d="M0,0 L9,4.5 L0,9 z" fill="#57606a"/>
-    </marker>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#57606a"/></marker>
   </defs>
-  <line x1="134" y1="240" x2="172" y2="240" stroke="#57606a" stroke-width="1.6" marker-end="url(#a)"/>
-  <line x1="426" y1="240" x2="464" y2="240" stroke="#57606a" stroke-width="1.6" marker-end="url(#a)"/>
-  <line x1="648" y1="240" x2="686" y2="240" stroke="#57606a" stroke-width="1.6" marker-end="url(#a)"/>
-  <path d="M813,390 L813,446 L560,446" fill="none" stroke="#57606a" stroke-width="1.6" marker-end="url(#a)"/>
-  <path d="M301,390 L301,446 L400,446" fill="none" stroke="#57606a" stroke-width="1.6" marker-end="url(#a)"/>
+  <rect width="1000" height="620" fill="#ffffff"/>
+  <text x="500" y="30" text-anchor="middle" font-size="17" font-weight="700" fill="#1f2328">LLM Security Gateway: two control points</text>
+
+  <!-- callers -->
+  <rect x="16" y="150" width="118" height="70" rx="8" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="75" y="180" text-anchor="middle" font-size="12" font-weight="700" fill="#1f2328">Caller</text>
+  <text x="75" y="198" text-anchor="middle" font-size="10" fill="#57606a">app or user</text>
+  <rect x="16" y="404" width="118" height="70" rx="8" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="75" y="434" text-anchor="middle" font-size="12" font-weight="700" fill="#1f2328">Agent</text>
+  <text x="75" y="452" text-anchor="middle" font-size="10" fill="#57606a">or MCP client</text>
+
+  <!-- text pipeline -->
+  <rect x="158" y="52" width="700" height="292" rx="10" fill="#f6f8fa" stroke="#3fb950" stroke-width="1.5"/>
+  <text x="176" y="74" font-size="12" font-weight="700" fill="#1a7f37">1 · TEXT PIPELINE (prompts and responses)</text>
+
+  <rect x="174" y="88" width="150" height="104" rx="6" fill="#fff" stroke="#d0d7de"/>
+  <text x="249" y="106" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2328">Limits</text>
+  <text x="249" y="124" text-anchor="middle" font-size="10" fill="#57606a">body 256 KiB</text>
+  <text x="249" y="139" text-anchor="middle" font-size="10" fill="#57606a">prompt 20,000 chars</text>
+  <text x="249" y="154" text-anchor="middle" font-size="10" fill="#57606a">20/min per session</text>
+  <text x="249" y="169" text-anchor="middle" font-size="10" fill="#57606a">120/min per IP</text>
+
+  <rect x="342" y="88" width="150" height="104" rx="6" fill="#fff" stroke="#d0d7de"/>
+  <text x="417" y="106" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2328">PII</text>
+  <text x="417" y="124" text-anchor="middle" font-size="10" fill="#57606a">redact or pseudonymize</text>
+  <text x="417" y="139" text-anchor="middle" font-size="10" fill="#57606a">email, phone, card, SSN</text>
+  <text x="417" y="154" text-anchor="middle" font-size="10" fill="#57606a">Aadhaar, PAN, IN phone</text>
+  <text x="417" y="169" text-anchor="middle" font-size="10" fill="#57606a">(Presidio optional)</text>
+
+  <rect x="510" y="88" width="160" height="104" rx="6" fill="#fff" stroke="#d0d7de"/>
+  <text x="590" y="106" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2328">Normalize (detect only)</text>
+  <text x="590" y="124" text-anchor="middle" font-size="10" fill="#57606a">tag chars, zalgo, leet</text>
+  <text x="590" y="139" text-anchor="middle" font-size="10" fill="#57606a">base64 / hex decoding</text>
+  <text x="590" y="154" text-anchor="middle" font-size="10" fill="#57606a">ROT13, Atbash, reversed</text>
+  <text x="590" y="169" text-anchor="middle" font-size="10" fill="#57606a">backend gets sanitized text</text>
+
+  <rect x="688" y="88" width="154" height="104" rx="6" fill="#fff" stroke="#d0d7de"/>
+  <text x="765" y="106" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2328">Detect (block on any)</text>
+  <text x="765" y="124" text-anchor="middle" font-size="10" fill="#57606a">30 rules, then a numpy</text>
+  <text x="765" y="139" text-anchor="middle" font-size="10" fill="#57606a">MLP classifier (2 MB,</text>
+  <text x="765" y="154" text-anchor="middle" font-size="10" fill="#57606a">torch-free); session</text>
+  <text x="765" y="169" text-anchor="middle" font-size="10" fill="#57606a">context, adaptive limits</text>
+
+  <rect x="510" y="236" width="160" height="88" rx="6" fill="#fff5f5" stroke="#f0a0a0"/>
+  <text x="590" y="262" text-anchor="middle" font-size="11" font-weight="700" fill="#b42318">Block + audit</text>
+  <text x="590" y="282" text-anchor="middle" font-size="10" fill="#57606a">reason, layer, pattern id</text>
+  <text x="590" y="297" text-anchor="middle" font-size="10" fill="#57606a">logged, never the PII</text>
+
+  <rect x="174" y="236" width="316" height="88" rx="6" fill="#fff" stroke="#d0d7de"/>
+  <text x="332" y="256" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2328">Post-flight (also on streamed output)</text>
+  <text x="332" y="274" text-anchor="middle" font-size="10" fill="#57606a">role-restricted data · system-prompt leak</text>
+  <text x="332" y="289" text-anchor="middle" font-size="10" fill="#57606a">jailbreak compliance · detokenize pseudonyms</text>
+  <text x="332" y="304" text-anchor="middle" font-size="10" fill="#57606a">for allowed roles</text>
+
+  <rect x="688" y="236" width="154" height="88" rx="6" fill="#fff" stroke="#d0d7de"/>
+  <text x="765" y="256" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2328">Backend adapter</text>
+  <text x="765" y="274" text-anchor="middle" font-size="10" fill="#57606a">one method: send()</text>
+  <text x="765" y="289" text-anchor="middle" font-size="10" fill="#57606a">stub, echo, project 2,</text>
+  <text x="765" y="304" text-anchor="middle" font-size="10" fill="#57606a">real ops-assistant</text>
+
+  <!-- backend -->
+  <rect x="880" y="236" width="104" height="88" rx="8" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="932" y="272" text-anchor="middle" font-size="12" font-weight="700" fill="#1f2328">Backend</text>
+  <text x="932" y="290" text-anchor="middle" font-size="10" fill="#57606a">LLM app</text>
+
+  <!-- action firewall -->
+  <rect x="158" y="372" width="826" height="150" rx="10" fill="#f6f8fa" stroke="#9a6700" stroke-width="1.5"/>
+  <text x="176" y="394" font-size="12" font-weight="700" fill="#9a6700">2 · ACTION FIREWALL (what an agent does: HTTP decision point or stdio MCP proxy)</text>
+
+  <rect x="174" y="410" width="196" height="96" rx="6" fill="#fff" stroke="#d0d7de"/>
+  <text x="272" y="430" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2328">Policy</text>
+  <text x="272" y="448" text-anchor="middle" font-size="10" fill="#57606a">default deny · role gates</text>
+  <text x="272" y="463" text-anchor="middle" font-size="10" fill="#57606a">argument rules, strict args</text>
+  <text x="272" y="478" text-anchor="middle" font-size="10" fill="#57606a">deterministic</text>
+
+  <rect x="392" y="410" width="196" height="96" rx="6" fill="#fff" stroke="#d0d7de"/>
+  <text x="490" y="430" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2328">Taint</text>
+  <text x="490" y="448" text-anchor="middle" font-size="10" fill="#57606a">was this argument copied</text>
+  <text x="490" y="463" text-anchor="middle" font-size="10" fill="#57606a">from untrusted text?</text>
+  <text x="490" y="478" text-anchor="middle" font-size="10" fill="#57606a">string-overlap heuristic</text>
+
+  <rect x="610" y="410" width="196" height="96" rx="6" fill="#fff" stroke="#d0d7de"/>
+  <text x="708" y="430" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2328">Approval queue</text>
+  <text x="708" y="448" text-anchor="middle" font-size="10" fill="#57606a">every write waits for a human</text>
+  <text x="708" y="463" text-anchor="middle" font-size="10" fill="#57606a">requester cannot approve</text>
+  <text x="708" y="478" text-anchor="middle" font-size="10" fill="#57606a">their own request</text>
+
+  <rect x="826" y="410" width="146" height="96" rx="6" fill="#fff" stroke="#d0d7de"/>
+  <text x="899" y="436" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2328">allow / deny /</text>
+  <text x="899" y="452" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2328">held</text>
+  <text x="899" y="474" text-anchor="middle" font-size="10" fill="#57606a">then the tool runs,</text>
+  <text x="899" y="489" text-anchor="middle" font-size="10" fill="#57606a">or does not</text>
+
+  <!-- footer boxes -->
+  <rect x="158" y="546" width="400" height="52" rx="6" fill="#fff" stroke="#d0d7de"/>
+  <text x="358" y="568" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2328">Audit log (JSONL) → dashboard</text>
+  <text x="358" y="585" text-anchor="middle" font-size="10" fill="#57606a">decisions, stages, approvals; rotatable while running</text>
+  <rect x="584" y="546" width="400" height="52" rx="6" fill="#fff" stroke="#d0d7de"/>
+  <text x="784" y="568" text-anchor="middle" font-size="11" font-weight="700" fill="#1f2328">Model integrity</text>
+  <text x="784" y="585" text-anchor="middle" font-size="10" fill="#57606a">SHA-256 manifest checked before any artifact is loaded</text>
+
+  <!-- arrows: text pipeline -->
+    <path d="M 134 172 L 150 172 L 150 140 L 172 140" fill="none" stroke="#57606a" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="142" y="164" text-anchor="middle" font-size="8" fill="#57606a">prompt</text>
+  <line x1="324" y1="140" x2="340" y2="140" stroke="#57606a" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="492" y1="140" x2="508" y2="140" stroke="#57606a" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="670" y1="140" x2="686" y2="140" stroke="#57606a" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="765" y1="192" x2="765" y2="234" stroke="#1a7f37" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="773" y="216" font-size="9" fill="#1a7f37">clean</text>
+  <path d="M 700 192 L 700 212 L 590 212 L 590 234" fill="none" stroke="#b42318" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="646" y="207" text-anchor="middle" font-size="9" fill="#b42318">flagged</text>
+  <line x1="842" y1="280" x2="878" y2="280" stroke="#57606a" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <path d="M 932 326 L 932 336 L 332 336 L 332 328" fill="none" stroke="#57606a" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="640" y="332" text-anchor="middle" font-size="9" fill="#57606a">response</text>
+  <path d="M 174 300 L 146 300 L 146 204 L 136 204" fill="none" stroke="#57606a" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="141" y="252" text-anchor="middle" font-size="8" fill="#57606a" transform="rotate(-90 141 252)">reply or block</text>
+
+  <!-- arrows: action firewall -->
+  <line x1="134" y1="439" x2="172" y2="439" stroke="#57606a" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="153" y="431" text-anchor="middle" font-size="8" fill="#57606a">tool call</text>
+  <line x1="370" y1="458" x2="390" y2="458" stroke="#57606a" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="588" y1="458" x2="608" y2="458" stroke="#57606a" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="806" y1="458" x2="824" y2="458" stroke="#57606a" stroke-width="1.5" marker-end="url(#arrow)"/>
 </svg>

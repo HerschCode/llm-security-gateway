@@ -51,3 +51,4 @@ redteam/.venv-garak/
 .venv-sec/
 *.log
 redteam/runs/
+.venv-demo/
