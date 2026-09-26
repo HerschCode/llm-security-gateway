@@ -1,6 +1,6 @@
 # Security scans and appsec hygiene (Phase 6)
 
-Run on 2026-09-25 against commit `13b8fbb` plus the changes in the Phase 6 commit. This is what each tool found, what was fixed, what was accepted and why,
+Run on 2026-09-25 against commit `13b8fbb` plus the changes in the Phase 6 commit; the CI-only tools were read for the first time on 2026-09-26 (below). This is what each tool found, what was fixed, what was accepted and why,
 and, just as important, what could **not** be run here. The threat model that ties these together is [`SECURITY.md`](../SECURITY.md).
 
 ## Which tools ran where
@@ -11,18 +11,35 @@ and, just as important, what could **not** be run here. The threat model that ti
 | Bandit | 1.9.4 | yes | `security.yml` `bandit`, **blocking** | 48 findings (3 HIGH, 13 MEDIUM, 32 LOW) before; **0 HIGH, 0 MEDIUM, 26 LOW** after; `gateway/` has none |
 | detect-secrets | 1.5.0 | yes (stand-in) | no | 3 candidates before, 5 after; all false positives (below) |
 | Git-history secret scan | grep, 11 token formats | yes (stand-in for gitleaks) | no | 0 matches in 72 commits |
-| gitleaks | action v2.3.9 | **no** | `security.yml` `gitleaks`, blocking, full history | not run by the author |
-| Semgrep | 1.178.0 | **no**: `semgrep-core` exits with an error on this Windows machine even for a one-line rule | `security.yml` `semgrep`, **non-blocking** | findings unknown |
-| Trivy (filesystem) | action v0.36.0 | **no** (no binary downloaded) | `security.yml` `trivy-fs`, blocking | not run by the author |
-| Trivy (image) | action v0.36.0 | **no** (no Docker daemon here) | `security.yml` `trivy-image`, **non-blocking** | not run; the image has not been built locally |
+| gitleaks | action v2.3.9 | **no** | `security.yml` `gitleaks`, blocking, full history | **passed** in CI on 2026-09-26 (the report was not read: a pass means no match under `.gitleaks.toml`) |
+| Semgrep | 1.178.0 | **no**: `semgrep-core` exits with an error on this Windows machine even for a one-line rule | `security.yml` `semgrep`, **blocking** since 2026-09-26 | first CI run: 13 warnings; 3 fixed, 10 accepted with a reason beside the code, 0 unsuppressed (triage below) |
+| Trivy (filesystem) | action v0.36.0 | **no** (no binary downloaded) | `security.yml` `trivy-fs`, blocking | **passed** in CI (fixed HIGH or CRITICAL vulnerabilities, secrets and misconfigurations; the report was not read) |
+| Trivy (image) | action v0.36.0 | **no** (no Docker daemon here) | `security.yml` `trivy-image`, **blocking** since 2026-09-26 | CI built `Dockerfile.render` and the scan passed (no fixed HIGH or CRITICAL); the full-mode `Dockerfile` (with torch) is not built anywhere yet |
 | CycloneDX SBOM | cyclonedx-bom 7.4.0 | yes (sample in `sbom/`) | `sbom.yml` on release, unrun | 23 components; hashes stay in the lock file, not the SBOM |
 | Lock verification | `pip download --require-hashes` | yes | | all 23 wheels of the serving lock downloaded and matched their hash (Linux, CPython 3.12) |
-| Workflow validation | check-jsonschema 0.38.1 | yes | | all four config files valid against GitHub's schemas; **the workflows have not been executed on GitHub** |
+| Workflow validation | check-jsonschema 0.38.1 | yes | | all four config files valid against GitHub's schemas; `ci.yml` and `security.yml` have run on GitHub on every push since the Phase 6 commit (`sbom.yml` runs on release and has not) |
 
-The three scanners that could not be run locally are configured so they run in CI, and the two whose first findings are unknown (Semgrep, the image scan) are
-non-blocking on purpose: making them blocking before anyone has seen their output would either fail the build on day one or invite a blanket suppression.
-`tests/test_supply_chain.py` pins which jobs are allowed to soften (`lint`, `semgrep`, `trivy-image`), so making another one soft is a visible test change. **To close
-this gap:** start Docker Desktop and run `semgrep/semgrep`, `aquasec/trivy` and `zricethezav/gitleaks` against the repository, triage, then flip the two jobs to blocking.
+Semgrep, Trivy and gitleaks cannot run on the maintainer's machine, so their first run was in CI, and they were not read until 2026-09-26: `ci.yml` had been failing since the
+Phase 6 push (a Linux-only test failure, see `decisions.md`, 2026-09-26) and the Security workflow's results had not been looked at. After the triage below, Semgrep and the image scan
+were made blocking, and `tests/test_supply_chain.py` now pins that only the style linter may soften. Read "passed" as "nothing above the configured threshold": the Trivy and gitleaks
+reports need a login to download and were not read, and the tools were not run inside a container here.
+
+## Semgrep triage (first CI run, 2026-09-26)
+
+13 warnings from `p/python`, `p/security-audit` and `p/owasp-top-ten` on 102 tracked files. A suppression is written as `# nosemgrep: <rule id> - <reason>` beside the code so a reader
+sees why; Semgrep still lists it, marked suppressed, and a rule id has to match exactly (one was wrong on the first try and its finding stayed blocking).
+
+| Rule | Where | Decision |
+|---|---|---|
+| `dependabot-missing-cooldown` (3) | `.github/dependabot.yml` | **Fixed**: `cooldown: default-days: 7` on every ecosystem, so a release is proposed only after a week |
+| `avoid-pickle`, 2 loads and 2 writes | `gateway/detectors/embedding_similarity.py` | Accepted. The loads are SHA-256 checked against `models/MANIFEST.sha256` first (SEC-05); the writes are training-time; the layer is off by default |
+| `avoid-pickle`, 1 load and 1 write | `gateway/detectors/embedding_similarity_st.py` | Accepted, same reasons (opt-in layer) |
+| `avoid-pickle`, 1 write | `scripts/distill_to_student.py` | Accepted: a training-script write of an experiment file the gateway never loads |
+| `dangerous-subprocess-use-tainted-env-args` | `redteam/run_garak.py` | Accepted: an argv list with no shell, run by the maintainer with their own arguments (Bandit's equivalent was accepted for the same call) |
+| `insecure-hash-algorithm-sha1` | `scripts/baselines/run_guard_hosted.py` | Accepted: a cache key with `usedforsecurity=False` (SEC-10); changing it would discard the cached hosted-API scores, which cost quota |
+| `dynamic-urllib-use-detected` | `scripts/prepare_training_data.py` | Accepted: a constant https URL whose scheme is checked before use (Bandit B310, same call) |
+
+Ten of the thirteen are suppressions, not fixes. Each is a judgement that should be revisited if the code around it changes; a new Semgrep finding now fails the build.
 
 ## Findings and what was done
 

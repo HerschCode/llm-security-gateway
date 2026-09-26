@@ -102,7 +102,7 @@ transport, where the proxy cannot tell who is speaking.
 | I2 | Script injected through a logged field runs in the operator's browser (stored XSS). | Every interpolated field is escaped (RT-07, High; pinned by a test and verified in a browser). | Fixed. |
 | I3 | Anyone can read the dashboard and stats. | None. `/gateway/dashboard` and `/gateway/stats` are unauthenticated: they show session ids, decisions and matched pattern ids. | **Open**, acceptable only for the public demo. Put them behind authentication. |
 | I4 | The response carries detector internals that help an attacker tune inputs. | None: `/gateway/chat` returns a `trace` with per-layer results. | **Open**, intentional for the demo; remove or gate it for real use. |
-| I5 | A secret in the repository or its history. | gitleaks on the full history in CI; `detect-secrets` locally; a manual scan of all 72 commits for 11 token formats found nothing; images exclude `.env`-style files and `logs/`. | Mitigated. gitleaks itself has not been run here (see `docs/security-scans.md`). |
+| I5 | A secret in the repository or its history. | gitleaks on the full history in CI; `detect-secrets` locally; a manual scan of all 72 commits for 11 token formats found nothing; images exclude `.env`-style files and `logs/`. | Mitigated. gitleaks passes in CI (full history); it has not been run locally (see `docs/security-scans.md`). |
 | I6 | The pseudonymization vault leaks originals. | In memory only, never logged or written; per-session, capped, expiring; not printed by `repr`. | Mitigated. A process memory dump would show it; it does not survive a restart. |
 | I7 | System-prompt or role-restricted content in a response. | Post-flight checks (`role_exposure`, `system_prompt_leak`, jailbreak-compliance markers), including on streamed output. | Mitigated, heuristic; depends on the asserted role (S1). |
 
@@ -122,7 +122,7 @@ transport, where the proxy cannot tell who is speaking.
 |---|---|---|---|
 | E1 | A caller asserts a higher role to see restricted output or act as a manager. | Response filtering and the tool policy both use the asserted role. | **Open**; the same gap as S1. |
 | E2 | A hijacked agent calls a tool, or a write, it should not. | Default-deny policy by role and argument; write tools always need human approval; taint tracking on write arguments (`docs/action-firewall.md`; 0 bypasses in 39 policy-enforced mutations). | Mitigated. Measured misses: paraphrase, translation, acronyms, trusted-tool data (all held for approval, none executed). |
-| E3 | Code execution through the container. | Non-root user, no shell in the command path beyond `sh -c uvicorn`, digest-pinned base, hash-locked packages, `MODEL_INTEGRITY=enforce`. | Mitigated on paper: **the images have not been built or scanned here** (no Docker daemon available); the CI job that does is not yet a gate. |
+| E3 | Code execution through the container. | Non-root user, no shell in the command path beyond `sh -c uvicorn`, digest-pinned base, hash-locked packages, `MODEL_INTEGRITY=enforce`. | Mitigated. CI builds the Render image and scans it (no fixed HIGH or CRITICAL finding; a blocking gate since 2026-09-26). The full-mode image with torch is not built anywhere yet, and nothing was run inside a container here. |
 | E4 | Approving your own request or forging the approver. | Separation of duties in the queue; shared token; fails closed. | Mitigated only as far as the token is secret and the ids are honest (S1). |
 
 ## Attack surface
@@ -151,7 +151,7 @@ transport, where the proxy cannot tell who is speaking.
 
 Hash-locked dependencies (`requirements*.lock`, refreshed with `scripts/update_locks.sh`), actions pinned to SHAs with least-privilege permissions, a
 digest-pinned base image, a non-root runtime user, Dependabot, `pip-audit` (blocking), Bandit (blocking on `gateway/`), gitleaks, Semgrep and Trivy
-(configured; see the status table), and a CycloneDX SBOM per release (`.github/workflows/sbom.yml`). Guard tests keep these from drifting:
+(all blocking in CI; see the status table), and a CycloneDX SBOM per release (`.github/workflows/sbom.yml`). Guard tests keep these from drifting:
 `tests/test_supply_chain.py`, `tests/test_source_hygiene.py`, `tests/test_model_integrity.py`.
 
 ## What has and has not been tested
@@ -160,5 +160,5 @@ Done: an adversarial exercise with garak, promptfoo, an LLM attacker and a mutat
 dependency audit (`docs/security-scans.md`); unit tests for every mitigation above.
 
 Not done, and worth saying: no third-party penetration test; no fuzzing of the MCP proxy's transport (duplicate keys, encodings, oversize
-frames); no load test of the limits under real traffic; Semgrep, Trivy and gitleaks have not been executed by this project's author (they run in CI);
-the container images have not been built locally; the approver flow and the dashboard have no authentication to test.
+frames); no load test of the limits under real traffic; Semgrep, Trivy and gitleaks ran only in CI, never locally, and their reports were not read beyond
+pass or fail and Semgrep's annotated findings; the full-mode container image has not been built anywhere; the approver flow and the dashboard have no authentication to test.

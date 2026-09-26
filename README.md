@@ -123,7 +123,7 @@ The full record, with the measurements behind each, is [`docs/decisions.md`](doc
 ## What it does not do
 
 Authenticate callers (identity is asserted by the caller), keep state across instances (rate limits, sessions and the approval queue are per process), or protect an unauthenticated dashboard. It has been red-teamed by its author with
-standard scanners and an LLM attacker, not by an independent party. The Semgrep, Trivy and gitleaks jobs are configured but were not run by the author, and the container images have not been built here.
+standard scanners and an LLM attacker, not by an independent party. Semgrep, Trivy and gitleaks run in CI only (they cannot run on the author's machine) and pass, after one Semgrep triage; their reports were not read beyond that, and the full-mode container image has not been built.
 The full list is in [`SECURITY.md`](SECURITY.md) (STRIDE threat model) and [`docs/project-notes.md`](docs/project-notes.md#known-limitations-stated-plainly-not-buried).
 
 ## Where things are

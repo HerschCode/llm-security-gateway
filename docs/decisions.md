@@ -1038,3 +1038,19 @@ such rather than conflated.
 **Found on the way.** The streaming cut-off wrote the last 80 characters of the response it had just blocked to the audit log (`buffer_snippet`), so text blocked for exposing restricted data or the system prompt was kept on disk. Removed, with a regression test (own commit). Three comments still described the old three-layer default (`middleware.py`, `docker-compose.yml`) and were corrected.
 
 **Not done.** Fix 3 (the action firewall in front of the real operations-assistant over MCP) is held until that project exposes `propose_intervention` over MCP; it has nine read tools. Phase 8 (cloud deployment) is deferred until asked for. The links in the README to the live demo were not fetched by the test suite (no network in tests).
+
+## 2026-09-26: CI was red from the Phase 6 push until today; Semgrep, Trivy and gitleaks read for the first time
+
+**What happened.** The Phase 6 push (`3ced567`) failed the CI test job on GitHub and I did not look: I reported Phases 6 and 7 as done and pushed Phase 7 on top of it. I found out while checking the repository afterwards (the CI badge is at the top of the README). The Dependabot PRs opened by the new `dependabot.yml` failed for the same reason. The Phase 6 entry above says the workflows had not been executed; they had run, on that push, and I had not read the result.
+
+**Cause.** `test_a_normal_archive_is_extracted` (Phase 6) builds a tar whose directory member has `TarInfo`'s default mode, `0o644`. On Linux the extracted directory had no execute bit, so reading a file inside it raised `PermissionError`; Windows ignores modes, so the test passed on every local run. I reproduced the CI environment as far as Windows allows before finding it (a torch-free venv, a fresh clone of the repository, Python 3.12 with the exact locked versions): all passed, and none of them could have shown a POSIX-mode bug.
+
+**Fix.** `safe_extract` passes `filter="data"` (PEP 706) where the interpreter has it, which normalises modes and drops setuid and setgid bits, with a POSIX-only regression test for both. Job logs need admin rights to read, so `tests/conftest.py` now reports failing tests as GitHub annotations under Actions (annotations are public); that is how the failure was read.
+
+**Semgrep, Trivy and gitleaks, first read.** gitleaks (full history), Trivy on the filesystem and on the Render image (which CI builds) and Bandit passed. Semgrep gave 13 warnings, read the same way through an annotation script (`scripts/sarif_to_annotations.py`): 3 fixed (the Dependabot cooldown), 10 accepted with a `nosemgrep` comment giving the reason beside the code (pickle in opt-in layers and a training script, an argv-list subprocess, a SHA-1 cache key, a constant https URL); the table is in `docs/security-scans.md`. Semgrep and the image scan are now blocking, and `tests/test_supply_chain.py` allows only the linter to soften. One suppression carried a wrong rule id and its finding stayed blocking until corrected.
+
+**Docs corrected.** The README, `SECURITY.md` (I5, E3, supply chain, not-done list) and `docs/security-scans.md` said these tools had never been run; they now say what ran where.
+
+**Process.** After a push, read the CI result before calling a phase done.
+
+**Still not done.** The full-mode `Dockerfile` (with torch) is built nowhere; nothing was run inside a container; the Trivy, gitleaks and Semgrep reports were read only as pass or fail (plus Semgrep's findings), not as full reports.
