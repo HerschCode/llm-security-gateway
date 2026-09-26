@@ -38,3 +38,19 @@ def test_a_missing_or_empty_file_never_fails_the_step(tmp_path, capsys):
     empty.write_text(json.dumps({"runs": [{"results": []}]}), encoding="utf-8")
     assert main([str(empty)]) == 0
     assert "0 findings" in capsys.readouterr().out
+
+
+def test_a_result_with_a_suppression_is_marked_as_such():
+    sarif = {"runs": [{"results": [{"ruleId": "r", "level": "warning", "message": {"text": "m"}, "suppressions": [{"kind": "inSource"}],
+                                    "locations": [{"physicalLocation": {"artifactLocation": {"uri": "a.py"}, "region": {"startLine": 3}}}]}]}]}
+    assert findings(sarif) == ["suppressed(warning) r a.py:3 m"]
+
+
+def test_the_console_tail_is_printed_as_a_second_annotation(tmp_path, capsys):
+    sarif = tmp_path / "s.sarif"
+    sarif.write_text(json.dumps({"runs": [{"results": []}]}), encoding="utf-8")
+    log = tmp_path / "scan.log"
+    log.write_text("\n".join(f"line {i}" for i in range(100)), encoding="utf-8")
+    assert main([str(sarif), "--title", "Semgrep", "--log", str(log)]) == 0
+    out = capsys.readouterr().out
+    assert "Semgrep console output" in out and "line 99" in out and "line 10" not in out      # only the last 40 lines

@@ -43,13 +43,17 @@ jobs:
       - name: Install Semgrep (hash-locked)
         run: pip install --require-hashes --no-deps -r requirements-ci.lock
       - name: Semgrep (free rule packs)
-        run: >
-          semgrep scan --config p/python --config p/security-audit --config p/owasp-top-ten --metrics off
-          --sarif --output semgrep.sarif --error gateway scripts project2_agent redteam/adaptive_attacker.py
-          redteam/mutation_attacker.py redteam/run_garak.py redteam/summarize.py redteam/target_shim.py Dockerfile Dockerfile.render .github
+        run: |
+          set +e
+          semgrep scan --config p/python --config p/security-audit --config p/owasp-top-ten --metrics off \
+            --sarif --output semgrep.sarif --error gateway scripts project2_agent redteam/adaptive_attacker.py \
+            redteam/mutation_attacker.py redteam/run_garak.py redteam/summarize.py redteam/target_shim.py Dockerfile Dockerfile.render .github > semgrep.log 2>&1
+          code=$?
+          cat semgrep.log
+          exit $code
       - name: Show the findings on the run page (the SARIF artifact needs a login to download)
         if: always()
-        run: python scripts/sarif_to_annotations.py semgrep.sarif --title Semgrep
+        run: python scripts/sarif_to_annotations.py semgrep.sarif --title Semgrep --log semgrep.log
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
         if: always()
         with:

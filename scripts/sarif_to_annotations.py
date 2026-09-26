@@ -23,7 +23,10 @@ def findings(sarif: dict) -> list[str]:
             uri = loc.get("artifactLocation", {}).get("uri", "?")
             line = loc.get("region", {}).get("startLine", 0)
             msg = " ".join(str(r.get("message", {}).get("text", "")).split())[:MAX_MESSAGE]
-            out.append(f"{r.get('level', 'warning')} {r.get('ruleId', '?')} {uri}:{line} {msg}")
+            level = r.get("level", "warning")
+            if r.get("suppressions"):                     # a `nosemgrep` comment: reported by the tool, but not a failure
+                level = f"suppressed({level})"
+            out.append(f"{level} {r.get('ruleId', '?')} {uri}:{line} {msg}")
     return out
 
 
@@ -40,6 +43,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("sarif")
     ap.add_argument("--title", default="SARIF")
+    ap.add_argument("--log", help="the scanner's own console output; its last lines are printed as a second annotation")
     args = ap.parse_args(argv)
     path = Path(args.sarif)
     if not path.exists():
@@ -48,6 +52,9 @@ def main(argv=None) -> int:
     lines = findings(json.loads(path.read_text(encoding="utf-8")))
     print(annotation(args.title, lines))
     sys.stdout.write("\n".join(lines) + "\n")
+    if args.log and Path(args.log).exists():
+        tail = Path(args.log).read_text(encoding="utf-8", errors="replace").splitlines()[-40:]
+        print(f"::notice title={escape(args.title + ' console output', prop=True)}::{escape(chr(10).join(tail)[-MAX_CHARS:])}")
     return 0
 
 
