@@ -1054,3 +1054,18 @@ such rather than conflated.
 **Process.** After a push, read the CI result before calling a phase done.
 
 **Still not done.** The full-mode `Dockerfile` (with torch) is built nowhere; nothing was run inside a container; the Trivy, gitleaks and Semgrep reports were read only as pass or fail (plus Semgrep's findings), not as full reports.
+
+## Fix 3: the action firewall in front of the real operations-assistant (2026-09-26)
+
+operations-assistant now exposes `propose_intervention` over MCP. Its first version took a free-text `roi_estimate`
+argument that this policy does not list; the policy is default-deny on unlisted arguments, so every proposal would have
+been blocked here. That argument was removed on the operations-assistant side (ROI figures are fetched server-side from
+operations-performance instead of being written by the model), and a test there pins the MCP argument set to the four
+this policy allows.
+
+`scripts/demo_action_firewall_real_upstream.py` runs the scripted hijacked agent through `MCPFirewallProxy` against the
+real server over stdio: the real read is forwarded; the write whose target came from an untrusted upload is denied at
+the taint stage; an action outside the enum is denied at the policy stage; neither reaches the server; the legitimate
+request is held, the requester's own approval is refused, and after a second manager approves, the proxy executes it
+and the real server records a pending intervention in its own approval queue. Output is in `docs/action-firewall.md`.
+Not in CI (the other repository is not checked out there); `demo_upstream.py` remains the tested upstream.

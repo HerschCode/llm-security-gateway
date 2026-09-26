@@ -1,9 +1,10 @@
 """
 A tiny, deliberately UNDEFENDED MCP server (stdlib only) used to demonstrate and test the action firewall.
 
-Why it exists: operations-assistant's real MCP server exposes only read tools (`propose_intervention`, its
-write tool, lives on its LangGraph path, not on MCP), so there is nothing there for an action firewall to stop.
-This server mirrors P2's read-tool names and adds the two things an attack needs:
+Why it exists: when the firewall was built, operations-assistant's real MCP server exposed only read tools, so
+there was nothing there for an action firewall to stop. It now exposes `propose_intervention` (see
+scripts/demo_action_firewall_real_upstream.py); this server stays as the CI and test upstream, because the other
+repository is not available in CI and a real server does not record effects for assertions. This server mirrors P2's read-tool names and adds the two things an attack needs:
   * `search_policy_documents` returns a poisoned document when the query mentions "addendum";
   * `propose_intervention` and `delete_all_records` actually record an effect (JSONL at $DEMO_UPSTREAM_EFFECTS)
     and run whatever they are told, like a naive tool server would.

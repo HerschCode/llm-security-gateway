@@ -28,6 +28,30 @@ A scripted "naive agent" reads a poisoned policy document and obeys it. Same age
 
 The agent is a script, not a model. The demo shows what the firewall does once an agent is hijacked, not how often real models are.
 
+## Against the real operations-assistant (`python -X utf8 -m scripts.demo_action_firewall_real_upstream`)
+
+The demo above uses `gateway/actions/demo_upstream.py`. This one spawns operations-assistant's real MCP server
+(`python -m src.mcp_server`, which now exposes `propose_intervention`) and puts the proxy in front of it over stdio.
+The agent is still a script; the injected instruction arrives in an uploaded document registered as untrusted (the real
+corpus is not modified). operations-performance is deliberately unreachable, so no API keys are needed. Output of one run:
+
+```
+1. real read, forwarded:   search_policy_documents -> "Procurement Escalation Procedure, Section 2. Escalation Path" ...
+3. the hijacked agent obeys the uploaded document:
+   propose_intervention(flag_supplier, Kestrel Logistics) -> Blocked: 'target' and 'reason' copied from untrusted content
+   propose_intervention(delete_supplier, Kestrel Logistics) -> Blocked: 'action'='delete_supplier' is not in the policy enum
+   calls that reached the real server so far: ['search_policy_documents']
+4. legitimate request (CASE-4471, from the user's own message):
+   HELD FOR HUMAN APPROVAL; the requester's own approval is refused (separation of duties); a second manager approves
+   operations-assistant -> intervention_id=inv_... status=pending_approval roi_context=None
+audit log:  allow / deny (taint) / deny (policy) / require_approval
+```
+
+Two approval gates now sit in series: the gateway's (who may ask for this, with which arguments) and
+operations-assistant's own (`POST /interventions/{id}/approve`, a manager other than the proposer). `roi_context` is
+filled by operations-assistant from operations-performance's `GET /roi/summary` when that service is reachable; the model
+never supplies it. Set `--p2-dir` or `P2_DIR` if the repositories are not siblings as in the author's layout.
+
 ## The three controls
 
 1. **Policy** (`policy.py`): default-deny, per-tool, first-matching-rule. A rule names roles and per-argument constraints
@@ -54,9 +78,11 @@ construction; not separately tested); ids starting `fw-` are reserved.
 
 **Verified against operations-assistant's real MCP server** (the `mcp` SDK, a real handshake): an employee sees 7 of the 9 tools
 (`get_management_report` and `get_supplier_performance` are hidden and blocked), an unlisted tool is blocked, and allowed calls reach the real
-server. That server exposes only read tools (`propose_intervention` lives on its LangGraph path, not on MCP), so the *write* behaviour is
-demonstrated against `demo_upstream.py`, a small undefended stdlib MCP server that mirrors P2's tool names. It is tested over real stdio in
-`tests/test_action_mcp_proxy.py`.
+server. When this was first built that server exposed only read tools, so the *write* behaviour was demonstrated against
+`demo_upstream.py`, a small undefended stdlib MCP server that mirrors P2's tool names (tested over real stdio in
+`tests/test_action_mcp_proxy.py`). operations-assistant now exposes `propose_intervention` over MCP with exactly the four arguments this
+policy allows; the write path against the real server is shown by `scripts/demo_action_firewall_real_upstream.py` (above). CI keeps
+using `demo_upstream.py`, since the other repository is not available there.
 
 ## Results (`python -X utf8 -m scripts.evaluate_action_firewall`)
 
