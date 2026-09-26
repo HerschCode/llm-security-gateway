@@ -284,7 +284,8 @@ __SHARED_CSS__
   .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
   .panel h2 { font-size: 13px; margin: 0 0 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
   .verdict { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-  .allowed { color: var(--bad); }     /* backend complied with an attack = bad */
+  .allowed { color: var(--bad); }     /* bypass panel: backend complied = bad */
+  .passed  { color: var(--good); }   /* gateway panel: correctly allowed = good */
   .blocked { color: var(--good); }   /* gateway stopped it = good */
   .neutral { color: var(--muted); }
   .errored { color: var(--warn); }   /* upstream backend failure -- not a verdict */
@@ -311,6 +312,7 @@ __SHARED_CSS__
   .guide-glossary { font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 5px; border-top: 1px solid var(--border); padding-top: 10px; }
   .gterm { display: inline-block; font-weight: 700; font-size: 11px; padding: 1px 6px; border-radius: 3px; margin-right: 4px; }
   .gterm.blocked { color: var(--good); }
+  .gterm.passed  { color: var(--good); }
   .gterm.allowed { color: var(--bad); }
 </style>
 </head>
@@ -355,7 +357,7 @@ __NAV__
         </div>
       </div>
       <div class="guide-glossary">
-        <div><span class="gterm blocked">BLOCKED</span> Gateway stopped the request &mdash; attack contained.&nbsp;&nbsp;<span class="gterm allowed">ALLOWED (left panel)</span> Backend answered with no protection &mdash; the attack worked.</div>
+        <div><span class="gterm blocked">BLOCKED</span> Gateway stopped the request &mdash; attack contained.&nbsp;&nbsp;<span class="gterm passed">ALLOWED (right panel)</span> Gateway passed the request &mdash; correct for benign prompts.&nbsp;&nbsp;<span class="gterm allowed">ANSWERED (left panel)</span> Backend answered with no protection &mdash; the attack worked.</div>
         <div><b>layer</b> &mdash; which stage triggered the block: <em>rule_based</em> (regex / keyword patterns), <em>embedding_similarity</em> (distance to known attack embeddings), <em>scratch_classifier</em> (NumPy MLP trained on the attack corpus), or <em>post_flight_checks</em> (response-side scan for leaks &amp; compliance).</div>
         <div><b>Attack categories:</b> &#x1F534;&nbsp;Direct Injection (override system prompt) &middot; &#x1F7E0;&nbsp;Indirect Injection (payload hidden in content) &middot; &#x1F7E1;&nbsp;Multi-turn Jailbreak (gradual behavioural drift) &middot; &#x1F7E3;&nbsp;Encoding Obfuscation (base64&nbsp;/&nbsp;Unicode evasion) &middot; &#x1F535;&nbsp;Tool Scope Escalation (out-of-scope tool calls)</div>
       </div>
@@ -488,7 +490,7 @@ function renderSide(prefix, r, isGateway) {
   }
   const allowed = r.allowed;
   if (isGateway) {
-    v.className = 'verdict ' + (allowed ? 'allowed' : 'blocked');
+    v.className = 'verdict ' + (allowed ? 'passed' : 'blocked');
     v.textContent = allowed ? 'ALLOWED' : 'BLOCKED';
   } else {
     v.className = 'verdict ' + (allowed ? 'allowed' : 'neutral');
