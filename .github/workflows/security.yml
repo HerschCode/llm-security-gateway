@@ -47,6 +47,9 @@ jobs:
           semgrep scan --config p/python --config p/security-audit --config p/owasp-top-ten --metrics off
           --sarif --output semgrep.sarif --error gateway scripts project2_agent redteam/adaptive_attacker.py
           redteam/mutation_attacker.py redteam/run_garak.py redteam/summarize.py redteam/target_shim.py Dockerfile Dockerfile.render .github
+      - name: Show the findings on the run page (the SARIF artifact needs a login to download)
+        if: always()
+        run: python scripts/sarif_to_annotations.py semgrep.sarif --title Semgrep
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
         if: always()
         with:
