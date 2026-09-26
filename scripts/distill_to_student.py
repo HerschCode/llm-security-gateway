@@ -157,7 +157,7 @@ def main():
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "wb") as f:
-        pickle.dump({"student": student, "embedder_name": args.embed_model}, f)
+        pickle.dump({"student": student, "embedder_name": args.embed_model}, f)  # nosemgrep: python.lang.security.deserialization.pickle.avoid-pickle - training-time write of our own artifact
     print(f"Student saved to {output_path}")
 
     print("\nNext steps:")

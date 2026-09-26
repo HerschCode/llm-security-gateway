@@ -14,8 +14,9 @@ import yaml
 REPO = Path(__file__).resolve().parents[1]
 WORKFLOWS = sorted((REPO / ".github" / "workflows").glob("*.yml"))
 
-# Jobs allowed to continue-on-error, each for a stated reason in its workflow file.
-SOFT_JOBS = {"lint", "semgrep", "trivy-image"}
+# Jobs allowed to continue-on-error, each for a stated reason in its workflow file. Semgrep and the image scan were soft until their first findings were
+# triaged (2026-09-26); only the style linter still is.
+SOFT_JOBS = {"lint"}
 
 
 def load(path):

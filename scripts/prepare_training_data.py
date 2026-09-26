@@ -78,7 +78,7 @@ def download_jailbreak_llms() -> Path:
     if not JBLLMS_TARBALL_URL.startswith("https://"):
         raise SystemExit(f"refusing to download over a non-https URL: {JBLLMS_TARBALL_URL}")
     try:
-        urllib.request.urlretrieve(JBLLMS_TARBALL_URL, tarball_path)  # nosec B310 - https only, checked above
+        urllib.request.urlretrieve(JBLLMS_TARBALL_URL, tarball_path)  # nosec B310 - https only, checked above  # nosemgrep: python.lang.security.audit.dynamic-urllib-use-detected.dynamic-urllib-use-detected - constant https URL
     except Exception as e:
         raise SystemExit(
             f"Failed to download jailbreak_llms dataset from {JBLLMS_TARBALL_URL}: {e}\n"

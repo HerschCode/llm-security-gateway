@@ -97,7 +97,7 @@ def main():
         report = OUT / f"{args.tag}.report.jsonl"
     else:
         print(f"[{args.tag}] {len(probes)} probes -> {args.mode}/{args.backend}", flush=True)
-        subprocess.run(cmd, cwd=REPO, env={**os.environ, "PYTHONIOENCODING": "utf-8"}, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False)
+        subprocess.run(cmd, cwd=REPO, env={**os.environ, "PYTHONIOENCODING": "utf-8"}, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False)  # nosemgrep: python.lang.security.audit.dangerous-subprocess-use-tainted-env-args - argv list, no shell; a dev harness run by the maintainer
         report = GARAK_RUNS / f"{args.tag}.report.jsonl"
         if not report.exists():
             sys.exit(f"no report at {report}")

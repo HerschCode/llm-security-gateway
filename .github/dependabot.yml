@@ -1,18 +1,26 @@
 # Weekly update PRs. Two limits worth knowing (docs/security-scans.md): Dependabot updates requirements*.txt but does not regenerate the
 # hash-pinned *.lock files (run scripts/update_locks.sh on its branch), and it may not see Dockerfile.render (a non-standard name), whose
 # base-image digest is kept identical to Dockerfile's by tests/test_supply_chain.py.
+# cooldown: a release is not proposed until it has been public for 7 days, so a malicious or broken release is more likely to have been
+# yanked first (Semgrep rule dependabot-missing-cooldown).
 version: 2
 updates:
   - package-ecosystem: pip
     directory: "/"
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 5
   - package-ecosystem: docker
     directory: "/"
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
