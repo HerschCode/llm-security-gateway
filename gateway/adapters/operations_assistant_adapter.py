@@ -16,6 +16,13 @@ shared process. Point it at the service with env vars:
     OPS_ASSISTANT_API_KEY    X-API-Key for the "/chat" path (not needed for
                              "/demo/chat"). Must equal operations-assistant's API_KEY.
     OPS_ASSISTANT_TIMEOUT    seconds to wait on a response (default 60).
+    AUTH_MODE                how this adapter authenticates. "api_key" (the default) is
+                             everything above. "google_id_token" is for a private Cloud
+                             Run deployment of operations-assistant: it sends a Google ID
+                             token minted for OPS_ASSISTANT_URL as "Authorization: Bearer
+                             ..." and no X-API-Key (see upstream_auth.py), and a 401 no
+                             longer falls back to /demo/chat, which would hide a
+                             credentials problem behind the anonymous route.
 
 If OPS_ASSISTANT_URL is unset, gateway/app.py does not register this backend at
 all. If it's set but the service errors/unreachable at request time, send()
@@ -24,12 +31,13 @@ adapter must never raise into GatewayMiddleware.process().
 
 As a convenience, a 401 from the configured path auto-retries once against
 "/demo/chat" (unless that was already the path), so a missing API key degrades
-to the public endpoint instead of a dead demo.
+to the public endpoint instead of a dead demo (api_key mode only, see AUTH_MODE).
 """
 import os
 
 import httpx
 
+from gateway.adapters import upstream_auth
 from gateway.adapters.base import BackendAdapter
 
 BACKEND_ERROR_PREFIX = "[backend-error] "
@@ -73,19 +81,25 @@ class OpsAssistantAdapter(BackendAdapter):
 
     def _headers(self) -> dict:
         h = {"Content-Type": "application/json"}
-        if self.api_key:
-            h["X-API-Key"] = self.api_key
+        # api_key mode: the X-API-Key below, exactly as before. google_id_token mode: a Google
+        # ID token minted for this service's URL instead, and no static key (upstream_auth.py).
+        h.update(upstream_auth.outbound_headers(
+            self.base_url, {"X-API-Key": self.api_key} if self.api_key else {}))
         return h
 
     def ping(self) -> tuple[bool, str]:
         """Cheap reachability check for /gateway/connectivity. Hits the service's
-        unauthenticated /health, returns (ok, detail)."""
+        /health (unauthenticated at the application level; under AUTH_MODE=google_id_token a
+        private Cloud Run service still wants an ID token there), returns (ok, detail)."""
         if not self.base_url:
             return False, "OPS_ASSISTANT_URL not set"
         try:
-            r = httpx.get(f"{self.base_url}/health", timeout=10)
+            r = httpx.get(f"{self.base_url}/health",
+                          headers=upstream_auth.outbound_headers(self.base_url), timeout=10)
             r.raise_for_status()
             return True, r.text[:200]
+        except upstream_auth.UpstreamAuthError as exc:
+            return False, f"{type(exc).__name__}: {exc}"
         except httpx.HTTPError as exc:
             return False, f"{type(exc).__name__}: {exc}"
 
@@ -102,16 +116,26 @@ class OpsAssistantAdapter(BackendAdapter):
             return f"{BACKEND_ERROR_PREFIX}operations_assistant not configured (set OPS_ASSISTANT_URL)"
 
         path = self.chat_path
+        mode = None
         try:
+            mode = upstream_auth.auth_mode()
             resp = self._post_chat(path, prompt, session_id)
-            if resp.status_code == 401 and path != _PUBLIC_PATH:
+            if resp.status_code == 401 and path != _PUBLIC_PATH and mode == upstream_auth.API_KEY:
                 path = _PUBLIC_PATH  # degrade to the keyless public endpoint
                 resp = self._post_chat(path, prompt, session_id)
             resp.raise_for_status()
+        except upstream_auth.UpstreamAuthError as exc:
+            # Nothing was sent: an adapter never raises into the middleware, and never makes the
+            # call unauthenticated when the configured mode says it must carry a token.
+            return f"{BACKEND_ERROR_PREFIX}operations_assistant: could not authenticate ({exc})"
         except httpx.HTTPStatusError as exc:
             code = exc.response.status_code
             hint = ""
-            if code == 401:
+            if mode == upstream_auth.GOOGLE_ID_TOKEN and code in (401, 403):
+                hint = (" -- Cloud Run refused the ID token, or this service's account lacks "
+                        "roles/run.invoker on operations-assistant; if the app itself says 401, "
+                        "unset its API_KEY (AUTH_MODE=google_id_token sends no X-API-Key)")
+            elif code == 401:
                 hint = (" -- set OPS_ASSISTANT_API_KEY to match operations-assistant's "
                         "API_KEY, or OPS_ASSISTANT_CHAT_PATH=/demo/chat")
             elif code == 429:

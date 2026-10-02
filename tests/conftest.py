@@ -1,10 +1,16 @@
-"""Suite-wide pytest hooks.
+"""Suite-wide pytest fixtures and hooks.
 
-Under GitHub Actions every failing test is also reported as a workflow annotation (`::error ...`). Annotations show on the run page and are readable through the
-public check-runs API without the full log (which needs admin rights), which matters for a failure that only reproduces on the runner (Linux, Python 3.12, locked
-dependency versions). Outside Actions this file does nothing.
+AUTH_MODE selects how the gateway authenticates to operations-assistant (gateway/adapters/upstream_auth.py) and is read on every call, so a value left
+in a developer's shell would silently change which code path every adapter test exercises. It is removed before each test; the tests that need a mode
+set it themselves.
+
+Under GitHub Actions every failing test is also reported as a workflow annotation (`::error ...`). Annotations show on the run page and are readable
+through the public check-runs API without the full log (which needs admin rights), which matters for a failure that only reproduces on the runner
+(Linux, Python 3.12, locked dependency versions). Outside Actions the hook below does nothing.
 """
 import os
+
+import pytest
 
 # Suppress stdout decision logs during the test suite so pytest's captured
 # output stays clean.  Set the env var before any test module imports the
@@ -16,6 +22,12 @@ try:
     _ls._LOG_STDOUT = False
 except ImportError:
     pass
+
+
+@pytest.fixture(autouse=True)
+def _auth_mode_unset(monkeypatch):
+    monkeypatch.delenv("AUTH_MODE", raising=False)
+
 
 _MAX_ANNOTATIONS = 10          # GitHub shows at most 10 error annotations per step
 _reported = 0
