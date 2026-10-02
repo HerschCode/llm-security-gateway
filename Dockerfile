@@ -11,6 +11,13 @@ ENV PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PYTHONDONTWRITEBYTECODE=1
 
+# One package is upgraded past the digest-pinned base: Debian published libpcre2-8-0 10.46-1~deb13u3 (a fixed HIGH, CVE-2026-103111) before the
+# python:3.12-slim image was rebuilt with it, and the Trivy image gate fails on a fixed HIGH. Drop this RUN when a refreshed base digest already has u3
+# (the gate going green with it removed is the check). Everything else stays as pinned.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends --only-upgrade libpcre2-8-0 \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 COPY requirements.lock .
