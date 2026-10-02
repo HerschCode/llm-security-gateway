@@ -20,14 +20,18 @@ result reported honestly rather than asserted.
 | **Validity** | A recorded instruction reflects something a real, authorized party actually said, not text that merely claims to | Taint tracking denies or flags a write-tool argument that was copied from untrusted content (a retrieved document, an uploaded file) without corroboration from a trusted source — this is the mechanical answer to a poisoned "CFO approved" note or a fake policy update embedded in text the agent reads | `gateway/actions/taint.py` |
 | **Completeness / audit trail** | Every decision is recorded, not just the ones that succeeded | Every `authorize()` call is appended to a JSONL audit log (PII-redacted) regardless of outcome | `gateway/actions/firewall.py::_audit` |
 | **Safeguarding of assets** | A single compromised session cannot cause unbounded damage | Per-session write budget (`max_per_session`); the approval queue itself is capped (200 pending) so it cannot be exhausted as a denial-of-service on legitimate approvals | `gateway/actions/firewall.py`, `gateway/actions/approvals.py` |
-| **Control testing** | The controls above actually hold against realistic attack framing, not just clean inputs | `finance_*` categories in `redteam/promptfoo/tests.yaml` (27 scenarios: vendor-bank-change/BEC fraud, threshold evasion, segregation-of-duties bypass requests, fake-authority notes, data over-reach, encoded and multilingual variants) | `redteam/promptfoo/tests.yaml`, `gateway/adapters/stub_ops_agent.py` |
+| **Control testing** | The controls above actually hold against realistic attack framing, not just clean inputs | `finance_*` categories in `redteam/promptfoo/tests.yaml` (27 scenarios: vendor-bank-change/BEC fraud, threshold evasion, segregation-of-duties bypass requests, fake-authority notes, data over-reach, encoded and multilingual variants) | `redteam/promptfoo/tests.yaml`, `gateway/adapters/stub_ops_agent.py`; and, for the action controls above, 32 action-firewall scenarios (`AG-FIN1`–`AG-FIN32` in `corpus/agentic_attacks.yaml`, 27 harmful, 3 known misses pinned) measured by `scripts/evaluate_action_firewall.py` (results in `docs/action-firewall.md`) |
 
 ## What this now covers, since operations-assistant shipped the tools
 
-`propose_payment_hold` / `propose_payment_release` exist now (operations-assistant, Phase F2) — both are
-thin wrappers that call the existing `propose_intervention` tool with `action="hold_payment"` /
-`"release_payment"`, not new top-level MCP tools, so the policy wiring lives in `propose_intervention`'s
-own rule list as two new rules, `finance-hold` and `finance-release` (`config/tool_policies.yaml`).
+`propose_payment_hold` / `propose_payment_release` exist now (operations-assistant, Phase F2). Their Python functions
+call `propose_intervention` with `action="hold_payment"` / `"release_payment"`, but operations-assistant's MCP server
+*also registers them as two separate tools*, which the policy does not govern: behind this gateway they are hidden and
+default-denied. (An earlier version of this document and of `docs/decisions.md` said they were not separate MCP tools;
+that was wrong, read from the Python layer instead of the protocol layer, and was caught by an external review.)
+operations-assistant is removing the duplicates so there is one write path per privileged action; the policy
+wiring lives in `propose_intervention`'s own rule list as two rules, `finance-hold` and `finance-release`
+(`config/tool_policies.yaml`), and `tests/test_policy_covers_ops_assistant_tools.py` pins the two duplicates as known misses.
 `finance-release` sets `require_role_separation: true`; `finance-hold` does not, since placing a hold is
 the conservative direction. Both constrain `priority` to the single value each real caller actually sends
 (`high` for hold, `normal` for release) — anything else is rejected rather than silently accepted. Argument
