@@ -36,8 +36,8 @@ from gateway.text_normalizer import find_hidden_tag_text, normalize as _normaliz
 # docs/decisions.md). It no longer needs to exist for that reason -- the
 # serving path now uses gateway/detectors/classifier_numpy.py, a torch-free
 # re-implementation of the same trained model's forward pass (verified
-# bit-parity in tests/test_classifier_numpy_parity.py), so the FULL 3-layer
-# ensemble fits the free tier too. GATEWAY_LITE is kept as an opt-in "run an
+# bit-parity in tests/test_classifier_numpy_parity.py), so the full default
+# ensemble (rules + classifier) fits the free tier too. GATEWAY_LITE is kept as an opt-in "run an
 # even smaller ensemble" toggle (marginally lower latency, one fewer moving
 # part for a quick smoke test), not because anything requires it anymore.
 CLASSIFIER_THRESHOLD = 0.5
@@ -122,7 +122,7 @@ class GatewayMiddleware:
         return response_text
 
     def _run_injection_ensemble(self, text: str, session_id: str) -> tuple[bool, str | None, str | None, dict]:
-        """Runs all 3 detection layers, blocks if any fires. Returns
+        """Runs the detection layers (rules, then the classifier; the similarity layer only when enabled), blocks if any fires. Returns
         (blocked, detection_layer_used, matched_pattern_id, per_layer_trace).
 
         Tier 3 adaptive thresholding: layers 2 and 3's thresholds are scaled
@@ -385,7 +385,7 @@ class GatewayMiddleware:
                     timestamp=self.logger.now(), session_id=session_id, request_id=request_id, user_id=user_id,
                     phase="post_flight", decision="block", detection_layer_used="streaming_post_flight",
                     latency_ms=0.0, matched_pattern_id=reason,
-                    extra={"chars_generated_before_cutoff": len(buffer), "buffer_snippet": buffer[-80:]},
+                    extra={"chars_generated_before_cutoff": len(buffer)},   # not the text: what was cut off is by definition data that must not be kept
                 ))
                 yield {"chunk": f"\n[STREAM CUT OFF -- post-flight check flagged: {reason}]", "cut_off": True}
                 return

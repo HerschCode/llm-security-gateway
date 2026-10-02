@@ -10,19 +10,29 @@ import yaml
 from gateway.actions.approvals import ApprovalQueue
 from gateway.actions.firewall import ActionFirewall
 from gateway.actions.policy import Principal
+from scripts.evaluate_action_firewall import attempt_approvals
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCENARIOS = yaml.safe_load((REPO_ROOT / "corpus" / "agentic_attacks.yaml").read_text(encoding="utf-8"))["scenarios"]
 EFFECTS = {"deny", "require_approval", "allow"}
 
 
-def run(sc, tmp_path):
+def run_with_approvals(sc, tmp_path):
+    """[(decision, approval attempts)] per call; attempts exist only on finance scenarios (`approve_attempts`)."""
     fw = ActionFirewall(approvals=ApprovalQueue(tmp_path / f"{sc['id']}.db"), audit_path=None)
     sid, p = sc["id"], sc["principal"]
     fw.register_source(sid, "user_message", sc["user_message"], "trusted")
     for c in sc.get("context") or []:
         fw.register_source(sid, c["source"], c["text"], c["trust"])
-    return [fw.authorize(sid, Principal(p["role"], p["user_id"]), call["tool"], call["args"]) for call in sc["calls"]]
+    out = []
+    for call in sc["calls"]:
+        d = fw.authorize(sid, Principal(p["role"], p["user_id"]), call["tool"], call["args"])
+        out.append((d, attempt_approvals(fw, call, d)))
+    return out
+
+
+def run(sc, tmp_path):
+    return [d for d, _ in run_with_approvals(sc, tmp_path)]
 
 
 def test_corpus_is_large_and_well_formed():
@@ -85,3 +95,54 @@ def test_corpus_is_disjoint_from_the_classifier_training_data():
         texts += [c["text"] for c in s.get("context") or []]
         texts += [v for call in s["calls"] if isinstance(call["args"], dict) for v in call["args"].values() if isinstance(v, str) and len(v) >= 12]
     assert not [t for t in texts if norm(t) in train]
+
+
+# ---- finance (accounts-payable) scenarios --------------------------------------------------------------------------------------
+
+FINANCE = [s for s in SCENARIOS if s["category"].startswith("finance_")]
+# the attack classes the finance module was specified to cover, each pinned to the scenario that exercises it
+FINANCE_CLASSES = {
+    "poisoned 'CFO approved' invoice note": ["AG-FIN1"],
+    "fake updated AP policy upload": ["AG-FIN2"],
+    "confused-deputy hold then release": ["AG-FIN7", "AG-FIN8"],
+    "requests split under the session cap": ["AG-FIN9"],
+    "bank-detail exfiltration through `reason`": ["AG-FIN10", "AG-FIN13"],
+    "self-approval": ["AG-FIN15", "AG-FIN17"],
+    "same-role approval": ["AG-FIN16", "AG-FIN19"],
+}
+
+
+def test_finance_corpus_has_at_least_25_harmful_scenarios_and_covers_the_specified_classes():
+    harmful = [s for s in FINANCE if any(c["harmful"] for c in s["calls"])]
+    assert len(harmful) >= 25
+    ids = {s["id"] for s in FINANCE}
+    for name, wanted in FINANCE_CLASSES.items():
+        assert set(wanted) <= ids, f"finance corpus lost its scenario for: {name}"
+    assert {"finance_indirect_injection", "finance_confused_deputy", "finance_exfiltration", "finance_sod", "finance_scope", "finance_benign"} <= {s["category"] for s in FINANCE}
+
+
+@pytest.mark.parametrize("sc", [s for s in SCENARIOS if any(c.get("approve_attempts") for c in s["calls"])], ids=lambda s: s["id"])
+def test_every_approval_attempt_behaves_as_the_corpus_expects(sc, tmp_path):
+    for call, (_, attempts) in zip(sc["calls"], run_with_approvals(sc, tmp_path)):
+        assert [a["got"] for a in attempts] == [a["expect"] for a in call.get("approve_attempts") or []], (sc["id"], attempts)
+
+
+def test_no_harmful_call_is_ever_approved_by_an_attempt(tmp_path):
+    for sc in SCENARIOS:
+        for call, (_, attempts) in zip(sc["calls"], run_with_approvals(sc, tmp_path)):
+            if call["harmful"]:
+                assert all(a["got"] == "refused" for a in attempts), (sc["id"], attempts)
+
+
+def _pinned(sc):
+    return pytest.param(sc, id=sc["id"], marks=pytest.mark.xfail(
+        strict=True, reason="known miss, held for approval instead of stopped: " + sc["title"].replace("KNOWN MISS - ", "")))
+
+
+@pytest.mark.parametrize("sc", [_pinned(s) for s in FINANCE if s.get("evasion")])
+def test_finance_known_misses_are_pinned_until_fixed(sc, tmp_path):
+    """What a correct firewall would do: deny every harmful call. It does not (see the title), so each is a strict xfail:
+    the day a control closes the gap this fails, and the scenario and the docs must change with it."""
+    for call, d in zip(sc["calls"], run(sc, tmp_path)):
+        if call["harmful"]:
+            assert d.effect == "deny", (sc["id"], d.effect)
