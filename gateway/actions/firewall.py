@@ -127,7 +127,8 @@ class ActionFirewall:
             risk = "high" if risk == "high" else "medium"
             evidence = {"tainted": tainted, "policy_rule": result.rule}
             approval_id = self.approvals.enqueue(
-                session_id, principal, tool, args, reasons or ["write action requires human approval"], evidence, risk, source)
+                session_id, principal, tool, args, reasons or ["write action requires human approval"], evidence, risk, source,
+                require_role_separation=result.require_role_separation)
             return Decision("require_approval", tool, reasons or ["write action requires human approval"], result.rule,
                             risk=risk, tainted=tainted, approval_id=approval_id, stage="approval")
 

@@ -80,7 +80,7 @@ class SentenceTransformerSimilarityDetector:
         path.mkdir(parents=True, exist_ok=True)
         np.save(path / "known_bad_vectors.npy", self.known_bad_vectors)
         with open(path / "known_bad_ids.pkl", "wb") as f:
-            pickle.dump(self.known_bad_ids, f)
+            pickle.dump(self.known_bad_ids, f)  # nosemgrep: python.lang.security.deserialization.pickle.avoid-pickle - training-time write of our own artifact
 
     def load(self, path: Path = MODEL_DIR):
         self._load_model()
@@ -89,7 +89,7 @@ class SentenceTransformerSimilarityDetector:
         model_integrity.verify(path / "known_bad_ids.pkl")     # pickle: check before deserializing
         self.known_bad_vectors = np.load(path / "known_bad_vectors.npy", allow_pickle=False)
         with open(path / "known_bad_ids.pkl", "rb") as f:
-            self.known_bad_ids = pickle.load(f)  # nosec B301 - integrity-checked above
+            self.known_bad_ids = pickle.load(f)  # nosec B301 - integrity-checked above  # nosemgrep: python.lang.security.deserialization.pickle.avoid-pickle - SHA-256 verified against models/MANIFEST.sha256
 
     def detect(self, text: str, threshold: float | None = None) -> DetectionResult:
         start = time.perf_counter()
