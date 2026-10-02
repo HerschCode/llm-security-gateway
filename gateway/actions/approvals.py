@@ -8,6 +8,12 @@ dashboard and receives approve/deny clicks. WAL mode allows one writer and many 
 Controls enforced here (not in the HTTP layer, so every caller gets them):
   * only manager/admin may decide;
   * separation of duties: the approver may not be the requester;
+  * role separation: a tool the policy marks `require_role_separation` also refuses an approver whose
+    role equals the requester's role, even when they are different people (see docs/decisions.md —
+    an auditor's definition of segregation of duties is a different function, not just a different name
+    on the same function; two people with the same role are not presumed to be a functional check on
+    each other). The flag is read from the policy once, at enqueue time, and stored on the request
+    itself, so a later policy edit cannot change the rule retroactively for a pending request;
   * a decision is final: a non-pending request cannot be decided again;
   * pending requests expire (default 24 h) and then cannot be approved;
   * execution is tracked separately from approval (`execution_status`), so an approved request that
@@ -39,7 +45,8 @@ CREATE TABLE IF NOT EXISTS approvals (
     risk TEXT NOT NULL, source TEXT NOT NULL,
     status TEXT NOT NULL DEFAULT 'pending',          -- pending | approved | denied
     decided_by TEXT, decided_role TEXT, decided_at REAL, note TEXT,
-    execution_status TEXT, execution_result TEXT      -- NULL | claimed | executed | failed
+    execution_status TEXT, execution_result TEXT,     -- NULL | claimed | executed | failed
+    require_role_separation INTEGER NOT NULL DEFAULT 0
 )"""
 
 
@@ -90,17 +97,19 @@ class ApprovalQueue:
         d = dict(r)
         for k in ("args", "reasons", "evidence"):
             d[k] = json.loads(d.pop(f"{k}_json"))
+        d["require_role_separation"] = bool(d["require_role_separation"])
         return d
 
     def enqueue(self, session_id: str, principal: Principal, tool: str, args: dict, reasons: list[str],
-                evidence: dict, risk: str, source: str = "http") -> str:
+                evidence: dict, risk: str, source: str = "http", require_role_separation: bool = False) -> str:
         approval_id = f"apr_{uuid.uuid4().hex[:10]}"
         with self._lock, self._conn() as c:
             c.execute(
                 "INSERT INTO approvals (id, created_at, session_id, requester_role, requester_id, tool, args_json,"
-                " reasons_json, evidence_json, risk, source) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                " reasons_json, evidence_json, risk, source, require_role_separation) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
                 (approval_id, time.time(), session_id, principal.role, principal.user_id, tool,
-                 json.dumps(args, default=str), json.dumps(reasons), json.dumps(evidence, default=str), risk, source),
+                 json.dumps(args, default=str), json.dumps(reasons), json.dumps(evidence, default=str), risk, source,
+                 int(require_role_separation)),
             )
         return approval_id
 
@@ -140,6 +149,10 @@ class ApprovalQueue:
                 raise ApprovalConflict(f"approval {approval_id!r} has expired")
             if approver.user_id.strip().lower() == row["requester_id"].strip().lower():
                 raise ApprovalForbidden("separation of duties: the requester may not decide their own request")
+            if row["require_role_separation"] and approver.role == row["requester_role"]:
+                raise ApprovalForbidden(
+                    "segregation of duties: this request requires an approver with a different role from the "
+                    f"requester ({row['requester_role']!r}), not just a different person")
             c.execute("UPDATE approvals SET status=?, decided_by=?, decided_role=?, decided_at=?, note=? WHERE id=?",
                       ("approved" if approve else "denied", approver.user_id, approver.role, time.time(), note, approval_id))
         return self.get(approval_id)
