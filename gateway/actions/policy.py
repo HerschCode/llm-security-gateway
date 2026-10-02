@@ -20,7 +20,7 @@ import yaml
 DEFAULT_POLICY_PATH = Path(__file__).resolve().parents[2] / "config" / "tool_policies.yaml"
 
 _TOOL_KEYS = {"kind", "output_trust", "rules", "taint", "max_per_session", "description"}
-_RULE_KEYS = {"name", "roles", "args", "approval"}
+_RULE_KEYS = {"name", "roles", "args", "approval", "require_role_separation"}
 _ARG_KEYS = {"in", "pattern", "not_pattern", "max_length", "min", "max", "type", "required", "equals"}
 _TYPES = {"string": str, "integer": int, "number": (int, float), "boolean": bool}
 
@@ -41,6 +41,7 @@ class PolicyResult:
     approval: str = "none"           # "none" | "required" (only meaningful when allowed)
     rule: str | None = None
     reasons: list[str] = field(default_factory=list)
+    require_role_separation: bool = False
 
 
 class Policy:
@@ -77,6 +78,11 @@ class Policy:
                     raise PolicyError(f"tool {name!r} rule {i}: unknown keys {sorted(unknown)}")
                 if not rule.get("roles"):
                     raise PolicyError(f"tool {name!r} rule {i}: roles must be a non-empty list")
+                if "require_role_separation" in rule:
+                    if not isinstance(rule["require_role_separation"], bool):
+                        raise PolicyError(f"tool {name!r} rule {i}: require_role_separation must be a boolean")
+                    if rule["require_role_separation"] and rule.get("approval") != "required":
+                        raise PolicyError(f"tool {name!r} rule {i}: require_role_separation only applies to a rule with approval: required")
                 for arg, constraint in (rule.get("args") or {}).items():
                     unknown = set(constraint) - _ARG_KEYS
                     if unknown:
@@ -116,11 +122,16 @@ class Policy:
         for i, rule in role_rules:
             failures = self._check_args(rule, args, principal)
             if not failures:
-                return PolicyResult(True, approval=rule.get("approval", "none"), rule=rule.get("name", f"rule-{i}"))
+                return PolicyResult(True, approval=rule.get("approval", "none"), rule=rule.get("name", f"rule-{i}"),
+                                     require_role_separation=bool(rule.get("require_role_separation")))
             failures_by_rule.append((rule.get("name", f"rule-{i}"), failures))
-        # report the failures of the first role-matching rule: the closest thing to what the caller meant
-        name, failures = failures_by_rule[0]
-        return PolicyResult(False, rule=name, reasons=failures)
+        # no rule matched: report the closest ones (fewest failures). Rules that tie are all shown, each tagged with its name:
+        # reporting only the first would blame, say, the finance-hold rule for a call that was never a hold.
+        fewest = min(len(f) for _, f in failures_by_rule)
+        closest = [(n, f) for n, f in failures_by_rule if len(f) == fewest]
+        if len(closest) == 1:
+            return PolicyResult(False, rule=closest[0][0], reasons=closest[0][1])
+        return PolicyResult(False, rule=closest[0][0], reasons=[f"[{n}] {x}" for n, f in closest for x in f])
 
     def _check_args(self, rule: dict, args: dict, principal: Principal) -> list[str]:
         constraints = rule.get("args") or {}

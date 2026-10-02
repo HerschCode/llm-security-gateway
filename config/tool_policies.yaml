@@ -7,6 +7,10 @@
 #   * strict_args: an argument that is not declared in the matching rule is rejected
 #     (blocks smuggled parameters such as `skip_approval=true`).
 #   * approval: required  -> the call is queued for human approval instead of running.
+#   * require_role_separation: true (a rule with approval: required) -> the approver's role, not just their
+#     identity, must differ from the requester's (auditor-grade segregation of duties); see docs/decisions.md.
+#     Per-rule, not per-tool: a tool whose rules cover several actions (like propose_intervention) can
+#     require it for one action's rule (e.g. release_payment) without requiring it for the others.
 #   * output_trust: untrusted -> this tool's results are free text that may carry injected
 #     instructions; they are registered as untrusted spans for taint tracking.
 #   * taint: per-argument reaction when the value was copied from an untrusted span without
@@ -78,6 +82,34 @@ tools:
       - roles: [employee, manager, admin]
         args: {}
 
+  # ---- accounts-payable reads (operations-assistant Phase F2; wrappers over operations-performance's /controls and
+  # /working-capital endpoints). Manager/admin only: they expose vendor-level exception and cash-timing data. Trusted
+  # output, like the other operations-performance analytics: a case id the agent reads here and then holds is corroborated,
+  # not tainted (tests/test_action_firewall.py pins that). tests/test_policy_covers_ops_assistant_tools.py keeps these
+  # entries in step with operations-assistant's real tool list.
+  get_control_exceptions:
+    kind: read
+    output_trust: trusted
+    rules:
+      - roles: [manager, admin]
+        args:
+          control: {in: [C1, C2, C3, C4, C5, C6]}
+          vendor: {type: string, max_length: 80, pattern: "[A-Za-z0-9 &_.,'-]{1,80}"}
+          min_exposure: {type: number, min: 0, max: 1000000000}
+          top_n: {type: integer, min: 1, max: 100}
+  get_control_summary:
+    kind: read
+    output_trust: trusted
+    rules:
+      - roles: [manager, admin]
+        args: {}
+  get_working_capital_summary:
+    kind: read
+    output_trust: trusted
+    rules:
+      - roles: [manager, admin]
+        args: {}
+
   # ---- illustrative user-scoped read (own records only) ----
   get_my_cases:
     kind: read
@@ -99,6 +131,28 @@ tools:
       target: deny       # an attacker-chosen entity is the core of a confused-deputy attack
       reason: flag       # agents legitimately summarise documents into reasons: raise risk, keep approval
     rules:
+      # Accounts-payable actions (operations-assistant's propose_payment_hold/propose_payment_release,
+      # both thin wrappers around this same tool -- see docs/decisions.md). release_payment requires
+      # require_role_separation: an approver with a different ROLE from the requester, not just a
+      # different person, per the auditor definition of segregation of duties; hold_payment does not,
+      # since placing a hold is the conservative direction (see docs/finance-controls-mapping.md).
+      - name: finance-hold
+        roles: [manager, admin]
+        approval: required
+        args:
+          action: {required: true, in: [hold_payment]}
+          target: {required: true, type: string, pattern: '[A-Za-z0-9 _.-]{1,60}'}
+          reason: {required: true, type: string, max_length: 500, not_pattern: '(?i)(https?://|www\.|@[a-z0-9-]+\.|password|api[_ -]?key|secret|\bssn\b|salary|\b[a-z]{2}\d{2}(?=(?: ?[a-z]{0,4} ?\d){8})(?: ?[a-z0-9]{4}){2,7}(?: ?[a-z0-9]{1,3})?\b)'}
+          priority: {in: [high]}
+      - name: finance-release
+        roles: [manager, admin]
+        approval: required
+        require_role_separation: true
+        args:
+          action: {required: true, in: [release_payment]}
+          target: {required: true, type: string, pattern: '[A-Za-z0-9 _.-]{1,60}'}
+          reason: {required: true, type: string, max_length: 500, not_pattern: '(?i)(https?://|www\.|@[a-z0-9-]+\.|password|api[_ -]?key|secret|\bssn\b|salary|\b[a-z]{2}\d{2}(?=(?: ?[a-z]{0,4} ?\d){8})(?: ?[a-z0-9]{4}){2,7}(?: ?[a-z0-9]{1,3})?\b)'}
+          priority: {in: [normal]}
       - name: manager-standard
         roles: [manager, admin]
         approval: required

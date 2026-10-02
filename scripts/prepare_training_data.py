@@ -53,7 +53,10 @@ def safe_extract(tar: tarfile.TarFile, dest: Path):
             raise SystemExit(f"refusing to extract {member.name!r}: it would leave {root}")
         if not (member.isreg() or member.isdir()):
             raise SystemExit(f"refusing to extract {member.name!r}: links and special files are not allowed")
-    tar.extractall(root, members=members)  # nosec B202 - every member was validated above
+    # PEP 706 "data" filter where the interpreter has it (3.12, 3.11.4+, 3.10.12+): also normalises modes (a member with mode 0o644 became an untraversable
+    # directory on Linux, the CI failure that found this) and drops setuid/setgid bits. Older interpreters rely on the validation above.
+    extra = {"filter": "data"} if hasattr(tarfile, "data_filter") else {}
+    tar.extractall(root, members=members, **extra)  # nosec B202 - every member was validated above
 
 
 def download_jailbreak_llms() -> Path:
@@ -75,7 +78,7 @@ def download_jailbreak_llms() -> Path:
     if not JBLLMS_TARBALL_URL.startswith("https://"):
         raise SystemExit(f"refusing to download over a non-https URL: {JBLLMS_TARBALL_URL}")
     try:
-        urllib.request.urlretrieve(JBLLMS_TARBALL_URL, tarball_path)  # nosec B310 - https only, checked above
+        urllib.request.urlretrieve(JBLLMS_TARBALL_URL, tarball_path)  # nosec B310 - https only, checked above  # nosemgrep: python.lang.security.audit.dynamic-urllib-use-detected.dynamic-urllib-use-detected - constant https URL
     except Exception as e:
         raise SystemExit(
             f"Failed to download jailbreak_llms dataset from {JBLLMS_TARBALL_URL}: {e}\n"

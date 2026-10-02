@@ -65,9 +65,9 @@ class EmbeddingSimilarityDetector:
     def save(self, path: Path = MODEL_DIR):
         path.mkdir(parents=True, exist_ok=True)
         with open(path / "vectorizer.pkl", "wb") as f:
-            pickle.dump(self.vectorizer, f)
+            pickle.dump(self.vectorizer, f)  # nosemgrep: python.lang.security.deserialization.pickle.avoid-pickle - training-time write of our own artifact
         with open(path / "known_bad.pkl", "wb") as f:
-            pickle.dump((self._known_bad_norm, self.known_bad_ids), f)
+            pickle.dump((self._known_bad_norm, self.known_bad_ids), f)  # nosemgrep: python.lang.security.deserialization.pickle.avoid-pickle - training-time write of our own artifact
 
     def load(self, path: Path = MODEL_DIR):
         from gateway import model_integrity
@@ -75,9 +75,9 @@ class EmbeddingSimilarityDetector:
         model_integrity.verify(path / "vectorizer.pkl")
         model_integrity.verify(path / "known_bad.pkl")
         with open(path / "vectorizer.pkl", "rb") as f:
-            self.vectorizer = pickle.load(f)  # nosec B301 - integrity-checked above
+            self.vectorizer = pickle.load(f)  # nosec B301 - integrity-checked above  # nosemgrep: python.lang.security.deserialization.pickle.avoid-pickle - SHA-256 verified against models/MANIFEST.sha256
         with open(path / "known_bad.pkl", "rb") as f:
-            stored, self.known_bad_ids = pickle.load(f)  # nosec B301 - integrity-checked above
+            stored, self.known_bad_ids = pickle.load(f)  # nosec B301 - integrity-checked above  # nosemgrep: python.lang.security.deserialization.pickle.avoid-pickle - SHA-256 verified against models/MANIFEST.sha256
         # Re-normalise on load in case an older pickle stores the raw vectors.
         self._known_bad_norm = normalize(stored, norm="l2")
 

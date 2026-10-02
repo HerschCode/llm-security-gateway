@@ -1,6 +1,6 @@
-# Local run of the gateway with ALL THREE detection layers (full mode, torch
-# included). Zero external dependencies -- backends are stub_ops_agent and the
-# project2_agent reconstruction. This is what you record the core demo against.
+# Local run of the gateway with the default ensemble (rules + classifier, block on
+# any). Zero external dependencies -- backends are stub_ops_agent and the
+# project2_agent reconstruction. The public demo runs the same ensemble.
 #
 #   docker compose up --build
 #   open http://localhost:8000/gateway/demo
