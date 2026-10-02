@@ -14,8 +14,9 @@ import yaml
 REPO = Path(__file__).resolve().parents[1]
 WORKFLOWS = sorted((REPO / ".github" / "workflows").glob("*.yml"))
 
-# Jobs allowed to continue-on-error, each for a stated reason in its workflow file.
-SOFT_JOBS = {"lint", "semgrep", "trivy-image"}
+# Jobs allowed to continue-on-error, each for a stated reason in its workflow file. Semgrep and the image scan were soft until their first findings were
+# triaged (2026-09-26); only the style linter still is.
+SOFT_JOBS = {"lint"}
 
 
 def load(path):
@@ -52,6 +53,14 @@ def test_every_workflow_declares_least_privilege_permissions(path):
 def test_no_workflow_uses_pull_request_target(path):
     triggers = load(path).get(True) or load(path).get("on") or {}
     assert "pull_request_target" not in triggers
+
+
+@pytest.mark.parametrize("path", WORKFLOWS, ids=lambda p: p.name)
+def test_every_job_runs_on_a_pinned_runner_image_not_a_moving_label(path):
+    """`ubuntu-latest` migrates to Ubuntu 26 on 2026-10-19, and a runner change is a toolchain change nobody reviewed."""
+    for name, job in (load(path).get("jobs") or {}).items():
+        runner = job.get("runs-on")
+        assert isinstance(runner, str) and re.fullmatch(r"ubuntu-\d\d\.\d\d", runner), f"{path.name}:{name} runs on {runner!r}; pin a version, e.g. ubuntu-24.04"
 
 
 def test_only_the_documented_jobs_are_allowed_to_fail_without_failing_the_build():

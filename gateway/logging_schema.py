@@ -14,7 +14,9 @@ matched_pattern_id), and when (timestamp) -- see the "Audit logging" section
 in README.md for how it's used (compliance framing, dashboard queries).
 """
 import json
+import os
 import queue
+import sys
 import threading
 import time
 import uuid
@@ -22,6 +24,12 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 LOG_PATH = Path(__file__).resolve().parents[1] / "logs" / "gateway.jsonl"
+
+# Emit each decision record to stdout so it appears in PaaS log streams
+# (Render, Cloud Run, etc.) where the filesystem is ephemeral.
+# Defaults to true; set GATEWAY_LOG_STDOUT=0 to suppress (e.g. in tests
+# that don't want stdout noise).
+_LOG_STDOUT = os.environ.get("GATEWAY_LOG_STDOUT", "1").strip() not in ("0", "false", "no")
 
 _SENTINEL = object()  # signals writer thread to drain and exit
 
@@ -98,6 +106,9 @@ class GatewayLogger:
 
     def log(self, record: LogRecord):
         line = json.dumps(asdict(record)) + "\n"
+        if _LOG_STDOUT:
+            sys.stdout.write(line)
+            sys.stdout.flush()
         self._queue.put(line)
 
     def close(self):
