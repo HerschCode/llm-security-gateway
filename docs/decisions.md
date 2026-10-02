@@ -1126,9 +1126,10 @@ six AP controls, working capital, model-risk doc) and operations-assistant (F2: 
 a concurrent session finished the P1 and P2 sides of the same finance plan while this session was doing P3's
 groundwork. That resolves the "tools don't exist yet" caveat from the entry above.
 
-**A design correction.** `propose_payment_hold`/`propose_payment_release` are not new MCP tools — reading
-operations-assistant's `src/tools/ap_controls.py` shows both are thin wrappers that call the *existing*
-`propose_intervention` tool with `action="hold_payment"` / `"release_payment"`. That meant the tool-level
+**A design correction.** (Corrected 2026-10-02: the first sentence of this paragraph originally said these were "not new
+MCP tools". That is true of the Python layer only; see the 2026-10-02 entry below.) Reading operations-assistant's
+`src/tools/ap_controls.py` shows `propose_payment_hold`/`propose_payment_release` are thin wrappers that call the *existing*
+`propose_intervention` function with `action="hold_payment"` / `"release_payment"`. That meant the tool-level
 `require_role_separation` flag from the groundwork entry was the wrong granularity: `propose_intervention` also
 handles `escalate_case`, `flag_supplier`, etc., and a tool-level flag would have applied the strict role check to
 those too. Moved the flag from `_TOOL_KEYS` to `_RULE_KEYS` (`gateway/actions/policy.py`): `PolicyResult` now
@@ -1150,3 +1151,51 @@ employee denial). Full suite: 804 passed.
 **Still not done**, unchanged from the groundwork entry: role granularity (employee/manager/admin, not AP
 clerk/controller), and no dollar-amount/threshold enforcement (`propose_payment_hold`/`release` carry no amount
 argument to check).
+
+## 2026-10-02: Round-5 review: policy and MCP drift, the finance corpus, CI hardening, the "down" demo
+
+An external review of all four repositories listed what was wrong with P3. Each claim was checked against the repository before acting on it; this records what was
+true, what was not, and two mistakes of my own that the work caught.
+
+**1. The policy and operations-assistant had drifted, and it was wider than the review said.** The review named the two `propose_payment_*` tools. Reading the
+real server (`python -c "import src.mcp_server"`, `list_tools()`) shows 15 tools and a policy that listed 10: also `get_control_exceptions`,
+`get_control_summary` and `get_working_capital_summary` were hidden and default-denied behind the gateway. **My own 2026-09-29 entry was wrong** that the payment tools "are not
+new MCP tools": I read the Python layer (their functions call `propose_intervention`) instead of the protocol layer (the server registers them as separate tools). Corrected in
+place in that entry, in `docs/finance-controls-mapping.md` and in `docs/action-firewall.md`. Fixes: policy entries for the three reads;
+`tests/test_policy_covers_ops_assistant_tools.py`, which compares the policy with a committed snapshot of the real tool list
+(`tests/fixtures/ops_assistant_mcp_tools.json`) for tool names, every declared argument (the failure class behind Fix 3's `roi_estimate`), optional versus
+required, and stale policy entries; and `scripts/snapshot_ops_assistant_tools.py [--check]`, because CI cannot import the other repository, so freshness of the snapshot is a manual step.
+The two duplicates are pinned as strict `xfail` until operations-assistant removes them (its decision: one write path per privileged action).
+
+**2. The finance corpus (the part of the F3 spec still missing).** 32 scenarios, `AG-FIN1`-`AG-FIN32`, in `corpus/agentic_attacks.yaml`: 27 harmful, 5 benign. A call can now carry
+`approve_attempts`, so the approval gate is measured as well as `authorize()`. Of 24 in-scope harmful scenarios: 11 stopped by policy, 7 by taint, 5 at the approval
+gate (self-approval, case-variant self-approval, a same-role peer, an employee, a second admin), 1 held (the justification copied from a poisoned note, as in `AG-A5`);
+3 known misses pinned as strict `xfail`: the agent releasing the invoice it was asked to hold (no state across calls), five releases that fit under the
+per-session cap of 5, and a bare account number in `reason` (nothing separates it from a PO number). 0 benign false blocks; 8 of 8 approval attempts as specified.
+`scripts/demo_action_firewall_real_upstream.py` gained a payment-release step, run against the real operations-assistant server (the duplicate tool is blocked, the requester and a
+same-role manager are refused, an admin's approval executes). Writing the scenarios found three things: an IBAN in `reason` would have reached the approval queue, so the finance rules now reject
+IBAN-shaped strings (the first pattern also rejected "FY24 exceptions", a legitimate reason; it now requires digits in the account part and is tested on ten legitimate reasons); a policy
+denial blamed only the first role-matching rule (`finance-hold` for a call that was never a hold), so denials now list every closest rule; and the small classifier, as deployed,
+blocks one innocuous finance message ("Release payment INV-4471, the block was resolved.", a terse imperative; the same request in more words passes), because finance vocabulary is not
+in its training data. That last one is reported (`docs/action-firewall.md`), not tuned away. **Two mistakes of mine, both caught by tests or by rereading:** the new ids `AG-F1`..`AG-F32`
+collided with the corpus's existing section F (86 scenarios, 80 unique ids; `test_corpus_is_large_and_well_formed` failed), so they are `AG-FIN*`; and a first README row said
+"0 executed" for approval attempts that were written to be refused, which measures nothing, so the row reports the 8 of 8 instead.
+
+**3. CI.** Every job runs on `ubuntu-24.04` (`ubuntu-latest` moves to Ubuntu 26 on 2026-10-19), and `tests/test_supply_chain.py` fails on any moving runner label. The Trivy image scan now writes SARIF
+and `scripts/sarif_to_annotations.py` prints it as a run-page annotation, because its report artifact needs a login and job logs need admin rights.
+
+**4. The decision log on stdout was already done** (`d48c657`, before this review); the review item was out of date. What was missing was the pin: `tests/test_decision_log_stdout.py` checks the exact field set,
+valid JSON per line, that `decision` (the field the infra alert filters on) is right, an allow-list for `extra`, and that no prompt, PII or response text is written, for `process()` and the streaming path.
+
+**5. The live demo was not down.** The first request after idle took more than 90 seconds; the next ones answered in under a second (`/health` 0.3 s). Local startup with the Render settings is 1.1 s, so the app is not the slow part:
+Render's free-tier wake-up is. The live demo page matches what the current code serves except for the lite-mode banner, so Render is deploying every push (a failing deploy would leave a stale page). The banner is there because the
+Render dashboard still has `GATEWAY_LITE=1`, overriding `render.yaml` and the Dockerfile (still an open owner item). The banner text itself was stale (it claimed layers 1 and 2 and a 512 MB limit for layer 3) and is fixed. Docker is not
+running here, so `Dockerfile.render` was not built locally; CI builds it, and the running service is the current build. `/gateway/connectivity` shows operations-assistant as unreachable because that service answers the gateway's `/health`
+probe with 429 (its own per-IP limit); that is on its side.
+
+**6. The Trivy image gate failed on 2026-10-02 on unchanged content, and the new annotation showed why.** Seven HIGH findings, all Debian 13 packages in the image (`libpcre2-8-0` and OpenSSL's `libssl3t64`, `openssl`,
+`openssl-provider-legacy`), each with a fixed `deb13u3` release published since the last green run on 2026-09-29. The cause is the digest-pinned base image going stale, which is what a digest pin trades for reproducibility:
+`python:3.12-slim` now points at a newer digest. Both Dockerfiles move to `dddfd7e0...`, which cleared the six OpenSSL findings; the annotation then showed one left, `libpcre2-8-0`, because even the newer base image was built before Debian's `deb13u3`. That one package is upgraded at build time (`apt-get install --only-upgrade libpcre2-8-0`, with a comment to drop it once a refreshed digest has it); the alternative, a time-limited `.trivyignore`, would leave a known fixed HIGH in the running image. Dependabot had proposed Python 3.14 (PR #2) instead of a digest refresh and the lock is compiled for 3.12, so `dependabot.yml`
+now ignores Python minor and major bumps for the docker ecosystem. The gate worked as designed: it failed on a new fixed vulnerability. What it cannot do is notice by itself: the scheduled Security run is weekly, so a stale pin can sit red-in-waiting for up to a week.
+
+**Not done.** The two partial adaptive red-team runs need `GROQ_API_KEY`, which is not in this environment (and `.env` files are not read for it). Merging and closing the open pull requests needs the owner's GitHub session; see below for their state.
