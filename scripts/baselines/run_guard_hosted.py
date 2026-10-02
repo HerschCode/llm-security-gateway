@@ -65,7 +65,7 @@ class Hosted:
 
     def score(self, text: str) -> float:
         """P(malicious) for the first START_CHARS characters of `text`."""
-        k = hashlib.sha1(text.encode("utf-8"), usedforsecurity=False).hexdigest()   # a cache key, not a security use
+        k = hashlib.sha1(text.encode("utf-8"), usedforsecurity=False).hexdigest()   # a cache key, not a security use  # nosemgrep: python.lang.security.insecure-hash-algorithms.insecure-hash-algorithm-sha1 - cache key only, usedforsecurity=False
         if k in self.cache:
             return self.cache[k]
         chars = min(len(text), START_CHARS)

@@ -1,5 +1,7 @@
 """Regression tests for fixes made after the Phase 6 appsec scan (docs/security-scans.md)."""
 import io
+import os
+import stat
 import sys
 import tarfile
 from pathlib import Path
@@ -40,6 +42,28 @@ def test_a_normal_archive_is_extracted(tmp_path):
     with tarfile.open(src) as tar:
         safe_extract(tar, dest)
     assert (dest / "repo" / "data" / "a.csv").read_text() == "x,y\n1,2\n"
+
+
+@pytest.mark.skipif(sys.platform == "win32" or not hasattr(tarfile, "data_filter"),
+                    reason="file modes only exist on POSIX, and the extraction filter needs Python 3.12 (or a patched 3.10/3.11)")
+def test_extraction_does_not_take_its_modes_from_the_archive(tmp_path):
+    """A directory stored as 0o644 came out untraversable on Linux (this test's first failure, in CI: Windows ignores modes so it never showed locally),
+    and a setuid member would have stayed setuid. The extraction filter normalises both."""
+    path = tmp_path / "modes.tar"
+    with tarfile.open(path, "w") as tar:
+        d = tarfile.TarInfo("repo/")
+        d.type, d.mode = tarfile.DIRTYPE, 0o644
+        tar.addfile(d)
+        f = tarfile.TarInfo("repo/a.txt")
+        f.size, f.mode = 1, 0o4755
+        tar.addfile(f, io.BytesIO(b"x"))
+    dest = tmp_path / "out"
+    dest.mkdir()
+    with tarfile.open(path) as tar:
+        safe_extract(tar, dest)
+    assert os.access(dest / "repo", os.X_OK)
+    assert (dest / "repo" / "a.txt").read_bytes() == b"x"
+    assert stat.S_IMODE((dest / "repo" / "a.txt").stat().st_mode) & 0o7000 == 0
 
 
 WINDOWS_ONLY = pytest.mark.skipif(sys.platform != "win32", reason="a backslash is a path separator only on Windows; on POSIX it is an ordinary filename character")

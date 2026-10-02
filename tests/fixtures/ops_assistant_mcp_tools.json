@@ -1,0 +1,110 @@
+{
+  "source": "operations-assistant src.mcp_server, FastMCP list_tools()",
+  "tools": {
+    "get_bottlenecks": {
+      "properties": [
+        "top_n"
+      ],
+      "required": []
+    },
+    "get_conformance": {
+      "properties": [],
+      "required": []
+    },
+    "get_control_exceptions": {
+      "properties": [
+        "control",
+        "min_exposure",
+        "top_n",
+        "vendor"
+      ],
+      "required": []
+    },
+    "get_control_summary": {
+      "properties": [],
+      "required": []
+    },
+    "get_cycle_time": {
+      "properties": [
+        "segment"
+      ],
+      "required": []
+    },
+    "get_management_report": {
+      "properties": [],
+      "required": []
+    },
+    "get_pipeline_status": {
+      "properties": [
+        "limit"
+      ],
+      "required": []
+    },
+    "get_sla_metrics": {
+      "properties": [
+        "segment"
+      ],
+      "required": []
+    },
+    "get_supplier_performance": {
+      "properties": [
+        "min_volume",
+        "top_n"
+      ],
+      "required": []
+    },
+    "get_working_capital_summary": {
+      "properties": [],
+      "required": []
+    },
+    "predict_sla_risk": {
+      "properties": [
+        "case_id"
+      ],
+      "required": [
+        "case_id"
+      ]
+    },
+    "propose_intervention": {
+      "properties": [
+        "action",
+        "priority",
+        "reason",
+        "target"
+      ],
+      "required": [
+        "action",
+        "reason",
+        "target"
+      ]
+    },
+    "propose_payment_hold": {
+      "properties": [
+        "case_id",
+        "reason"
+      ],
+      "required": [
+        "case_id",
+        "reason"
+      ]
+    },
+    "propose_payment_release": {
+      "properties": [
+        "case_id",
+        "reason"
+      ],
+      "required": [
+        "case_id",
+        "reason"
+      ]
+    },
+    "search_policy_documents": {
+      "properties": [
+        "query"
+      ],
+      "required": [
+        "query"
+      ]
+    }
+  }
+}
