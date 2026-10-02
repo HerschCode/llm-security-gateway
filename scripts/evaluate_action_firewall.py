@@ -30,7 +30,7 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 
-from gateway.actions.approvals import ApprovalQueue  # noqa: E402
+from gateway.actions.approvals import ApprovalError, ApprovalQueue  # noqa: E402
 from gateway.actions.firewall import ActionFirewall  # noqa: E402
 from gateway.actions.policy import Principal  # noqa: E402
 from gateway.middleware import GatewayMiddleware  # noqa: E402
@@ -50,6 +50,22 @@ def text_layers_block(mw: GatewayMiddleware, text: str, sid: str) -> bool:
     return bool(mw._run_injection_ensemble(working, sid)[0])
 
 
+def attempt_approvals(fw: ActionFirewall, call: dict, decision) -> list[dict]:
+    """A call's `approve_attempts` (finance scenarios): once it is held, each listed principal tries to decide the request,
+    in order. `expect` is approved | refused; a refusal carries the approval queue's own reason."""
+    out = []
+    for a in call.get("approve_attempts") or []:
+        assert decision.approval_id, f"approve_attempts on a call that was not held: {call['tool']}"
+        who = Principal(a["by"]["role"], a["by"]["user_id"])
+        try:
+            fw.approvals.decide(decision.approval_id, True, who)
+            got, why = "approved", ""
+        except ApprovalError as e:
+            got, why = "refused", str(e)
+        out.append({"by": who.user_id, "role": who.role, "expect": a["expect"], "got": got, "why": why[:140], "matches_expect": got == a["expect"]})
+    return out
+
+
 def run_scenario(sc: dict, mw: GatewayMiddleware, tmp: Path, index: int) -> dict:
     fw = ActionFirewall(approvals=ApprovalQueue(tmp / f"s{index}.db"), audit_path=None)
     sid = sc["id"]
@@ -63,7 +79,8 @@ def run_scenario(sc: dict, mw: GatewayMiddleware, tmp: Path, index: int) -> dict
         d = fw.authorize(sid, principal, call["tool"], call["args"])
         decisions.append({"tool": call["tool"], "expect": call["expect"], "harmful": call["harmful"],
                           "effect": d.effect, "stage": d.stage, "risk": d.risk,
-                          "reasons": d.reasons[:2], "matches_expect": d.effect == call["expect"]})
+                          "reasons": d.reasons[:2], "matches_expect": d.effect == call["expect"],
+                          "approvals": attempt_approvals(fw, call, d)})
 
     # text layers, scored separately from the firewall: a block only counts as a detection when the text really is an attack
     user_blocked = text_layers_block(mw, sc["user_message"], sid + "-u")
@@ -79,7 +96,13 @@ def run_scenario(sc: dict, mw: GatewayMiddleware, tmp: Path, index: int) -> dict
             stage = next(d["stage"] for d in harmful if d["effect"] == "deny")
             outcome = {"policy": "stopped_policy", "budget": "stopped_policy", "taint": "stopped_taint"}[stage]
         elif any(d["effect"] == "require_approval" for d in harmful):
-            outcome = "held_for_approval"
+            held = [d for d in harmful if d["effect"] == "require_approval"]
+            if any(a["got"] == "approved" for d in held for a in d["approvals"]):
+                outcome = "executed"                       # a human-approval step let the harmful call through
+            elif all(d["approvals"] for d in held):
+                outcome = "stopped_approval_gate"          # every attempt to approve it (self, same role, employee) was refused
+            else:
+                outcome = "held_for_approval"
         else:
             outcome = "executed"
     return {"id": sid, "category": sc["category"], "title": sc["title"], "evasion": bool(sc.get("evasion")),
@@ -90,6 +113,22 @@ def run_scenario(sc: dict, mw: GatewayMiddleware, tmp: Path, index: int) -> dict
             "text_context_scan_detects_injection": any(b for _, b in injected),
             "text_context_scan_false_positive_on_clean_context": any(b for _, b in clean),
             "calls": decisions, "outcome": outcome}
+
+
+def finance_summary(results: list[dict]) -> dict:
+    """The accounts-payable scenarios (category finance_*) on their own, with the same reading rules as the whole corpus."""
+    fin = [r for r in results if r["category"].startswith("finance_")]
+    harmful = [r for r in fin if r["outcome"]]
+    benign = [r for r in fin if not r["outcome"]]
+    calls = [c for r in fin for c in r["calls"]]
+    return {"scenarios": len(fin), "harmful_scenarios": len(harmful), "benign_scenarios": len(benign),
+            "harmful_excluding_known_evasions": dict(Counter(r["outcome"] for r in harmful if not r["evasion"])),
+            "known_evasion_scenarios": dict(Counter(r["outcome"] for r in harmful if r["evasion"])),
+            "by_category": {c: dict(Counter(r["outcome"] for r in fin if r["category"] == c and r["outcome"])) for c in sorted({r["category"] for r in fin})},
+            "ground_truth_agreement": {"calls": len(calls), "match": sum(c["matches_expect"] for c in calls)},
+            "approval_attempts": {"attempts": sum(len(c["approvals"]) for c in calls), "match": sum(a["matches_expect"] for c in calls for a in c["approvals"])},
+            "benign_false_blocks": [r["id"] for r in benign if any(c["effect"] == "deny" for c in r["calls"])],
+            "benign_approval_blocked": [r["id"] for r in benign if any(a["got"] != a["expect"] for c in r["calls"] for a in c["approvals"])]}
 
 
 def summarise(results: list[dict]) -> dict:
@@ -111,6 +150,10 @@ def summarise(results: list[dict]) -> dict:
         "ground_truth_agreement": {"calls": len(calls), "match": sum(c["matches_expect"] for c in calls),
                                    "mismatches": [{"scenario": r["id"], "tool": c["tool"], "expect": c["expect"], "got": c["effect"], "stage": c["stage"]}
                                                   for r in results for c in r["calls"] if not c["matches_expect"]]},
+        "approval_attempts": {"attempts": sum(len(c["approvals"]) for c in calls), "match": sum(a["matches_expect"] for c in calls for a in c["approvals"]),
+                              "mismatches": [{"scenario": r["id"], "by": a["by"], "role": a["role"], "expect": a["expect"], "got": a["got"]}
+                                             for r in results for c in r["calls"] for a in c["approvals"] if not a["matches_expect"]]},
+        "finance": finance_summary(results),
         "benign_false_blocks": [r["id"] for r in benign if any(c["effect"] == "deny" for c in r["calls"])],
         "benign_held_high_risk": [r["id"] for r in benign if any(c["effect"] == "require_approval" and c["risk"] == "high" for c in r["calls"])],
         "text_layers": {
@@ -135,7 +178,8 @@ def main():
     (REPO_ROOT / "reports" / "p3_action_firewall.json").write_text(json.dumps({"summary": summary, "results": results}, indent=2), encoding="utf-8")
 
     labels = {"stopped_policy": "stopped by policy/budget",
-              "stopped_taint": "stopped by taint tracking", "held_for_approval": "held for human approval", "executed": "EXECUTED (nothing stopped it)"}
+              "stopped_taint": "stopped by taint tracking", "stopped_approval_gate": "stopped at the approval gate (approval refused)",
+              "held_for_approval": "held for human approval", "executed": "EXECUTED (nothing stopped it)"}
     print(f"{summary['scenarios']} scenarios: {summary['harmful_scenarios']} harmful, {summary['benign_scenarios']} benign controls")
     print("\nharmful scenarios, excluding known evasions:")
     for k, label in labels.items():
@@ -153,6 +197,12 @@ def main():
           f" flagged clean context in {t['hypothetical_context_scan_false_positives_on_clean_context']} scenarios")
     g = summary["ground_truth_agreement"]
     print(f"ground-truth agreement: {g['match']}/{g['calls']} calls; mismatches: {g['mismatches']}")
+    a = summary["approval_attempts"]
+    print(f"approval attempts: {a['match']}/{a['attempts']} behaved as expected; mismatches: {a['mismatches']}")
+    f = summary["finance"]
+    print(f"\nfinance (accounts payable): {f['scenarios']} scenarios, {f['harmful_scenarios']} harmful, {f['benign_scenarios']} benign;"
+          f" in scope {f['harmful_excluding_known_evasions']}; known evasions {f['known_evasion_scenarios']};"
+          f" benign false blocks {f['benign_false_blocks']}, benign approvals blocked {f['benign_approval_blocked']}")
     print("benign false blocks:", summary["benign_false_blocks"], "| benign held at high risk:", summary["benign_held_high_risk"])
     print("\nby category:", json.dumps(summary["by_category"], indent=1))
     print("\nWrote reports/p3_action_firewall.json")
