@@ -11,6 +11,6 @@ pydantic==2.13.5
 httpx==0.28.1
 scikit-learn>=1.7,<1.9
 scipy==1.15.3
-numpy==2.2.6
+numpy==2.4.6
 joblib==1.6.0
 pyyaml==6.0.3
